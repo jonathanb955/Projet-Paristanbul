@@ -109,8 +109,8 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
             <div class="carousel-item" data-bs-interval="5000">
                 <img src="assets/img/okBcAn1F1F0y0E5DIoED9afIQeadgzXYFkXuvR.jpg" class="d-block w-100" alt="...">
                 <div class="carousel-caption custom-text" style="font-family: 'Times New Roman',serif">
-                    <h2><u>Couronné Meilleur Aéroport</u></h2>
-                    <p>En 2024, JBSkyTravel élu Meilleur Aéroport pour son excellence et ses services inégalés, offrant une expérience unique et reconnue par tous pour son service de qualité et son innovation.</p>
+                    <h2><u>A REMPLIR</u></h2>
+                    <p>DESCRIPTION A REMPLIR.</p>
                 </div>
             </div>
         </div>
@@ -126,3 +126,29 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     </div>
     <br>
 </section>
+<section id="catalogue">
+   <div> <div id="bloc gauche">
+
+        jkhkh
+
+    </div>
+
+    <div style="border-style: dashed" id="bloc top milieu">
+        jhkn
+
+    </div>
+
+    <div style="border-style: dashed" id=" top droite">
+        jhkn
+    </div>
+
+    <div style="border-style: dashed" id="bottom">
+        jhkn
+    </div>
+
+   </div>
+</section>
+<style>#bloc gauche{height: 1000px;wiidth:40%}</style>
+<style>#bloc top milieu{height: 1000px;wiidth:30%}</style>
+<style>#bloc top droite{height: 1000px;wiidth:30%}</style>
+<style>#bloc top bottom{height: 1000px;wiidth:60%}</style>
