@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paristanbul</title>
+    <link rel="stylesheet" href="assets/css/index.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="web site icon" type="png" href="https://previews.123rf.com/images/jovanas/jovanas1602/jovanas160201149/52031915-logo-avi%C3%B3n-volando-alrededor-del-planeta-tierra-azul.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<body>
+<header>
+    <div class="d-flex justify-content-center align-items-center position-relative ">
+        <div class="btn-group position-absolute end-0 me-3">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-square"></i>
+            </button>
+            <ul class="dropdown-menu text-center">
+                <?php if ($connecte): ?>
+                <span class="dropdown-item-text"><strong>Bienvenue</strong><br><?php echo $_SESSION['prenom'] . ' ' . $_SESSION['nom']; ?></span>
+                <li><hr class="dropdown-divider"></li>
+
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                <li><a class="dropdown-item" href="../Projet-Vol/vue/pageAdmin.php"><i class="bi bi-shield-lock-fill"></i> Espace Admin</a></li>
+                <?php else: ?>
+                <li><a class="dropdown-item" href="../Projet-Vol/vue/espaceClient.php"><i class="bi bi-person-circle"></i> Espace Client</a></li>
+                <?php endif; ?>
+
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="?logout=true"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+                <?php else: ?>
+                <li><a class="dropdown-item" href="vue/pageConnexion.php">Connexion <i class="bi bi-person-bounding-box"></i></a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="vue/pageInscription.php">Inscription <i class="bi bi-person-plus-fill"></i></a></li>
+                <?php endif; ?>
+            </ul>
+
+        </div>
+
+        <h1 class="mb-0" style="text-transform: capitalize">Paristanbul</h1>
+    </div>
+
+    <nav>
+        <ul>
+            <li><a href="#accueil">Accueil</a></li>
+            <li><a href="#catalogue">Catalogue</a></li>
+            <li><a href="#reseauxsociaux">Nous suivre</a></li>
+
+
+        </ul>
+    </nav>
+
+</header>
+<h2 style="color: #004080 ; margin-left: 250px">Qui sommes-nous ? </h2>
+
+<iframe class="elementor-video" frameborder="0" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write;
+encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+        title="SUPERMARCHE PARISTANBUL ( TOUS NOS MAGASINS À L'EXTERIEURE" width="100%" height="500"
+        src="https://www.youtube-nocookie.com/embed/tVr152vEHNY?controls=1&amp;rel=0&amp;playsinline=1&amp;modestbranding=1&amp;autoplay=1&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fparistanbul.com&amp;widgetid=1&amp;forigin=https%3A%2F%2Fparistanbul.com%2Fqui-sommes-nous%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fparistanbul.com%2F&amp;vf=2" id="widget2" data-gtm-yt-inspected-9="true"></iframe>
+
+<h3 style="color : #004080">Notre marque</h3>
+<div class="marque">
+    <div class="logo"> <img src="assets/img/LOGO-PARISTANBUL-300x94.png"></div>
+    <div class="texte">
+    <p>Notre ambition est de devenir le commerce de proximité préféré et d’être<br>
+        l’acteur de référence en matière de qualité et service, avec une équipe <br>
+        professionnelle et expérimentée qui a pour mission la satisfaction de sa<br>
+        clientèle. <br><br>
+        Nos supermarchés constituent, en effet, un véritable lieu d’échanges et de<br>
+        gourmandises pour une meilleure expérience d’achat.<br><br>
+
+        Voici les raisons pour lesquelles vous choisirez Paristanbul :<br>
+
+        – Pour ses produits d’exceptions et de qualités,<br>
+        – Pour son personnel chaleureux à votre écoute,<br>
+        – Pour son hygiène irréprochable,<br>
+        – Pour le bon rapport qualité/prix …<br><br>
+
+        A vous de garnir vos assiettes avec notre large gamme de variétés proposées….</p>
+</div>
+</div>
+
+
+</body>
+</html>

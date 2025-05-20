@@ -265,3 +265,26 @@ body {
     padding: 20px;
 
 }
+
+iframe{
+    margin-top: 20px;
+}
+.marque{
+    margin-bottom: 50px;
+}
+h3{
+    margin-left: 500px;
+    margin-top: 50px;
+}
+.marque {
+display: flex;
+}
+
+.marque .texte{
+    margin-left:100px
+
+}
+
+.marque .logo{
+    padding: 20px;
+}
