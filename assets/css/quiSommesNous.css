@@ -1,0 +1,290 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #004080;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+    background-color: #003366;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+section {
+    padding: 20px;
+    text-align: center;
+}
+
+h2 {
+    color: #004080;
+}
+
+table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+footer {
+    background-color: #004080;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+.carousel-inner img {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    max-height: 500px;
+    object-fit: cover;
+
+}
+.carousel-inner .carousel-item:nth-child(2) img {
+    position: relative;
+    width: 50px;
+}
+
+
+.carousel-item{
+    position: relative;
+}
+.custom-caption {
+    position: absolute;
+    top: 35%;
+    text-align: center;
+    color: #000000;
+    padding: 50px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5)
+}
+.custom-text{
+    color: #000000;
+    padding: 50px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5)
+}
+.card-case{
+    max-width: 400px;
+    height: auto;
+    margin: 0 auto;
+}
+.custom-titre{
+    text-align: center;
+}
+.card-header{
+    text-transform: capitalize;
+    font-size: 20px;
+}
+.card-body{
+    text-align: center;
+    background-color: #004080;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.type{
+    background-color: white;
+}
+
+.card-case {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-case:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.card-body {
+    background: linear-gradient(to bottom, #ffffff, #e3f2fd);
+    padding: 20px;
+    border-radius: 0 10px 10px 0;
+    text-align: center;
+}
+
+.card-title {
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 0.8rem;
+    color: #666666;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+.btn-dark {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-dark:hover {
+    background-color: #004080;
+    cursor: pointer;
+}
+.card-body-accueil{
+    background-image: url("https://storage.canalblog.com/75/71/400144/38042095.gif");
+}
+.message-case{
+    color: white;
+}
+.message-aide {
+    width: 300px;
+    max-width: 300px;
+    padding: 5px 10px;
+    position: relative;
+    align-content: center;
+    display: block;
+    margin: 0 auto;
+}
+.carte-partnaires1{
+    background-image: url("https://i.gifer.com/NAWM.gif");
+    width: 300px;
+    height: 250px;
+    border-radius: 10px;
+    border: 5px solid #004080;
+}
+.carte-partnaires2 {
+    background-image: url("https://d24chjhol3kq77.cloudfront.net/trbusiness.com/wp-content/uploads/2023/05/Dufry-walkthrough-SIA.gif");
+    width: 300px;
+    height: 250px;
+    border-radius: 10px;
+    border: 5px solid #004080;
+}
+
+.carte-partnaires3 {
+    background-image: url("https://kbp.aero/wp-content/uploads/2020/09/Business-lounges.gif");
+    width: 300px;
+    height: auto;
+    border-radius: 10px;
+    border: 5px solid #004080;
+    background-position: center ;
+}
+
+.partenaire {
+    position: relative;
+    top: 5px;
+    text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.9);
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+}
+.container{
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+
+
+body {
+
+    margin: 0;
+
+    font-family: Arial, sans-serif;
+
+}
+
+
+
+
+
+.colonne-gauche {
+    flex: 1.2;
+    height: 400px;
+    width: 100vw;
+    margin-left: 0;
+    padding-left: 0;
+    background-image: url("https://cdn.discordapp.com/attachments/1284260338925178923/1374328426898522122/93C949B2-7D0F-41C6-95AE-20394538CE1F.png?ex=682da696&is=682c5516&hm=38a9b499d5a169b71fdab0c293b8efcaf6c372a70e13d536b63d76c605a24034&");
+    background-size: 100%; /* Réduit la taille de l'image */
+    background-repeat: no-repeat;
+    background-position: center; /* Centrer l'image */
+    border-radius: 10px;
+}
+.colonne-droite {
+
+    flex: 1;
+    border-radius: 10px;
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 30px;
+
+}
+
+.bloc-haut,
+
+.bloc-bas {
+    border-radius: 10px;
+    background-color: #c0c0ff;
+
+    flex: 1;
+
+    padding: 20px;
+
+}
+
+iframe{
+    margin-top: 20px;
+}
+.marque{
+    margin-bottom: 50px;
+}
+h3{
+    margin-left: 500px;
+    margin-top: 50px;
+}
+.marque {
+    display: flex;
+}
+
+.marque .texte{
+    margin-left:100px
+
+}
+
+.marque .logo{
+    padding: 20px;
+}
