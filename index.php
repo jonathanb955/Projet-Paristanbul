@@ -25,6 +25,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paristanbul</title>
     <link rel="stylesheet" href="assets/css/index.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="web site icon" type="png" href="https://previews.123rf.com/images/jovanas/jovanas1602/jovanas160201149/52031915-logo-avi%C3%B3n-volando-alrededor-del-planeta-tierra-azul.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
@@ -75,6 +76,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
         </ul>
     </nav>
+
 </header>
 
 <section id="accueil">
@@ -127,28 +129,19 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <br>
 </section>
 <section id="catalogue">
-   <div> <div id="bloc gauche">
-
-        jkhkh
-
+    <div class="container">
+        <div class="colonne-gauche"></div>
+        <div class="colonne-droite">
+            <div class="bloc-haut">Bloc moyen 1</div>
+            <div class="bloc-bas">Bloc moyen 2</div>
+        </div>
     </div>
 
-    <div style="border-style: dashed" id="bloc top milieu">
-        jhkn
-
-    </div>
-
-    <div style="border-style: dashed" id=" top droite">
-        jhkn
-    </div>
-
-    <div style="border-style: dashed" id="bottom">
-        jhkn
-    </div>
-
-   </div>
 </section>
-<style>#bloc gauche{height: 1000px;wiidth:40%}</style>
-<style>#bloc top milieu{height: 1000px;wiidth:30%}</style>
-<style>#bloc top droite{height: 1000px;wiidth:30%}</style>
-<style>#bloc top bottom{height: 1000px;wiidth:60%}</style>
+<section id="reseauxsociaux">
+
+    Nous suivre
+ <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" > <i class="bi bi-youtube"></i></a>
+   <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR"> <i class="bi bi-facebook"></i> </a>
+   <a href=https://www.instagram.com/paristanbul_supermarche/"><i class="bi bi-instagram"></i> </a>
+    <a href="https://www.tiktok.com/@supermarche_paristanbul"> <i class="bi bi-tiktok"></i> </a>
