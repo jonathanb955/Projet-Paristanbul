@@ -69,10 +69,10 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
     <nav>
         <ul>
-            <li><a href="#accueil">Accueil</a></li>
+
             <li><a href="#catalogue">Catalogue</a></li>
             <li><a href="#reseauxsociaux">Nous suivre</a></li>
-            <li><a href="#apropos">À propos de nous</a></li>
+            <li><a href="#apropos">Informations</a></li>
 
 
         </ul>
@@ -80,7 +80,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
 </header>
 
-<section id="accueil">
+
 
 
     <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
@@ -128,7 +128,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
         </button>
     </div>
     <br>
-</section>
+
 
 <section id="catalogue">
    <div class="titreCatalogue"><strong> En ce moment, chez Paristanbul</strong></div>
@@ -153,6 +153,8 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 <br>
 <section  id="apropos">
 
+   <div class="titreInfo"> Les informations de l'entreprise</div>
+    <div style="height: 2px; width: 28.3%; background-color: black; margin-right: 50px; "></div>
     <div class="containerlol text-center">
 
         <div class="row">
