@@ -296,3 +296,33 @@ body {
 .suivretexte{
     font-size:25px;
 }
+.containerlol{
+    border-color: black;
+
+}
+.titreCatalogue{
+    text-align: center;
+    font-size: 30px;
+}
+.bi-book, .bi-shop,.bi-person-fill-add{
+    font-size: 30px;
+}
+.col{
+    background-color: cornflowerblue;
+color: white;
+    border-color: black;
+    text-align: center;
+}
+.order-1{
+    background-color: #dddddd;
+    color: black;
+    text-align: center;
+}
+.order-2{
+    background-color: #FE4760;
+    text-align: center;
+    border-style:inset;
+}
+.boutonapropos{
+    text-align: center;
+}

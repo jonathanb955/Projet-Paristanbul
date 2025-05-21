@@ -131,11 +131,19 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 </section>
 
 <section id="catalogue">
+   <div class="titreCatalogue"><strong> En ce moment, chez Paristanbul</strong></div>
+    <br>
     <div class="container">
-        <div class="colonne-gauche"></div>
+        <div class="colonne-gauche"><form action="vue/catalogue.php" method="get">
+                <button type="submit" class="btn btn-dark boutongauche" style="width: 320px;">En savoir plus</button>
+            </form></div>
         <div class="colonne-droite">
-            <div class="bloc-haut"></div>
-            <div class="bloc-bas">Les promotions du week-end</div>
+            <div class="bloc-haut"><form action="vue/catalogue.php" method="get">
+                    <button type="submit" class="btn btn-dark boutonhaut" style="width: 320px;">En savoir plus</button>
+                </form></div>
+            <div class="bloc-bas"><form action="vue/catalogue.php" method="get">
+                    <button type="submit" class="btn btn-dark boutonbas" style="width: 320px;">En savoir plus</button>
+                </form></div>
         </div>
     </div>
 
@@ -144,19 +152,64 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 <br>
 <br>
 <section  id="apropos">
-    <div class="container text-center">
+
+    <div class="containerlol text-center">
+
         <div class="row">
             <div class="col">
-                À propos de nous
-            </div>
-            <div class="col order-5">
-                Nos magasins
+                <br>
+                 <i class="bi bi-book"></i><br>
+                <strong><u><h5 style="text-transform: uppercase">À propos de nous</h5></u></strong><br>
+
+               <em> Le fondateur de Paristanbul, Metin GULTEKIN, entre dans le secteur avec le premier marché ouvert à Drancy, qui débute sa vie professionnelle en 1993 avec le commerce de fruits et légumes. Soucieux de grandir dans le temps, il intègre ses 3 fils dans l’entreprise et crée l’entreprise familiale PARISTANBUL.</em>
+          <br>
+                <br>
+                <br>
+                <br>
+                <form action="quiSommesNous.html" method="get">
+                    <button type="submit" class="btn btn-dark boutonapropos" style="width: 320px;">En apprendre plus</button>
+                </form>
+                <br>
             </div>
             <div class="col order-1">
-                Third in DOM, with an order of 1
+                <br>
+                <i class="bi bi-shop"></i><br>
+                <strong><u><h5 style="text-transform: uppercase"> Nos magasins</h5></u> </strong><br>
+                <em>Vous pouvez retrouver, dans nos magasins, tous ce dont vous aurez besoin chez vous, dans votre cuisine. Des produit de qualité et au bon prix.
+<br>
+                    Boucherie, produits de boulangerie, primeurs, épicerie, pâtisserie et bien d’autres rayons sont à votre service.</em>
+                <br>
+                <br>
+                <br>
+                <br>
+                <form action="vue/catalogue.php" method="get">
+                    <button type="submit" class="btn btn-dark boutonapropos" style="width: 320px;">Découvrir</button>
+                </form>
+                <br>
+            </div>
+            <div class="col order-2">
+                <br>
+                <i class="bi bi-person-fill-add"></i><br>
+                <strong><u><h5 style="text-transform: uppercase">Nous rejoindre</h5></u></strong><br>
+                <em>Vous souhaitez rejoindre notre équipe et travailler avec nous ?
+<br>
+                    <br>
+                    Nous prenons en considération vos candidatures et les évaluons avec soin.</em>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <form action="vue/catalogue.php" method="get">
+                    <button type="submit" class="btn btn-dark boutonapropos" style="width: 320px;">Nous rejoindre</button>
+                </form>
+                <br>
+
             </div>
         </div>
+
     </div>
+
 </section>
 <section id="reseauxsociaux">
 
