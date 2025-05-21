@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paristanbul</title>
-    <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/index.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="web site icon" type="png" href="https://previews.123rf.com/images/jovanas/jovanas1602/jovanas160201149/52031915-logo-avi%C3%B3n-volando-alrededor-del-planeta-tierra-azul.jpg">
@@ -29,9 +29,9 @@
                 <li><hr class="dropdown-divider"></li>
 
                 <?php if ($_SESSION['role'] === 'admin'): ?>
-                <li><a class="dropdown-item" href="../Projet-Vol/vue/pageAdmin.php"><i class="bi bi-shield-lock-fill"></i> Espace Admin</a></li>
+                <li><a class="dropdown-item" href="../../Projet-Vol/vue/pageAdmin.php"><i class="bi bi-shield-lock-fill"></i> Espace Admin</a></li>
                 <?php else: ?>
-                <li><a class="dropdown-item" href="../Projet-Vol/vue/espaceClient.php"><i class="bi bi-person-circle"></i> Espace Client</a></li>
+                <li><a class="dropdown-item" href="../../Projet-Vol/vue/espaceClient.php"><i class="bi bi-person-circle"></i> Espace Client</a></li>
                 <?php endif; ?>
 
                 <li><hr class="dropdown-divider"></li>
@@ -50,7 +50,7 @@
 
     <nav>
         <ul>
-            <li><a href="#accueil">Accueil</a></li>
+            <li><a href="index.php">Accueil</a></li>
             <li><a href="#catalogue">Catalogue</a></li>
             <li><a href="#reseauxsociaux">Nous suivre</a></li>
 
@@ -68,7 +68,7 @@ encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="stric
 
 <h3 style="color : #004080">Notre marque</h3>
 <div class="marque">
-    <div class="logo"> <img src="assets/img/LOGO-PARISTANBUL-300x94.png"></div>
+    <div class="logo"> <img src="../assets/img/LOGO-PARISTANBUL-300x94.png"></div>
     <div class="texte">
     <p>Notre ambition est de devenir le commerce de proximité préféré et d’être<br>
         l’acteur de référence en matière de qualité et service, avec une équipe <br>
