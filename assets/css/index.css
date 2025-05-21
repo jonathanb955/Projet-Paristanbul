@@ -1,8 +1,14 @@
+
+
+
+html{
+    background-color: black;
+}
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: black;
     color: #333;
 }
 
@@ -232,12 +238,12 @@ body {
 
 .colonne-gauche {
     flex: 1.2;
-    height: 400px;
+    height: 600px;
     width: 100vw;
     margin-left: 0;
     padding-left: 0;
-    background-image: url("https://cdn.discordapp.com/attachments/1284260338925178923/1374328426898522122/93C949B2-7D0F-41C6-95AE-20394538CE1F.png?ex=682da696&is=682c5516&hm=38a9b499d5a169b71fdab0c293b8efcaf6c372a70e13d536b63d76c605a24034&");
-    background-size: 100%; /* Réduit la taille de l'image */
+    background-image: url("https://cdn.discordapp.com/attachments/1374390818089074804/1374403023014596730/image.jpg?ex=682dec0f&is=682c9a8f&hm=81103a624f48cdb2c055bce8fcdf852bf67ec8b6837d2fc51f65ccd164ff73aa&");
+    background-size: cover; /* Réduit la taille de l'image */
     background-repeat: no-repeat;
     background-position: center; /* Centrer l'image */
     border-radius: 10px;
@@ -248,43 +254,45 @@ body {
     border-radius: 10px;
     display: flex;
 
+
     flex-direction: column;
 
     gap: 30px;
 
 }
 
-.bloc-haut,
-
-.bloc-bas {
+.bloc-haut{
+    background-image: url("https://cdn.discordapp.com/attachments/1374390818089074804/1374390921457565737/68BEF59C-FF72-41A4-95E9-CCE3E329A5F0.png?ex=682de0ca&is=682c8f4a&hm=8255b26618ecccc6320224fb06916d41c61948b718d6d8ec896c65fc8fd29d24&");
     border-radius: 10px;
     background-color: #c0c0ff;
+    background-size: 100%; /* Réduit la taille de l'image */
+    background-repeat: no-repeat;
+    background-position: center;
+
+    flex: 1;
+
+    padding: 20px;
+
+
+}
+
+.bloc-bas {
+    background-image: url("https://cdn.discordapp.com/attachments/1374390818089074804/1374401206541226064/987EB8C7-7696-48BA-B8BD-9E5AC5E03774.png?ex=682dea5e&is=682c98de&hm=538f42a91b9fb27fb34632f212ba777871b1f0463e5eeab31b26ef2e804bf324&");
+    border-radius: 10px;
+    background-color: #c0c0ff;
+    background-size: 100%; /* Réduit la taille de l'image */
+    background-repeat: no-repeat;
+    background-position: center;
 
     flex: 1;
 
     padding: 20px;
 
 }
-
-iframe{
-    margin-top: 20px;
+.bi-youtube, .bi-instagram, .bi-facebook, .bi-tiktok{
+    font-size: 50px;
+    padding: 25px;
 }
-.marque{
-    margin-bottom: 50px;
-}
-h3{
-    margin-left: 500px;
-    margin-top: 50px;
-}
-.marque {
-display: flex;
-}
-
-.marque .texte{
-    margin-left:100px
-
-}
-
-.marque .logo{
-    padding: 20px;
+.suivretexte{
+    font-size:25px;
 }
