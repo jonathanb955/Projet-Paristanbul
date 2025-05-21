@@ -310,19 +310,32 @@ body {
 .col{
     background-color: cornflowerblue;
 color: white;
-    border-color: black;
+
     text-align: center;
+    border-style: solid;
+    border-color: white;
+    border-radius: 20px;
 }
 .order-1{
     background-color: #dddddd;
     color: black;
     text-align: center;
+    border-style: solid;
+    border-color: white;
+    border-spacing: 100px;
+    border-radius: 20px;
 }
 .order-2{
     background-color: #FE4760;
     text-align: center;
-border-style: inset;
+border-style: solid;
+    border-color: white;
+    border-radius: 20px;
 }
 .boutonapropos{
     text-align: center;
+}
+.titreInfo{
+    text-align: left;
+    font-size: 30px;
 }
