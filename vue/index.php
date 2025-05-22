@@ -37,9 +37,22 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 </head>
 <body>
 <header>
+    <div class="logo"> <img src="../assets/img/LOGO-PARISTANBUL-300x94.png"></div>
     <div class="d-flex justify-content-center align-items-center position-relative ">
         <div class="btn-group position-absolute end-0 me-3">
-            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+
+
+        </div>
+
+    </div>
+
+    <nav>
+        <ul>
+
+            <li><a href="#catalogue">Catalogue</a></li>
+            <li><a href="#reseauxsociaux">Nous suivre</a></li>
+            <li><a href="#apropos">Informations</a></li>
+            <button type="button" class="btn btn-black dropdown-toggle" style="color: #a0522d" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-person-square"></i>
             </button>
             <ul class="dropdown-menu text-center">
@@ -62,18 +75,6 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
                 <?php endif; ?>
             </ul>
 
-        </div>
-
-        <h1 class="mb-0" style="text-transform: capitalize">Paristanbul</h1>
-    </div>
-
-    <nav>
-        <ul>
-
-            <li><a href="#catalogue">Catalogue</a></li>
-            <li><a href="#reseauxsociaux">Nous suivre</a></li>
-            <li><a href="#apropos">Informations</a></li>
-
 
         </ul>
     </nav>
@@ -83,7 +84,28 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
 
 
-    <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
+
+
+<main>
+    <section id="catalogue">
+        <div class="titreCatalogue"><strong> <a href="catalogue.php" style="color:  #a0522d;"> En ce moment, chez Paristanbul</a></strong></div>
+
+
+        
+
+        <div class="container">
+            <div class="colonne-gauche"></div>
+            <div class="colonne-droite">
+                <div class="bloc-haut"></div>
+                <div class="bloc-bas"></div>
+            </div>
+        </div>
+
+    </section>
+    <br>
+    <br>
+    <br>
+    <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel" style="height: 400px">
 
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -110,7 +132,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
             </div>
 
             <div class="carousel-item" data-bs-interval="5000">
-                <img src="assets/img/495375281_1518700992616938_3099741751952121350_n.jpg" class="d-block w-100" alt="...">
+                <img src="../assets/img/IMG_2172.jpg" class="d-block w-100" alt="...">
                 <div class="carousel-caption custom-text" style="font-family: 'Times New Roman',serif">
                     <h2><u>A REMPLIR</u></h2>
                     <p>DESCRIPTION A REMPLIR.</p>
@@ -129,103 +151,54 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     </div>
     <br>
 
-
-<section id="catalogue">
-   <div class="titreCatalogue"><strong> En ce moment, chez Paristanbul</strong></div>
-    <br>
-    <div class="container">
-        <div class="colonne-gauche"><form action="vue/catalogue.php" method="get">
-                <button type="submit" class="btn btn-dark boutongauche" style="width: 320px;">En savoir plus</button>
-            </form></div>
-        <div class="colonne-droite">
-            <div class="bloc-haut"><form action="vue/catalogue.php" method="get">
-                    <button type="submit" class="btn btn-dark boutonhaut" style="width: 320px;">En savoir plus</button>
-                </form></div>
-            <div class="bloc-bas"><form action="vue/catalogue.php" method="get">
-                    <button type="submit" class="btn btn-dark boutonbas" style="width: 320px;">En savoir plus</button>
-                </form></div>
+    <section id="apropos">
+        <div class="info-box fade-in">
+            <h3><a href="quiSommesNous.html">À propos de nous</a></h3>
+            <p>Paristanbul, fondé par Metin Gultekin en 1993, est une entreprise familiale avec une histoire riche et des valeurs fortes.</p>
         </div>
-    </div>
-
-</section>
-<br>
-<br>
-<br>
-<section  id="apropos">
-
-   <div class="titreInfo"> Les informations de l'entreprise</div>
-    <div style="height: 2px; width: 28.3%; background-color: black; margin-right: 50px; "></div>
-    <div class="containerlol text-center">
-
-        <div class="row">
-            <div class="col">
-                <br>
-                 <i class="bi bi-book"></i><br>
-                <strong><u><h5 style="text-transform: uppercase">À propos de nous</h5></u></strong><br>
-
-               <em> Le fondateur de Paristanbul, Metin GULTEKIN, entre dans le secteur avec le premier marché ouvert à Drancy, qui débute sa vie professionnelle en 1993 avec le commerce de fruits et légumes. Soucieux de grandir dans le temps, il intègre ses 3 fils dans l’entreprise et crée l’entreprise familiale PARISTANBUL.</em>
-          <br>
-                <br>
-                <br>
-                <br>
-                <form action="quiSommesNous.html" method="get">
-                    <button type="submit" class="btn btn-dark boutonapropos" style="width: 320px;">En apprendre plus</button>
-                </form>
-                <br>
-            </div>
-            <div class="col order-1">
-                <br>
-                <i class="bi bi-shop"></i><br>
-                <strong><u><h5 style="text-transform: uppercase"> Nos magasins</h5></u> </strong><br>
-                <em>Vous pouvez retrouver, dans nos magasins, tous ce dont vous aurez besoin chez vous, dans votre cuisine. Des produit de qualité et au bon prix.
-<br>
-                    Boucherie, produits de boulangerie, primeurs, épicerie, pâtisserie et bien d’autres rayons sont à votre service.</em>
-                <br>
-                <br>
-                <br>
-                <br>
-                <form action="vue/catalogue.php" method="get">
-                    <button type="submit" class="btn btn-dark boutonapropos" style="width: 320px;">Découvrir</button>
-                </form>
-                <br>
-            </div>
-            <div class="col order-2">
-                <br>
-                <i class="bi bi-person-fill-add"></i><br>
-                <strong><u><h5 style="text-transform: uppercase">Nous rejoindre</h5></u></strong><br>
-                <em>Vous souhaitez rejoindre notre équipe et travailler avec nous ?
-<br>
-                    <br>
-                    Nous prenons en considération vos candidatures et les évaluons avec soin.</em>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <form action="vue/catalogue.php" method="get">
-                    <button type="submit" class="btn btn-dark boutonapropos" style="width: 320px;">Nous rejoindre</button>
-                </form>
-                <br>
-
-            </div>
+        <div class="info-box fade-in">
+            <h3>Nos magasins</h3>
+            <p>Produits frais, qualité garantie. Retrouvez tout ce dont vous avez besoin chez vous.</p>
         </div>
+        <div class="info-box fade-in">
+            <h3>Nous rejoindre</h3>
+            <p>Envie de faire partie de l’aventure Paristanbul ? Postulez dès maintenant !</p>
+        </div> <div class="info-box fade-in">
+            <h3>Notre application</h3>
+            <p>Faites des économies en téléchargeant l'application !</p>
+        </div>
+    </section>
 
-    </div>
+    <section id="reseauxsociaux">
+        <h2>Nous suivre</h2>
+        <p>
+            <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" class="text-danger"><i class="bi bi-youtube"></i></a>
+            <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" class="text-primary"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-warning"><i class="bi bi-instagram" style="color: #c32aa3"></i></a>
+            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-dark"><i class="bi bi-tiktok"></i></a>
+        </p>
+    </section>
 
-</section>
-<section id="reseauxsociaux">
 
-    <div class="suivretexte" ><strong><u>Nous suivre</u></strong></div>
+
     <br>
-    <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" > <i class="bi bi-youtube" style="color: red"></i></a>
-    <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR"> <i class="bi bi-facebook" style="color: #3b5998"></i> </a>
-    <a href="https://www.instagram.com/paristanbul_supermarche/"> <i class="bi bi-instagram" style="color: #c32aa3"></i> </a>
-    <a href="https://www.tiktok.com/@supermarche_paristanbul"> <i class="bi bi-tiktok" style="color: black"></i> </a>
-</section>
-<br>
-<br>
+    <br>
+    <br>
+
+</main>
 <footer>
     <p>&copy; 2025 Paristanbul. Tous droits réservés.</p>
 </footer>
+
+<script>
+    window.addEventListener('scroll', () => {
+        document.querySelectorAll('.fade-in').forEach(el => {
+            if (el.getBoundingClientRect().top < window.innerHeight - 100) {
+                el.classList.add('visible');
+            }
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
