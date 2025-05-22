@@ -1,3 +1,6 @@
+
+
+
 /* === RESET & GENERAL === */
 * {
     margin: 0;
@@ -247,7 +250,16 @@ section {
 #reseauxsociaux i:hover {
     transform: scale(1.2);
 }
-
+.google-play{
+    font-size: 2rem;
+    margin: 0 1rem;
+    transition: transform 0.3s ease;
+}
+.apple-store{
+    font-size: 2rem;
+    margin: 0 1rem;
+    transition: transform 0.3s ease;
+}
 /* === FOOTER === */
 footer {
     background-color: #ecd8b1;
@@ -288,6 +300,12 @@ footer {
         justify-content: center;
     }
 }
+/* Réduction de la largeur du menu latéral */
+.offcanvas-start {
+    width: 25px; /* Tu peux changer cette valeur selon ce que tu veux */
+}
+
+
 
 
 
