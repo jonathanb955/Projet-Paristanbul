@@ -18,10 +18,22 @@
 </head>
 <body>
 <header>
-    <div class="logo"> <img src="../assets/img/LOGO-PARISTANBUL-300x94.png"></div>
+    <div class="logo"><a href="index.php"> <img src="../assets/img/LOGO-PARISTANBUL-300x94.png"> </a></div>
     <div class="d-flex justify-content-center align-items-center position-relative ">
         <div class="btn-group position-absolute end-0 me-3">
-            <button type="button" class="btn btn-dark  dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="color: white; background-color: black">
+
+
+        </div>
+
+    </div>
+
+    <nav>
+        <ul>
+
+            <li><a href="#catalogue">Catalogue</a></li>
+            <li><a href="#reseauxsociaux">Nous suivre</a></li>
+            <li><a href="#apropos">Informations</a></li>
+            <button type="button" class="btn btn-black dropdown-toggle" style="color: #a0522d" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-person-square"></i>
             </button>
             <ul class="dropdown-menu text-center">
@@ -44,27 +56,20 @@
                 <?php endif; ?>
             </ul>
 
-        </div>
-
-    </div>
-
-    <nav>
-        <ul>
-            <li><a href="index.php">Accueil</a></li>
-            <li><a href="#catalogue">Catalogue</a></li>
-            <li><a href="#reseauxsociaux">Nous suivre</a></li>
-
 
         </ul>
     </nav>
-
 </header>
+
+<div class="titre">
 <h2 style="color: #0e0e0e ; margin-left: 250px">Qui sommes-nous ? </h2>
+</div>
+
 <div class="texte-ambition">
     <div class="video">
         <iframe class="elementor-video" frameborder="0" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write;
 encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                title="SUPERMARCHE PARISTANBUL ( TOUS NOS MAGASINS À L'EXTERIEURE" width="120%" height="350"
+                title="SUPERMARCHE PARISTANBUL ( TOUS NOS MAGASINS À L'EXTERIEURE" width="500px" height="350"
                 src="https://www.youtube-nocookie.com/embed/tVr152vEHNY?controls=1&amp;rel=0&amp;playsinline=1&amp;modestbranding=1&amp;autoplay=1&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fparistanbul.com&amp;widgetid=1&amp;forigin=https%3A%2F%2Fparistanbul.com%2Fqui-sommes-nous%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fparistanbul.com%2F&amp;vf=2" id="widget2" data-gtm-yt-inspected-9="true"></iframe>
     </div>
     <div class="texte">
@@ -85,11 +90,58 @@ encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="stric
             A vous de garnir vos assiettes avec notre large gamme de variétés proposées….</p>
     </div>
 </div>
-<div class="engagement">
-    <img src="../assets/img/Capture%20d’écran%202025-05-21%20143906.png" width="50%">
+
+
+<section id="apropos">
+    <div class="info-box fade-in">
+        <h3><a href="quiSommesNous.html">À propos de nous</a></h3>
+        <p>Paristanbul, fondé par Metin Gultekin en 1993, est une entreprise familiale avec une histoire riche et des valeurs fortes.</p>
+    </div>
+    <div class="info-box fade-in">
+        <h3>Nos magasins</h3>
+        <p>Produits frais, qualité garantie. Retrouvez tout ce dont vous avez besoin chez vous.</p>
+    </div>
+    <div class="info-box fade-in">
+        <h3>Nous rejoindre</h3>
+        <p>Envie de faire partie de l’aventure Paristanbul ? Postulez dès maintenant !</p>
+    </div> <div class="info-box fade-in">
+    <h3>Notre application</h3>
+    <p>Faites des économies en téléchargeant l'application !</p>
 </div>
+</section>
+
+<section id="reseauxsociaux">
+    <h2>Nous suivre</h2>
+    <p>
+        <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" class="text-danger"><i class="bi bi-youtube"></i></a>
+        <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" class="text-primary"><i class="bi bi-facebook"></i></a>
+        <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-warning"><i class="bi bi-instagram" style="color: #c32aa3"></i></a>
+        <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-dark"><i class="bi bi-tiktok"></i></a>
+    </p>
+</section>
 
 
+
+<br>
+<br>
+<br>
+
+</main>
+<footer>
+    <p>&copy; 2025 Paristanbul. Tous droits réservés.</p>
+</footer>
+
+<script>
+    window.addEventListener('scroll', () => {
+        document.querySelectorAll('.fade-in').forEach(el => {
+            if (el.getBoundingClientRect().top < window.innerHeight - 100) {
+                el.classList.add('visible');
+            }
+        });
+    });
+</script>
+
+</main>
 
 
 
