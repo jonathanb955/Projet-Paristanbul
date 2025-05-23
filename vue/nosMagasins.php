@@ -26,7 +26,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <title>Paristanbul</title>
 
     <!-- Feuilles de style -->
-    <link rel="stylesheet" href="../assets/css/quiSommesNous.css">
+    <link rel="stylesheet" href="../assets/css/index.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -41,7 +41,6 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-    
 
 
 
@@ -54,15 +53,15 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel" style="width: 250px">
         <div class="offcanvas-header"  style="background-color:#3a3939">
             <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel"><u> <div class="logo" ><img src="../assets/img/LOGO-PARISTANBUL-300x94.png" style="width: 160px"></div>
-                <div class="d-flex justify-content-center align-items-center position-relative ">
-                    <div class="btn-group position-absolute end-0 me-3">
+                    <div class="d-flex justify-content-center align-items-center position-relative ">
+                        <div class="btn-group position-absolute end-0 me-3">
 
 
-                    </div>
+                        </div>
 
 
 
-                </div></u></h5>
+                    </div></u></h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div style="height: 3px; width: 100%; background-color:  #e0c097; margin: 0 auto;"></div>
@@ -126,21 +125,21 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
             </button>
             <ul class="dropdown-menu text-center">
                 <?php if ($connecte): ?>
-                <span class="dropdown-item-text"><strong>Bienvenue</strong><br><?php echo $_SESSION['prenom'] . ' ' . $_SESSION['nom']; ?></span>
-                <li><hr class="dropdown-divider"></li>
+                    <span class="dropdown-item-text"><strong>Bienvenue</strong><br><?php echo $_SESSION['prenom'] . ' ' . $_SESSION['nom']; ?></span>
+                    <li><hr class="dropdown-divider"></li>
 
-                <?php if ($_SESSION['role'] === 'admin'): ?>
-                <li><a class="dropdown-item" href="../../Projet-Vol/vue/pageAdmin.php"><i class="bi bi-shield-lock-fill"></i> Espace Admin</a></li>
-                <?php else: ?>
-                <li><a class="dropdown-item" href="../../Projet-Vol/vue/espaceClient.php"><i class="bi bi-person-circle"></i> Espace Client</a></li>
-                <?php endif; ?>
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
+                        <li><a class="dropdown-item" href="../../Projet-Vol/vue/pageAdmin.php"><i class="bi bi-shield-lock-fill"></i> Espace Admin</a></li>
+                    <?php else: ?>
+                        <li><a class="dropdown-item" href="../../Projet-Vol/vue/espaceClient.php"><i class="bi bi-person-circle"></i> Espace Client</a></li>
+                    <?php endif; ?>
 
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="?logout=true"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="?logout=true"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
                 <?php else: ?>
-                <li><a class="dropdown-item" href="vue/pageConnexion.php">Connexion <i class="bi bi-person-bounding-box"></i></a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="vue/pageInscription.php">Inscription <i class="bi bi-person-plus-fill"></i></a></li>
+                    <li><a class="dropdown-item" href="vue/pageConnexion.php">Connexion <i class="bi bi-person-bounding-box"></i></a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="vue/pageInscription.php">Inscription <i class="bi bi-person-plus-fill"></i></a></li>
                 <?php endif; ?>
             </ul>
 
@@ -150,71 +149,79 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
 </header>
 
-<div class="titre">
-<h2 style="color: #0e0e0e ; margin-left: 250px">Qui sommes-nous ? </h2>
-</div>
-
-<div class="texte-ambition">
-    <div class="video">
-        <iframe class="elementor-video" frameborder="0" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write;
-encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                title="SUPERMARCHE PARISTANBUL ( TOUS NOS MAGASINS À L'EXTERIEURE" width="500px" height="350"
-                src="https://www.youtube-nocookie.com/embed/tVr152vEHNY?controls=1&amp;rel=0&amp;playsinline=1&amp;modestbranding=1&amp;autoplay=1&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fparistanbul.com&amp;widgetid=1&amp;forigin=https%3A%2F%2Fparistanbul.com%2Fqui-sommes-nous%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fparistanbul.com%2F&amp;vf=2" id="widget2" data-gtm-yt-inspected-9="true"></iframe>
-    </div>
-    <div class="texte">
-        <p>Notre ambition est de devenir le commerce de proximité préféré et d’être<br>
-            l’acteur de référence en matière de qualité et service, avec une équipe <br>
-            professionnelle et expérimentée qui a pour mission la satisfaction de sa<br>
-            clientèle. <br><br>
-            Nos supermarchés constituent, en effet, un véritable lieu d’échanges et de<br>
-            gourmandises pour une meilleure expérience d’achat.<br><br>
-
-            Voici les raisons pour lesquelles vous choisirez Paristanbul :<br>
-
-            – Pour ses produits d’exceptions et de qualités,<br>
-            – Pour son personnel chaleureux à votre écoute,<br>
-            – Pour son hygiène irréprochable,<br>
-            – Pour le bon rapport qualité/prix …<br><br>
-
-            A vous de garnir vos assiettes avec notre large gamme de variétés proposées….</p>
-    </div>
-</div>
-<div class="stats">
-    <img src="../assets/img/Votre%20texte%20de%20paragraphe.png" style="width: 5000px">
-    
-    
-</div>
-
-
-<section id="apropos">
-    <div class="info-box fade-in">
-        <h3>Nos magasins</h3>
-        <p>Produits frais, qualité garantie. Retrouvez tout ce dont vous avez besoin chez vous.</p>
-    </div>
-    <div class="info-box fade-in">
-        <h3>Nous rejoindre</h3>
-        <p>Envie de faire partie de l’aventure Paristanbul ? Postulez dès maintenant !</p>
-    </div> <div class="info-box fade-in">
-    <h3>Notre application</h3>
-    <p>Faites des économies en téléchargeant l'application !</p>
-</div>
-</section>
-
-<section id="reseauxsociaux">
-    <div class="titreReseaux" data-aos="fade-up"  data-aos-once="true"><h2>Nous suivre</h2></div>
-    <p>
-        <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" class="text-danger"><i class="bi bi-youtube"></i></a>
-        <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" class="text-primary"><i class="bi bi-facebook"></i></a>
-        <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-warning"><i class="bi bi-instagram" style="color: #c32aa3"></i></a>
-        <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-dark"><i class="bi bi-tiktok"></i></a>
-    </p>
-</section>
 
 
 
-<br>
-<br>
-<br>
+
+
+<main>
+
+    <br>
+
+    <section id="apropos">
+        <div class="info-box fade-in">
+            <i class="bi bi-book" style="font-size: 25px; color:#a0522d "></i>
+            <h3><a href="quiSommesNous.html" style="color: #a0522d ;  text-decoration: none;">À propos de nous</a></h3>
+            <p>Paristanbul, fondé par Metin Gultekin en 1993, est une entreprise familiale avec une histoire riche et des valeurs fortes.</p>
+        </div>
+        <div class="info-box fade-in">
+            <i class="bi bi-person-fill-add" style="font-size: 25px; color:#a0522d " ></i>
+            <h3><a href="quiSommesNous.html" style="color: #a0522d;   text-decoration: none;">Nous rejoindre </a></h3>
+            <p>Envie de faire partie de l’aventure Paristanbul ? Postulez dès maintenant !</p>
+        </div>
+
+
+
+        <section id="appli">
+            <div class="info-box fade-in" data-bs-toggle="modal" data-bs-target="#appliModal">
+                <i class="bi bi-app-indicator" style="font-size: 25px; color:#a0522d;"></i><br>
+                <h3>Notre application</h3>
+                <p>Faites des économies en téléchargeant l'application !</p>
+
+
+            </div>
+        </section>
+
+        <!-- Modal -->
+        <div class="modal fade" id="appliModal" tabindex="-1" aria-labelledby="appliModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="appliModalLabel" style="p">Télécharger l'application</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p ><i class="bi bi-google-play text-success" style="font-size: 20px"></i><a href="https://play.google.com/store/apps/details?id=com.akead.paristanbul" target="_blank" style="font-size: 20px; color: green; text-decoration: none ">Google Play</a></p>
+                        <p><i class="bi bi-apple text-primary"  style="font-size: 20px"></i><a href="https://apps.apple.com/id/app/paristanbul-plus/id6743162682" target="_blank"  style="font-size: 20px;  text-decoration: none">Apple Store</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS (obligatoire !) -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Bootstrap Icons si tu veux les icônes -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+
+
+
+        <section id="reseauxsociaux">
+            <div class="titreReseaux" data-aos="fade-up"  data-aos-once="true"><h2>Nous suivre</h2></div>
+            <p>
+                <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" class="text-danger"  data-aos="fade-up"  data-aos-once="true"><i class="bi bi-youtube"></i></a>
+                <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" class="text-primary"  data-aos="fade-up"  data-aos-once="true"><i class="bi bi-facebook"></i></a>
+                <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-warning" data-aos="fade-up"  data-aos-once="true"><i class="bi bi-instagram" style="color: #c32aa3" ></i></a>
+                <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-dark" data-aos="fade-up"  data-aos-once="true"><i class="bi bi-tiktok" ></i></a>
+            </p>
+        </section>
+
+
+
+        <br>
+        <br>
+        <br>
 
 </main>
 <footer>
@@ -249,11 +256,3 @@ encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="stric
 
 </body>
 </html>
-
-
-
-
-
-
-
-
