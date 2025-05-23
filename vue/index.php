@@ -95,7 +95,11 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
                             </nav>
 
                             <a class="nav-link" style="color:  darkgrey;   text-decoration: none "><i class="bi bi-caret-right-fill"></i><strong><u>À propos de Paristanbul</u></strong></a>
-                            <a class="nav-link"   <a href="#appli" style="color: #a0522d;   text-decoration: none"><strong><u>Télécharger notre application</u></strong> <i class="bi bi-app-indicator"></i></i></a>
+                            <a class="nav-link" href="#" style="color: #a0522d; text-decoration: none;"
+                               onclick="openModal(); return false;">
+                                <strong><u>Télécharger notre application <i class="bi bi-app-indicator"></i></u></strong>
+                            </a>
+
 
 
                         </nav>
@@ -173,7 +177,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <br>
     <br>
     <br>
-    <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel" style="height: 400px">
+    <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel" style="height: 400px" data-aos="zoom-up" data-aos-once="true">
 
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -238,7 +242,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
 
 
-        <section id="appli">
+
             <div class="info-box fade-in" data-bs-toggle="modal" data-bs-target="#appliModal">
                 <i class="bi bi-app-indicator" style="font-size: 25px; color:#a0522d;"></i><br>
                 <h3>Notre application</h3>
@@ -246,7 +250,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
 
             </div>
-        </section>
+
 
         <!-- Modal -->
         <div class="modal fade" id="appliModal" tabindex="-1" aria-labelledby="appliModalLabel" aria-hidden="true">
@@ -293,6 +297,20 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 <footer>
     <p>&copy; 2025 Paristanbul. Tous droits réservés.</p>
 </footer>
+<script>
+    function openModal() {
+        // Fermer le offcanvas s'il est ouvert
+        const offcanvasEl = document.querySelector('.offcanvas.show');
+        if (offcanvasEl) {
+            const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+            offcanvas.hide();
+        }
+
+        // Ouvrir le modal
+        const modal = new bootstrap.Modal(document.getElementById('appliModal'));
+        modal.show();
+    }
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
