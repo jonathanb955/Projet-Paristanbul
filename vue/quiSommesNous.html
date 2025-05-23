@@ -1,28 +1,8 @@
-<?php
-
-use bdd\Bdd;
-
-
-session_start();
-
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header('Location: index.php');
-    exit;
-}
-
-$connecte = isset($_SESSION['connexion']) && $_SESSION['connexion'] === true;
-
-if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur']['role'])) {
-    $_SESSION['role'] = $_SESSION['utilisateur']['role'];
-}
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Paristanbul</title>
 
     <!-- Feuilles de style -->
@@ -41,13 +21,57 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Yeseva+One:wght@400;700&display=swap" rel="stylesheet">
 
 
+    <style>
+        /* Effet sur le bouton dark mode */
+        .dark-toggle {
+            cursor: pointer;
+            font-size: 1.8rem;
+            background: none;
+            border: none;
+            transition: transform 0.4s ease;
+        }
 
+        .dark-toggle:active {
+            transform: rotate(360deg);
+        }
+
+        /* Mode sombre */
+        .dark-mode {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+        }
+
+        .dark-mode nav,
+        .dark-mode header,
+        .dark-mode footer,
+        .dark-mode .info-box {
+            background-color: #2c2c2c !important;
+            color: #f0f0f0 !important;
+        }
+
+        .dark-mode nav ul li a {
+            color: #f0f0f0;
+        }
+
+        .dark-mode nav ul li a:hover {
+            color: #ffa500;
+        }
+
+        .dark-mode .btn-dark {
+            background-color: #555;
+        }
+
+        .dark-mode .btn-dark:hover {
+            background-color: #888;
+        }
+    </style>
 </head>
-
 <body>
+
+<!-- En-tête avec le bouton toggle -->
 <header>
     <button class="btn btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions" style="color: black;font-size: 30px "><i class="bi bi-justify"></i></button>
 
@@ -147,79 +171,195 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
         </ul>
     </nav>
-
+    <button class="dark-toggle" onclick="toggleDarkMode()">
+        <span id="theme-icon">🌙</span>
+    </button>
 </header>
 
-<div class="titre">
-<h2 style="color: #0e0e0e ; margin-left: 250px">Qui sommes-nous ? </h2>
-</div>
 
-<div class="texte-ambition">
-    <div class="video">
-        <iframe class="elementor-video" frameborder="0" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write;
+<!-- Navigation -->
+
+
+<!-- Contenu principal -->
+<main>
+    <div class="titre">
+        <h2 style="color: #0e0e0e ; margin-left: 250px"><strong>Qui sommes-nous ?</strong> </h2>
+    </div>
+
+    <div class="texte-ambition">
+        <div class="video">
+            <iframe class="elementor-video" frameborder="0" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write;
 encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                title="SUPERMARCHE PARISTANBUL ( TOUS NOS MAGASINS À L'EXTERIEURE" width="500px" height="350"
-                src="https://www.youtube-nocookie.com/embed/tVr152vEHNY?controls=1&amp;rel=0&amp;playsinline=1&amp;modestbranding=1&amp;autoplay=1&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fparistanbul.com&amp;widgetid=1&amp;forigin=https%3A%2F%2Fparistanbul.com%2Fqui-sommes-nous%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fparistanbul.com%2F&amp;vf=2" id="widget2" data-gtm-yt-inspected-9="true"></iframe>
+                    title="SUPERMARCHE PARISTANBUL ( TOUS NOS MAGASINS À L'EXTERIEURE" width="500px" height="350"
+                    src="https://www.youtube-nocookie.com/embed/tVr152vEHNY?controls=1&amp;rel=0&amp;playsinline=1&amp;modestbranding=1&amp;autoplay=1&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fparistanbul.com&amp;widgetid=1&amp;forigin=https%3A%2F%2Fparistanbul.com%2Fqui-sommes-nous%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fparistanbul.com%2F&amp;vf=2" id="widget2" data-gtm-yt-inspected-9="true"></iframe>
+        </div>
+        <div class="texte" style="border-style: solid;background-color: white; border-radius: 10px; padding: 5px;">
+            <p>Notre ambition est de devenir le commerce de proximité préféré et d’être<br>
+                l’acteur de référence en matière de qualité et service, avec une équipe <br>
+                professionnelle et expérimentée qui a pour mission la satisfaction de sa<br>
+                clientèle. <br><br>
+                Nos supermarchés constituent, en effet, un véritable lieu d’échanges et de<br>
+                gourmandises pour une meilleure expérience d’achat.<br><br>
+
+                Voici les raisons pour lesquelles vous choisirez Paristanbul :<br>
+
+                – Pour ses produits d’exceptions et de qualités,<br>
+                – Pour son personnel chaleureux à votre écoute,<br>
+                – Pour son hygiène irréprochable,<br>
+                – Pour le bon rapport qualité/prix …<br><br>
+
+                A vous de garnir vos assiettes avec notre large gamme de variétés proposées….</p>
+        </div>
     </div>
-    <div class="texte">
-        <p>Notre ambition est de devenir le commerce de proximité préféré et d’être<br>
-            l’acteur de référence en matière de qualité et service, avec une équipe <br>
-            professionnelle et expérimentée qui a pour mission la satisfaction de sa<br>
-            clientèle. <br><br>
-            Nos supermarchés constituent, en effet, un véritable lieu d’échanges et de<br>
-            gourmandises pour une meilleure expérience d’achat.<br><br>
+    <section id="catalogue">
+        <div class="titreCatalogue"  data-aos="zoom-down" data-aos-once="true"><strong> <a href="catalogue.php" style="color:  #a0522d;  text-decoration: none;"> En ce moment, chez Paristanbul</a></strong></div>
 
-            Voici les raisons pour lesquelles vous choisirez Paristanbul :<br>
 
-            – Pour ses produits d’exceptions et de qualités,<br>
-            – Pour son personnel chaleureux à votre écoute,<br>
-            – Pour son hygiène irréprochable,<br>
-            – Pour le bon rapport qualité/prix …<br><br>
 
-            A vous de garnir vos assiettes avec notre large gamme de variétés proposées….</p>
+
+        <div class="container">
+            <div class="colonne-gauche"  data-aos="fade-right" data-aos-once="true"></div>
+            <div class="colonne-droite">
+                <div class="bloc-haut" data-aos="fade-left" data-aos-once="true"></div>
+                <div class="bloc-bas"  data-aos="fade-left" data-aos-once="true"></div>
+                <p>Bienvenue chez Paristanbul, votre magasin de proximité où qualité, fraîcheur et diversité se rencontrent au cœur de votre quotidien.
+                    <br>
+
+                    Découvrez un large éventail de fruits et légumes soigneusement sélectionnés pour leur fraîcheur et leur goût, ainsi qu’une crèmerie proposant fromages, yaourts et produits laitiers d’exception. La boucherie et la charcuterie vous régaleront avec des viandes de qualité supérieure, préparées dans le respect des traditions.
+                    <br>
+                    Savourez chaque matin le parfum du pain chaud grâce à notre boulangerie, et laissez-vous tenter par notre espace confiserie & gâteaux pour une touche sucrée.
+                    <br>
+                    Pour votre maison, notre rayon bazar regorge d’articles utiles et pratiques, tandis que notre sélection hygiène répond à tous vos besoins quotidiens.
+                    <br>
+                    Retrouvez également un large choix de produits surgelés, d’huiles alimentaires, de condiments et sauces, ainsi que de fruits et légumes secs, pour agrémenter toutes vos recettes.
+                    <br>
+                    Chez Paristanbul, chaque produit est choisi pour vous offrir le meilleur. Venez découvrir une expérience d’achat authentique, conviviale et pleine de saveurs !</p>
+            </div>
+        </div>
+
+    </section>
+    <br>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+
+            margin: 0;
+            padding: 0;
+        }
+        .stats-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 0;
+            background: url('../assets/img/WhatsApp Image 2025-05-21 à 17.06.57_037a393c.jpg') no-repeat center center;
+            background-size: cover;
+        }
+        .stats-container {
+            display: flex;
+            gap: 40px;
+        }
+        .stat-box {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid orange;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            min-width: 150px;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+        }
+        .stat-label {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: white;
+        }
+        .intro-text {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        .intro-text h2 {
+            margin: 0;
+            font-size: 2rem;
+            color: white;
+        }
+        .intro-text p {
+            margin: 5px 0;
+            color: white;
+        }
+    </style>
+    <div class="stats-section">
+        <div>
+            <div class="intro-text">
+                <h2>ParIstanbul en Données</h2>
+                <p>ParIstanbul c hella.</p>
+            </div>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-number">75.000.000</div>
+                    <div class="stat-label">+ 75Million de chiffre d'affaire en 2024</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">12.000</div>
+                    <div class="stat-label">+ de 12 000 produits</div>
+                </div> <div class="stat-box">
+                <div class="stat-number">8,000</div>
+                <div class="stat-label">+ de 8 000 références</div>
+            </div> <div class="stat-box">
+                <div class="stat-number">6</div>
+                <div class="stat-label">  6 magasins</div>
+            </div> <div class="stat-box">
+                <div class="stat-number">3</div>
+                <div class="stat-label">3 entrepôts</div>
+            </div>
+                <div class="stat-box">
+                    <div class="stat-number">1</div>
+                    <div class="stat-label">1 en cours d'ouverture</div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-<div class="stats">
-    <img src="../assets/img/Votre%20texte%20de%20paragraphe.png" style="width: 5000px">
-    
-    
-</div>
 
-
-<section id="apropos">
-    <div class="info-box fade-in">
-        <h3>Nos magasins</h3>
-        <p>Produits frais, qualité garantie. Retrouvez tout ce dont vous avez besoin chez vous.</p>
+    <section id="apropos">
+        <div class="info-box fade-in">
+            <h3>Nos magasins</h3>
+            <p>Produits frais, qualité garantie. Retrouvez tout ce dont vous avez besoin chez vous.</p>
+        </div>
+        <div class="info-box fade-in">
+            <h3>Nous rejoindre</h3>
+            <p>Envie de faire partie de l’aventure Paristanbul ? Postulez dès maintenant !</p>
+        </div> <div class="info-box fade-in">
+        <h3>Notre application</h3>
+        <p>Faites des économies en téléchargeant l'application !</p>
     </div>
-    <div class="info-box fade-in">
-        <h3>Nous rejoindre</h3>
-        <p>Envie de faire partie de l’aventure Paristanbul ? Postulez dès maintenant !</p>
-    </div> <div class="info-box fade-in">
-    <h3>Notre application</h3>
-    <p>Faites des économies en téléchargeant l'application !</p>
-</div>
-</section>
+    </section>
 
-<section id="reseauxsociaux">
-    <div class="titreReseaux" data-aos="fade-up"  data-aos-once="true"><h2>Nous suivre</h2></div>
-    <p>
-        <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" class="text-danger"><i class="bi bi-youtube"></i></a>
-        <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" class="text-primary"><i class="bi bi-facebook"></i></a>
-        <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-warning"><i class="bi bi-instagram" style="color: #c32aa3"></i></a>
-        <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-dark"><i class="bi bi-tiktok"></i></a>
-    </p>
-</section>
+    <section id="reseauxsociaux">
+        <div class="titreReseaux" data-aos="fade-up"  data-aos-once="true"><h2>Nous suivre</h2></div>
+        <p>
+            <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" class="text-danger"><i class="bi bi-youtube"></i></a>
+            <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" class="text-primary"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-warning"><i class="bi bi-instagram" style="color: #c32aa3"></i></a>
+            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-dark"><i class="bi bi-tiktok"></i></a>
+        </p>
+    </section>
 
 
 
-<br>
-<br>
-<br>
+
+    <br>
+    <br>
+    <br>
 
 </main>
 <footer>
     <p>&copy; 2025 Paristanbul. Tous droits réservés.</p>
 </footer>
+</main>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -247,13 +387,28 @@ encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="stric
     AOS.init();
 </script>
 
+<!-- Script mode sombre -->
+<script>
+    function toggleDarkMode() {
+        const body = document.body;
+        const icon = document.getElementById("theme-icon");
+        body.classList.toggle("dark-mode");
+
+        const isDark = body.classList.contains("dark-mode");
+        localStorage.setItem("darkMode", isDark ? "on" : "off");
+
+        // Icône avec effet
+        icon.textContent = isDark ? "☀️" : "🌙";
+    }
+
+    // Appliquer le mode sombre si déjà activé
+    window.addEventListener("DOMContentLoaded", () => {
+        const isDark = localStorage.getItem("darkMode") === "on";
+        if (isDark) {
+            document.body.classList.add("dark-mode");
+            document.getElementById("theme-icon").textContent = "☀️";
+        }
+    });
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
