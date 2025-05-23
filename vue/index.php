@@ -32,83 +32,26 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="web site icon" type="png" href="https://previews.123rf.com/images/jovanas/jovanas1602/jovanas160201149/52031915-logo-avi%C3%B3n-volando-alrededor-del-planeta-tierra-azul.jpg">
+    <link rel="web site icon" type="png" href="https://play-lh.googleusercontent.com/4-hTf32960CWp7N_cBSNN7UnH3UNHMzgye3wGzXqSp69-iAc7-88jwc1jPlkeqDktLE">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <!-- ✅ UNIQUE CSS POUR LA BARRE HAUT GAUCHE -->
-</head>
-<!-- ... tes autres <link> comme Bootstrap, police Inter, etc. -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
-<style>
-    body {
-        font-family: 'Inter', sans-serif;
-    }
 
-    .offcanvas-start {
-        width: 275px !important;
-        background-color: #fff !important;
-        padding: 1rem;
-    }
 
-    .offcanvas-body .nav-link {
-        font-size: 16px;
-        font-weight: 600;
-        color: #333 !important;
-        padding: 10px 15px;
-        margin: 6px 0;
-        border-radius: 8px;
-        background-color: transparent !important;
-        transition: background-color 0.2s ease-in-out, color 0.2s;
-    }
-
-    .offcanvas-body .nav-link:hover,
-    .offcanvas-body .nav-link:focus {
-        background-color: #f2f2f2 !important;
-        color: #0a58ca !important;
-    }
-
-    .offcanvas-body .nav .nav-link.ms-3 {
-        font-weight: 400;
-        background-color: transparent !important;
-        margin-left: 1rem;
-        color: #555 !important;
-    }
-
-    .offcanvas-body .nav .nav-link.ms-3:hover {
-        background-color: #f2f2f2 !important;
-        color: #0a58ca !important;
-    }
-
-    .offcanvas-body .nav-link.active,
-    .offcanvas-body .nav-link:active {
-        background-color: transparent !important;
-        color: #333 !important;
-    }
-</style>
-</head>
-
-<!-- ✅ UNIQUE CSS POUR LA BARRE HAUT GAUCHE -->
-
-<!-- ✅ Style personnalisé pour rétrécir le menu -->
-<style>
-    .offcanvas-start {
-        width: 275px !important;
-    }
-</style>
-
-<!-- JS Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 
 <body>
 <header>
-    <button class="btn btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions" style="color: #a0522d;font-size: 30px "><i class="bi bi-justify"></i></button>
+    <button class="btn btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions" style="color: black;font-size: 30px "><i class="bi bi-justify"></i></button>
 
-    <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
-        <div class="offcanvas-header">
+    <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel" style="width: 250px">
+        <div class="offcanvas-header"  style="background-color:#3a3939">
             <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel"><u> <div class="logo" ><img src="../assets/img/LOGO-PARISTANBUL-300x94.png" style="width: 160px"></div>
                     <div class="d-flex justify-content-center align-items-center position-relative ">
                         <div class="btn-group position-absolute end-0 me-3">
@@ -121,39 +64,40 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
                     </div></u></h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div style="height: 3px; width: 100%; background-color: lightgrey; margin: 0 auto;"></div>
+        <div style="height: 3px; width: 100%; background-color:  #e0c097; margin: 0 auto;"></div>
 
         <div class="offcanvas-body">
 
             <div class="row">
                 <div class="col-4">
                     <nav id="navbar-example3" class="h-100 flex-column align-items-stretch pe-4 border-end">
-                        <nav class="nav nav-pills flex-column">
+                        <nav class="nav  flex-column">
+                            <a class="nav-link" style="color:  darkgrey;   text-decoration: none "><i class="bi bi-caret-right-fill"></i><strong><u>Consulter en ligne</u></strong></a>
+                            <a class="nav-link"   href="#item-5" style="color: #a0522d;   text-decoration: none"><strong><u>Catalogue</u></strong> <i class="bi bi-book-half"></i></a>
 
-                            <a class="nav-link" href="#item-1"><strong><u>Boissons</u></strong></a>
-                            <nav class="nav nav-pills flex-column">
-                                <a class="nav-link ms-3 my-1" href="#item-1-1">Basiques</a>
-                                <a class="nav-link ms-3 my-1" href="#item-1-2">Asiatiques</a>
+                            <a class="nav-link" href="#item-1"><strong><u>Aliments</u></strong></a>
+                            <nav class="nav nav flex-column">
+                                <a class="nav-link ms-3 my-1" href="#item-1-1">Frais</a>
+                                <a class="nav-link ms-3 my-1" href="#item-1-2">Secs</a>
+
                             </nav>
 
-                            <a class="nav-link" href="#item-2"><strong><u>Aliments</u></strong></a>
-                            <nav class="nav nav-pills flex-column">
-                                <a class="nav-link ms-3 my-1" href="#item-2-1">Frais</a>
-                                <a class="nav-link ms-3 my-1" href="#item-2-2">Secs</a>
-                                <a class="nav-link ms-3 my-1" href="#item-2-3">Surgelés</a>
+                            <a class="nav-link" href="#item-2"><strong><u>Produits</u></strong></a>
+                            <nav class="nav  flex-column">
+                                <a class="nav-link ms-3 my-1" href="#item-2-1">Hygiènes</a>
+                                <a class="nav-link ms-3 my-1" href="#item-2-2">Contenants</a>
                             </nav>
 
-                            <a class="nav-link" href="#item-3"><strong><u>Produits</u></strong></a>
-                            <nav class="nav nav-pills flex-column">
-                                <a class="nav-link ms-3 my-1" href="#item-3-1">Hygiènes</a>
-                                <a class="nav-link ms-3 my-1" href="#item-3-2">Contenants</a>
+                            <a class="nav-link" href="#item-3"><strong><u>Boissons</u></strong></a>
+                            <nav class="nav  flex-column">
+                                <a class="nav-link ms-3 my-1" href="#item-3-1">Bières</a>
+                                <a class="nav-link ms-3 my-1" href="#item-3-2">Vins</a>
                             </nav>
 
-                            <a class="nav-link" href="#item-4"><strong><u>Alcools</u></strong></a>
-                            <nav class="nav nav-pills flex-column">
-                                <a class="nav-link ms-3 my-1" href="#item-4-1">Bières</a>
-                                <a class="nav-link ms-3 my-1" href="#item-4-2">Vins</a>
-                            </nav>
+                            <a class="nav-link" style="color:  darkgrey;   text-decoration: none "><i class="bi bi-caret-right-fill"></i><strong><u>À propos de Paristanbul</u></strong></a>
+                            <a class="nav-link"   <a href="#appli" style="color: #a0522d;   text-decoration: none"><strong><u>Télécharger notre application</u></strong> <i class="bi bi-app-indicator"></i></i></a>
+
+
                         </nav>
                     </nav>
                 </div>
@@ -212,16 +156,16 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
 <main>
     <section id="catalogue">
-        <div class="titreCatalogue"><strong> <a href="catalogue.php" style="color:  #a0522d;  text-decoration: none;"> En ce moment, chez Paristanbul</a></strong></div>
+        <div class="titreCatalogue"  data-aos="zoom-down" data-aos-once="true"><strong> <a href="catalogue.php" style="color:  #a0522d;  text-decoration: none;"> En ce moment, chez Paristanbul</a></strong></div>
 
 
 
 
         <div class="container">
-            <div class="colonne-gauche"></div>
+            <div class="colonne-gauche"  data-aos="fade-right" data-aos-once="true"></div>
             <div class="colonne-droite">
-                <div class="bloc-haut"></div>
-                <div class="bloc-bas"></div>
+                <div class="bloc-haut" data-aos="fade-left" data-aos-once="true"></div>
+                <div class="bloc-bas"  data-aos="fade-left" data-aos-once="true"></div>
             </div>
         </div>
 
@@ -277,31 +221,65 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
     <section id="apropos">
         <div class="info-box fade-in">
+            <i class="bi bi-book" style="font-size: 25px; color:#a0522d "></i>
             <h3><a href="quiSommesNous.html" style="color: #a0522d ;  text-decoration: none;">À propos de nous</a></h3>
             <p>Paristanbul, fondé par Metin Gultekin en 1993, est une entreprise familiale avec une histoire riche et des valeurs fortes.</p>
         </div>
         <div class="info-box fade-in">
+            <i class="bi bi-shop-window" style="font-size: 25px; color:#a0522d "></i>
             <h3><a href="quiSommesNous.html" style="color: #a0522d  ; text-decoration: none;">Nos magasins </a></h3>
             <p>Produits frais, qualité garantie. Retrouvez tout ce dont vous avez besoin chez vous.</p>
         </div>
         <div class="info-box fade-in">
+            <i class="bi bi-person-fill-add" style="font-size: 25px; color:#a0522d " ></i>
             <h3><a href="quiSommesNous.html" style="color: #a0522d;   text-decoration: none;">Nous rejoindre </a></h3>
             <p>Envie de faire partie de l’aventure Paristanbul ? Postulez dès maintenant !</p>
-        </div> <div class="info-box fade-in">
-            <h3> Notre application</h3>
-            <p>Faites des économies en téléchargeant l'application !</p>
-            <a href="https://play.google.com/store/apps/details?id=com.akead.paristanbul" class="text-success google-play"><i class="bi bi-google-play"></i></a>
-            <a href="https://apps.apple.com/id/app/paristanbul-plus/id6743162682" class="text-primary apple-store"><i class="bi bi-apple"></i></a>
         </div>
-    </section>
 
-    <section id="reseauxsociaux">
-        <h2>Nous suivre</h2>
+
+
+        <section id="appli">
+            <div class="info-box fade-in" data-bs-toggle="modal" data-bs-target="#appliModal">
+                <i class="bi bi-app-indicator" style="font-size: 25px; color:#a0522d;"></i><br>
+                <h3>Notre application</h3>
+                <p>Faites des économies en téléchargeant l'application !</p>
+
+
+            </div>
+        </section>
+
+        <!-- Modal -->
+        <div class="modal fade" id="appliModal" tabindex="-1" aria-labelledby="appliModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="appliModalLabel" style="p">Télécharger l'application</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p ><i class="bi bi-google-play text-success" style="font-size: 20px"></i><a href="https://play.google.com/store/apps/details?id=com.akead.paristanbul" target="_blank" style="font-size: 20px; color: green; text-decoration: none ">Google Play</a></p>
+                        <p><i class="bi bi-apple text-primary"  style="font-size: 20px"></i><a href="https://apps.apple.com/id/app/paristanbul-plus/id6743162682" target="_blank"  style="font-size: 20px;  text-decoration: none">Apple Store</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS (obligatoire !) -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Bootstrap Icons si tu veux les icônes -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+
+
+
+        <section id="reseauxsociaux">
+        <div class="titreReseaux" data-aos="fade-up"  data-aos-once="true"><h2>Nous suivre</h2></div>
         <p>
-            <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" class="text-danger"><i class="bi bi-youtube"></i></a>
-            <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" class="text-primary"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-warning"><i class="bi bi-instagram" style="color: #c32aa3"></i></a>
-            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-dark"><i class="bi bi-tiktok"></i></a>
+            <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" class="text-danger"  data-aos="fade-up"  data-aos-once="true"><i class="bi bi-youtube"></i></a>
+            <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" class="text-primary"  data-aos="fade-up"  data-aos-once="true"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-warning" data-aos="fade-up"  data-aos-once="true"><i class="bi bi-instagram" style="color: #c32aa3" ></i></a>
+            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-dark" data-aos="fade-up"  data-aos-once="true"><i class="bi bi-tiktok" ></i></a>
         </p>
     </section>
 
@@ -317,14 +295,30 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 </footer>
 
 <script>
-    window.addEventListener('scroll', () => {
-        document.querySelectorAll('.fade-in').forEach(el => {
-            if (el.getBoundingClientRect().top < window.innerHeight - 100) {
-                el.classList.add('visible');
-            }
+    document.addEventListener('DOMContentLoaded', () => {
+        const elements = document.querySelectorAll('.fade-in');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Pour déclencher une seule fois :
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
         });
+
+        elements.forEach(el => observer.observe(el));
     });
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+    AOS.init();
+</script>
+
 </body>
 </html>
