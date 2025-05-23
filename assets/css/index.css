@@ -306,6 +306,35 @@ footer {
 }
 
 
+/* Supprime le fond beige derrière les catégories du menu latéral */
+.offcanvas-body .nav,
+.offcanvas-body .nav-link,
+.offcanvas-body nav.nav {
+    background-color: white !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.clickable-box {
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.clickable-box:hover {
+    background-color: #f0e6dc; /* léger beige clair */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
 
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
 
