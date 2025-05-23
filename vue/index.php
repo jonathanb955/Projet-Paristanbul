@@ -231,7 +231,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
         </div>
         <div class="info-box fade-in">
             <i class="bi bi-shop-window" style="font-size: 25px; color:#a0522d "></i>
-            <h3><a href="quiSommesNous.html" style="color: #a0522d  ; text-decoration: none;">Nos magasins </a></h3>
+            <h3><a href="nosMagasins.php" style="color: #a0522d  ; text-decoration: none;">Nos magasins </a></h3>
             <p>Produits frais, qualité garantie. Retrouvez tout ce dont vous avez besoin chez vous.</p>
         </div>
         <div class="info-box fade-in">
@@ -287,16 +287,12 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
         </p>
     </section>
 
-
-
-    <br>
-    <br>
-    <br>
-
 </main>
+
 <footer>
     <p>&copy; 2025 Paristanbul. Tous droits réservés.</p>
 </footer>
+
 <script>
     function openModal() {
         // Fermer le offcanvas s'il est ouvert
