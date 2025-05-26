@@ -1,16 +1,14 @@
 <?php
 
-use modele\Utilisateur;
+use modele\Utilisateurs;
 
 require_once __DIR__ . '/../bdd/Bdd.php';
-require_once"../modele/Utilisateur.php";
-require_once"../repository/UtilisateurRepository.php";
+require_once"../modele/Utilisateurs.php";
+require_once "../repository/UtilisateursRepository.php";
 
 if (!empty($_POST["email"]) &&
     !empty($_POST["nom"]) &&
     !empty($_POST["prenom"]) &&
-    !empty($_POST["date_naissance"]) &&
-    !empty($_POST["ville_residence"]) &&
     !empty($_POST["mdp"]) &&
     !empty($_POST["mdpC"])) {
 
@@ -24,19 +22,17 @@ if (!empty($_POST["email"]) &&
         $hashpassword = password_hash($_POST["mdp"], PASSWORD_DEFAULT);
         session_start();
 
-        $utilisateurRepository = new utilisateurRepository();
+        $utilisateurRepository = new UtilisateursRepository();
         $nbutilisateur=$utilisateurRepository->nombreUtilisateur();
         if($nbutilisateur==0) {
             $role="admin";
         }else{
             $role="utilisateur";
         }
-        $utilisateur = new Utilisateur([
+        $utilisateur = new Utilisateurs([
             "email" => $_POST["email"],
             "nom" => $_POST["nom"],
             "prenom" => $_POST["prenom"],
-            "dateNaissance" => $_POST["date_naissance"],
-            "villeResidence" => $_POST["ville_residence"],
             "mdp" => $hashpassword,
             "role"=> $role,
 
@@ -50,8 +46,6 @@ if (!empty($_POST["email"]) &&
             $_SESSION["email"] = $_POST["email"];
             $_SESSION["mdp"] = $_POST["mdp"];
             $_SESSION["role"] = $role;
-            $_SESSION["ville_residence"] = $_POST["ville_residence"];
-            $_SESSION["date_naissance"] = $_POST["date_naissance"];
             $_SESSION["nom"] = $_POST["nom"];
             $_SESSION["prenom"] = $_POST["prenom"];
 
@@ -60,7 +54,7 @@ if (!empty($_POST["email"]) &&
                 header("Location: ../../index.php");
             }
 
-            header("Location: ../../vue/pageInscriptionReussite.html");
+            header("Location: ../../vue/pageReussite/pageInscriptionReussite.html");
         }
 
     } else {

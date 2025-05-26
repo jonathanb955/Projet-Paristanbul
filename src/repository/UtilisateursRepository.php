@@ -5,18 +5,21 @@ use bdd\Bdd;
 require_once __DIR__ . '/../bdd/Bdd.php';
 
 
-class UtilisateurRepository {
 
-    public function connexion(\modele\Utilisateur $utilisateur){
+
+
+class UtilisateursRepository {
+
+    public function connexion(\modele\Utilisateurs $utilisateur){
         $bdd = new Bdd();
         $database = $bdd->getBdd();
-        $req = $database->prepare('SELECT * FROM utilisateur WHERE email = :email');
+        $req = $database->prepare('SELECT * FROM utilisateurs WHERE email = :email');
         $req->execute(array(
             'email' => $utilisateur->getEmail()
         ));
         $donnees = $req->fetch();
         if ($donnees) {
-            return new \modele\Utilisateur([
+            return new \modele\Utilisateurs([
                 'id_utilisateur' => $donnees['id_utilisateur'],
                 'nom' => $donnees['nom'],
                 'prenom' => $donnees['prenom'],
@@ -28,36 +31,34 @@ class UtilisateurRepository {
 
         return null;
     }
-
-    public function inscription(\modele\Utilisateur $utilisateur) {
+    public function inscription(\modele\Utilisateurs $utilisateur) {
         try {
-            $bdd=new Bdd();
-            $database=$bdd->getBdd();
+            $bdd = new Bdd();
+            $database = $bdd->getBdd();
             $hashedMdp = password_hash($utilisateur->getMdp(), PASSWORD_BCRYPT);
-            $req = $database->prepare ("INSERT INTO utilisateur (nom, prenom, date_naissance, ville_residence, email, mdp, role) VALUES (:nom, :prenom, :date_naissance, :ville_residence, :email, :mdp, :role)");
-            var_dump([
-                $req->execute(array(
 
-                    'nom' => $utilisateur->getNom(),
-                    'prenom' => $utilisateur->getPrenom(),
-                    'date_naissance' => $utilisateur->getDateNaissance(),
-                    'ville_residence' => $utilisateur->getVilleResidence(),
-                    'email' => $utilisateur->getEmail(),
-                    'mdp' => $utilisateur->getMdp(),
-                    'role' => $utilisateur->getRole(),
+            $req = $database->prepare("INSERT INTO utilisateurs (nom, prenom, email, mdp, role) 
+                                   VALUES (:nom, :prenom, :email, :mdp, :role)");
 
-                ))
-            ]);
+            $req->execute(array(
+                'nom' => $utilisateur->getNom(),
+                'prenom' => $utilisateur->getPrenom(),
+                'email' => $utilisateur->getEmail(),
+                'mdp' => $hashedMdp,
+                'role' => $utilisateur->getRole(),
+            ));
+
             return $utilisateur;
         } catch (PDOException $e) {
             die("Erreur SQL : " . $e->getMessage());
         }
     }
 
+
     public function nombreUtilisateur(){
         $bdd = new Bdd();
         $database = $bdd->getBdd();
-        $req = $database->prepare('SELECT COUNT(id_utilisateur) FROM utilisateur');
+        $req = $database->prepare('SELECT COUNT(id_utilisateur) FROM utilisateurs');
         $req->execute();
         $result = $req->fetch();
         return $result[0];
@@ -67,7 +68,7 @@ class UtilisateurRepository {
     {
         $bdd = new Bdd();
         $datebase = $bdd->getBdd();
-        $req = $datebase->prepare('SELECT email FROM utilisateur WHERE email=:email');
+        $req = $datebase->prepare('SELECT email FROM utilisateurs WHERE email=:email');
         $req->execute(array(
             "email"=>$utilisateur->getEmail()
         ));
@@ -82,20 +83,17 @@ class UtilisateurRepository {
     }
 
 
-    public function modifierUtilisateur(\modele\Utilisateur $utilisateur) {
+    public function modifierUtilisateur(\modele\Utilisateurs $utilisateur) {
         try {
             $bdd = new Bdd();
             $database = $bdd->getBdd();
-            $req = $database->prepare("UPDATE utilisateur 
-            SET nom = :nom, prenom = :prenom, date_naissance = :date_naissance, 
-                ville_residence = :ville_residence, email = :email, role = :role  
+            $req = $database->prepare("UPDATE utilisateurs 
+            SET nom = :nom, prenom = :prenom, email = :email, role = :role  
             WHERE id_utilisateur = :id_utilisateur");
 
             $req->execute([
                 'nom' => $utilisateur->getNom(),
                 'prenom' => $utilisateur->getPrenom(),
-                'date_naissance' => $utilisateur->getDateNaissance(),
-                'ville_residence' => $utilisateur->getVilleResidence(),
                 'email' => $utilisateur->getEmail(),
                 'role' => $utilisateur->getRole(),
                 'id_utilisateur' => $utilisateur->getIdUtilisateur()

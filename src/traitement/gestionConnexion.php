@@ -1,74 +1,55 @@
 <?php
+require_once '../modele/Utilisateurs.php';
+require_once "../repository/UtilisateursRepository.php";
+require_once "../bdd/Bdd.php";
+session_start();
 
-use modele\Utilisateur;
-
-require_once __DIR__ . '/../bdd/Bdd.php';
-require_once"../modele/Utilisateur.php";
-require_once"../repository/UtilisateurRepository.php";
-
-if (!empty($_POST["email"]) &&
-    !empty($_POST["nom"]) &&
-    !empty($_POST["prenom"]) &&
-    !empty($_POST["date_naissance"]) &&
-    !empty($_POST["ville_residence"]) &&
-    !empty($_POST["mdp"]) &&
-    !empty($_POST["mdpC"])) {
-
-    if (strlen($_POST["mdp"]) < 12) {
-        header("Location: ../../vue/pageInscription.php?parametre=mdp");
-        exit();
-    }
+if (empty($_POST['emailCo']) || empty($_POST['mdpCo'])) {
+    header("Location: ../../vue/pageConnexion.php?parametre=infoManquante");
+    exit();
+} else {
+    $utilisateur = new \modele\Utilisateurs([
+        'email' => $_POST["emailCo"]
+    ]);
+    $utilisateurRepository = new UtilisateursRepository();
+    $utilisateur = $utilisateurRepository->connexion($utilisateur);
 
 
-    if(($_POST["mdp"]==$_POST["mdpC"])) {
-        $hashpassword = password_hash($_POST["mdp"], PASSWORD_DEFAULT);
-        session_start();
+    if ($utilisateur !== null) {
 
-        $utilisateurRepository = new utilisateurRepository();
-        $nbutilisateur=$utilisateurRepository->nombreUtilisateur();
-        if($nbutilisateur==0) {
-            $role="admin";
-        }else{
-            $role="utilisateur";
+            // DEBUG : Affiche les deux mots de passe
+            echo "<div style='padding: 20px; font-family: monospace; background: #f5f5f5; border: 1px solid #ccc'>";
+            echo "<strong>Mot de passe saisi :</strong> " . htmlspecialchars($_POST['mdpCo']) . "<br>";
+            echo "<strong>Mot de passe hashé (BDD) :</strong> " . htmlspecialchars($utilisateur->getMdp()) . "<br>";
+            echo "<strong>Résultat de password_verify :</strong> ";
+            var_dump(password_verify($_POST['mdpCo'], $utilisateur->getMdp()));
+            echo "</div>";
+            exit;
         }
-        $utilisateur = new Utilisateur([
-            "email" => $_POST["email"],
-            "nom" => $_POST["nom"],
-            "prenom" => $_POST["prenom"],
-            "dateNaissance" => $_POST["date_naissance"],
-            "villeResidence" => $_POST["ville_residence"],
-            "mdp" => $hashpassword,
-            "role"=> $role,
 
-        ]);
-        $verif=$utilisateurRepository->verifDoublonEmail($utilisateur);
-        if ($verif) {
-            header("Location: ../../vue/pageInscription.php?parametre=doublon");
-        }else{
-            $utilisateur = $utilisateurRepository->inscription($utilisateur);
+        // Si tu veux garder le login fonctionnel, commente les lignes ci-dessus après debug
+    if (password_verify($_POST['mdpCo'], $utilisateur->getMdp()))
+        $_SESSION['id_utilisateur'] = $utilisateur->getIdUtilisateur();
+            $_SESSION['email'] = $utilisateur->getEmail();
+            $_SESSION['nom'] = $utilisateur->getNom();
+            $_SESSION['prenom'] = $utilisateur->getPrenom();
+            $_SESSION['role'] = $utilisateur->getRole();
+            $_SESSION['connexion'] = true;
 
-            $_SESSION["email"] = $_POST["email"];
-            $_SESSION["mdp"] = $_POST["mdp"];
-            $_SESSION["role"] = $role;
-            $_SESSION["ville_residence"] = $_POST["ville_residence"];
-            $_SESSION["date_naissance"] = $_POST["date_naissance"];
-            $_SESSION["nom"] = $_POST["nom"];
-            $_SESSION["prenom"] = $_POST["prenom"];
-
-            var_dump($utilisateur);
-            if ($utilisateur->getRole() == "utilisateur") {;
-                header("Location: ../../index.php");
+            if ($utilisateur->getRole() == "admin") {
+                $_SESSION["connexionAdmin"] = true;
             }
 
-            header("Location: ../../vue/pageInscriptionReussite.html");
+            if (isset($_SESSION['redirect_after_login'])) {
+                $url = $_SESSION['redirect_after_login'];
+                unset($_SESSION['redirect_after_login']);
+                header("Location: $url");
+            } else {
+                header("Location: ../../index.php");
+            }
+            exit();
+        } else {
+            header("Location: ../../vue/pageConnexion.php?parametre=emailmdpInvalide");
+            exit();
         }
-
-    } else {
-        header("Location: ../../vue/pageInscription.php?parametre=mdp");
-    }
-
-}
-
-else{
-    header("Location: ../../vue/pageInscription.php?parametre=champsVides");
 }
