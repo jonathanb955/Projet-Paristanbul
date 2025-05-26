@@ -26,9 +26,9 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <title>Paristanbul</title>
 
     <!-- Feuilles de style -->
-    <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/nosMagasins.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -41,140 +41,131 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-    <script src="https://maps.googleapis.com/maps/api/js?key=TA_CLE_API&callback=initMap" async defer></script>
-
+    <link rel="stylesheet" href="../assets/css/catalogue.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="web site icon" type="png" href="https://previews.123rf.com/images/jovanas/jovanas1602/jovanas160201149/52031915-logo-avi%C3%B3n-volando-alrededor-del-planeta-tierra-azul.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 
 </head>
 
 <body>
+
+
 <header>
-    <button class="btn btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions" style="color: black;font-size: 30px "><i class="bi bi-justify"></i></button>
-
-    <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel" style="width: 250px">
-        <div class="offcanvas-header"  style="background-color:#3a3939">
-            <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel"><u> <div class="logo" ><img src="../assets/img/LOGO-PARISTANBUL-300x94.png" style="width: 160px"></div>
-                    <div class="d-flex justify-content-center align-items-center position-relative ">
-                        <div class="btn-group position-absolute end-0 me-3">
-
-
-                        </div>
-
-
-
-                    </div></u></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div style="height: 3px; width: 100%; background-color:  #e0c097; margin: 0 auto;"></div>
-
-        <div class="offcanvas-body">
-
-            <div class="row">
-                <div class="col-4">
-                    <nav id="navbar-example3" class="h-100 flex-column align-items-stretch pe-4 border-end">
-                        <nav class="nav  flex-column">
-                            <a class="nav-link" style="color:  darkgrey;   text-decoration: none "><i class="bi bi-caret-right-fill"></i><strong><u>Consulter en ligne</u></strong></a>
-                            <a class="nav-link"   href="#item-5" style="color: #a0522d;   text-decoration: none"><strong><u>Catalogue</u></strong> <i class="bi bi-book-half"></i></a>
-
-                            <a class="nav-link" href="#item-1"><strong><u>Aliments</u></strong></a>
-                            <nav class="nav nav flex-column">
-                                <a class="nav-link ms-3 my-1" href="#item-1-1">Frais</a>
-                                <a class="nav-link ms-3 my-1" href="#item-1-2">Secs</a>
-
-                            </nav>
-
-                            <a class="nav-link" href="#item-2"><strong><u>Produits</u></strong></a>
-                            <nav class="nav  flex-column">
-                                <a class="nav-link ms-3 my-1" href="#item-2-1">Hygiènes</a>
-                                <a class="nav-link ms-3 my-1" href="#item-2-2">Contenants</a>
-                            </nav>
-
-                            <a class="nav-link" href="#item-3"><strong><u>Boissons</u></strong></a>
-                            <nav class="nav  flex-column">
-                                <a class="nav-link ms-3 my-1" href="#item-3-1">Bières</a>
-                                <a class="nav-link ms-3 my-1" href="#item-3-2">Vins</a>
-                            </nav>
-
-                            <a class="nav-link" style="color:  darkgrey;   text-decoration: none "><i class="bi bi-caret-right-fill"></i><strong><u>À propos de Paristanbul</u></strong></a>
-                            <a class="nav-link"   <a href="#appli" style="color: #a0522d;   text-decoration: none"><strong><u>Télécharger notre application</u></strong> <i class="bi bi-app-indicator"></i></i></a>
-
-
-                        </nav>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="logo"><a href="index.php"><img src="../assets/img/LOGO-PARISTANBUL-300x94.png"></a></div>
-    <div class="d-flex justify-content-center align-items-center position-relative ">
-        <div class="btn-group position-absolute end-0 me-3">
-
+    <div class="d-flex justify-content-center align-items-center position-relative">
 
         </div>
 
-    </div>
-
-    <nav>
-        <ul>
-
-            <li><a href="#catalogue">Catalogue</a></li>
-            <li><a href="#reseauxsociaux">Nous suivre</a></li>
-            <li><a href="#apropos">Informations</a></li>
-            <button type="button" class="btn btn-black dropdown-toggle" style="color: #a0522d" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-square"></i>
+        <form action="index.php" method="get" class="position-absolute start-0 ms-3">
+            <button type="submit" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Retour
             </button>
-            <ul class="dropdown-menu text-center">
-                <?php if ($connecte): ?>
-                    <span class="dropdown-item-text"><strong>Bienvenue</strong><br><?php echo $_SESSION['prenom'] . ' ' . $_SESSION['nom']; ?></span>
-                    <li><hr class="dropdown-divider"></li>
+        </form>
 
-                    <?php if ($_SESSION['role'] === 'admin'): ?>
-                        <li><a class="dropdown-item" href="../../Projet-Vol/vue/pageAdmin.php"><i class="bi bi-shield-lock-fill"></i> Espace Admin</a></li>
-                    <?php else: ?>
-                        <li><a class="dropdown-item" href="../../Projet-Vol/vue/espaceClient.php"><i class="bi bi-person-circle"></i> Espace Client</a></li>
-                    <?php endif; ?>
+        <div class="logo"><a href="index.php"><img src="../assets/img/LOGO-PARISTANBUL-300x94.png"></a></div>
+        <div class="d-flex justify-content-center align-items-center position-relative ">
+            <div class="btn-group position-absolute end-0 me-3">
 
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="?logout=true"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
-                <?php else: ?>
-                    <li><a class="dropdown-item" href="vue/pageConnexion.php">Connexion <i class="bi bi-person-bounding-box"></i></a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="vue/pageInscription.php">Inscription <i class="bi bi-person-plus-fill"></i></a></li>
-                <?php endif; ?>
+
+            </div>
+
+        </div>
+
+        <nav>
+            <ul>
+
+                <li><a href="#catalogue">Catalogue</a></li>
+                <li><a href="#reseauxsociaux">Nous suivre</a></li>
+                <li><a href="#apropos">Informations</a></li>
+                <button type="button" class="btn btn-black dropdown-toggle" style="color: #a0522d" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-square"></i>
+                </button>
+
+
             </ul>
 
 
-        </ul>
-    </nav>
+            </ul>
+        </nav>
 
 </header>
-<br>
-<div class="titreMagasin" style="text-align: center; font-size: 35px"><strong>Nos Magasins</strong></div>
+<div class="catalogue">
+
+    <?php
+
+    $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+
+
+    $search = isset($_GET['search']) ? $_GET['search'] : '';
+
+
+    if ($search) {
+        $req = $pdo->prepare('
+        SELECT *
+        FROM magasins
+        WHERE magasins.ville_magasin LIKE :search
+        
+    ');
+        $req->execute(['search' => '%' . $search . '%']);
+    } else {
+        $req = $pdo->query('
+        SELECT *
+        FROM magasins
+    ');
+    }
 
 
 
-<div id="map"></div>
+    while ($magasins = $req->fetch(PDO::FETCH_ASSOC)) {
+        $ville = $magasins['ville_magasin'];
+        $rue = $magasins['rue'];
+        $cp = $magasins['cp'];
+        $image = $magasins['image'];
+        echo '<div class="film-card">';
+        echo '<img src="' . htmlspecialchars($image) . '" alt="Photo de ' . htmlspecialchars($ville) . '" class="magasins-photo">';
+        echo '<div class="film-info">';
+        echo '<u><h2>magasins: ' . htmlspecialchars($ville) . '</h2></u>';
+        echo '<p>' . htmlspecialchars($rue)  . htmlspecialchars($cp) .  '</p>';
+        echo '<form action="index.php" method="get">
+              <button type="submit" class="btn btn-dark" name="destination" value="' . htmlspecialchars($ville) . '">voir +</button>
+          </form>';
+        echo '</div>';
+        echo '</div>';
+    }
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const map = L.map('map').setView([48.8566, 2.3522], 13);
+    ?>
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        L.marker([48.8566, 2.3522]).addTo(map)
-            .bindPopup('Paris')
-            .openPopup();
-    });
-</script>
-
+</div>
 
 
 
 <main>
+
+    <div class="recherche">
+        <form id="search-form">
+            <div class="trouver-magasin">
+                <label for="magasin" class="form-label">Trouver un magasin</label>
+                <div class="search-group">
+                    <input type="search" name="magasin" id="magasin" class="form-control" placeholder="Saisir une ville, un code postal...">
+                    <button type="submit" class="search-button" aria-label="Rechercher">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+
+        <div id="map">
+            <!-- Ici la carte -->
+        </div>
+
+    </div>
+
+
+
+
 
     <br>
 
@@ -276,21 +267,71 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
 </body>
 </html>
-<style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
+
+
+<!------- Open street map ------------>
+<!-- CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="" />
+
+
+<!-- Fichiers Javascript -->
+<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
+
+<!-- Initialise la map -->
+<script>
+    var villes = {
+        "Villiers-le-Bel": { "lat": 48.999975, "lon": 2.3907978 },
+        "PARISTANBUL DRANCY": { "lat": 48.929943, "lon": 2.431965 },
+        "PARISTANBUL BONDY": { "lat": 48.905894, "lon": 2.481594 },
+        "SUPERMARCHE PARISTANBUL VILLEMOMBLE": { "lat": 48.8807913, "lon": 2.5018502 },
+        "PARISTANBUL NOGENT-SUR-OISE": { "lat": 49.2860566, "lon": 2.4589897 },
+    };
+
+    let macarte;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        initMap();
+
+        // ✅ Handler sur le vrai <form>
+        document.getElementById('search-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const search = document.getElementById('magasin').value.trim().toLowerCase();
+
+            let found = false;
+            for (const ville in villes) {
+                if (ville.toLowerCase().includes(search)) {
+                    const { lat, lon } = villes[ville];
+                    macarte.setView([lat, lon], 15); // Zoom sur la ville
+                    L.popup()
+                        .setLatLng([lat, lon])
+                        .setContent(`<strong>${ville}</strong>`)
+                        .openOn(macarte);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                alert("Magasin introuvable.");
+            }
+        });
+    });
+
+    function initMap() {
+        var lat = villes["Villiers-le-Bel"].lat;
+        var lon = villes["Villiers-le-Bel"].lon;
+
+        macarte = L.map('map').setView([lat, lon], 11);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+            attribution: 'données © OpenStreetMap/ODbL - rendu OSM France',
+            minZoom: 1,
+            maxZoom: 20
+        }).addTo(macarte);
+
+        for (let ville in villes) {
+            let marker = L.marker([villes[ville].lat, villes[ville].lon]).addTo(macarte);
+            marker.bindPopup(ville);
+        }
     }
-    #map {
-        height: 70%;
-        width: 100%;
-
-border-style: double;
-        border-radius: 10px;
-            margin-top: 30px;
-
-border-width: 5px;
-    }
-
-</style>
+</script>
