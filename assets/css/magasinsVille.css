@@ -1,0 +1,562 @@
+/* === RESET & GENERAL === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'montserrat',serif;
+    background-color: #fff8f0;
+    line-height: 1.6;
+}
+.texte, .titre,.info-box{
+    font-weight: 700 !important;
+}
+
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* === HEADER === */
+header {
+    background-color: #ecd8b1;
+    padding: 0.5rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    border-bottom: 2px solid #e0c097;
+}
+
+.logo img {
+    max-height: 70px;
+}
+
+/* === FIXED NAVIGATION === */
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #fff8f0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    margin-right: 100px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem;
+    margin: 0;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #a0522d;
+    font-weight: bold;
+    transition: color 0.3s;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+}
+
+nav ul li a:hover {
+    color: #d35400;
+}
+
+/* === CONNECTION BUTTON === */
+.btn-group.position-absolute.end-0 {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    z-index: 1001;
+}
+
+/* === CAROUSEL === */
+#carouselExampleInterval {
+    max-height: 60vh;
+    overflow: hidden;
+}
+
+.carousel-item img {
+    height: 60vh;
+    object-fit: cover;
+}
+
+.carousel-caption.custom-caption,
+.carousel-caption.custom-text {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-family: 'Libre Baskerville', serif;
+}
+
+.carousel-caption h1,
+.carousel-caption h2 {
+    color: #fff8f0;
+    font-weight: 700;
+}
+
+.carousel-caption p {
+    color: #f8e9d2;
+    font-size: 1rem;
+}
+
+/* === SECTIONS === */
+section {
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.titreCatalogue {
+    font-size: 2rem;
+    color: #a0522d;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+    font-family: 'Playfair Display', serif;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
+
+}
+
+
+.container{
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+
+
+
+
+
+
+
+
+
+.colonne-gauche {
+    flex: 1.2;
+    height: 600px;
+    width: 100vw;
+    margin-left: 0;
+    padding-left: 0;
+    background-image: url("../img/72934fda-d9d0-4653-9af5-b918399a14878.JPG");
+    background-size: cover; /* Réduit la taille de l'image */
+    background-repeat: no-repeat;
+    background-position: center; /* Centrer l'image */
+    border-radius: 10px;
+}
+
+.colonne-droite {
+
+    flex: 1;
+    border-radius: 10px;
+    display: flex;
+
+
+    flex-direction: column;
+
+    gap: 30px;
+    border-radius: 10px;
+
+}
+
+
+.stat-droite{
+    flex: 1.2;
+    height: 400px;
+    width: 50vw;
+    margin-left: 0;
+    padding-left: 0;
+    background-image: url("../img/Stat.png");
+    background-size: cover; /* Réduit la taille de l'image */
+    background-repeat: no-repeat;
+    background-pos3ition: center; /* Centrer l'image */
+    border-radius: 10px;
+}
+
+.btn-dark {
+    background-color: #a0522d;
+    border: none;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.btn-dark:hover {
+    background-color: #d35400;
+}
+
+/* === À PROPOS === */
+.info-box {
+    background-color: #ffffff;
+    margin: 1rem auto;
+    padding: 2rem;
+    max-width: 800px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(160, 82, 45, 0.1);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease-out;
+}
+
+.info-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.info-box h3 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 1.75rem;
+    color: #a0522d;
+    margin-bottom: 1rem;
+}
+
+/* === SOCIALS === */
+#reseauxsociaux i {
+    font-size: 2rem;
+    margin: 0 1rem;
+    transition: transform 0.3s ease;
+}
+
+#reseauxsociaux i:hover {
+    transform: scale(1.2);
+}
+
+/* === FOOTER === */
+footer {
+    background-color: #ecd8b1;
+    color:#a0522d;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    font-family: 'Libre Baskerville', serif;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .carousel-caption.custom-caption,
+    .carousel-caption.custom-text {
+        padding: 1rem;
+    }
+    .carouselExampleInterval{
+        height: 10px
+    }
+
+    .btn-group.position-absolute.end-0 {
+        position: static;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.texte-ambition{
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    max-width: 100%;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.video, .text {
+    flex: 1;
+}
+.video{
+    margin-left: 10px;
+    flex: 1;
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 20px;
+    overflow: hidden; /* coupe les coins arrondis proprement */
+    background-color: black; /* optionnel si chargement lent */
+
+}
+
+.video iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    display: block;
+    border: none;
+}
+
+.elementor-video{
+    border-radius: 50px;
+}
+.texte{
+    margin-left: 70px;
+    flex: 1;
+    border: 2px solid black;
+    padding: 20px;
+    font-family: sans-serif;
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    display: block;
+    box-sizing: border-box;
+    max-width: 600px;
+}
+
+.dark-mode .texte{
+    border-color: white;
+    background-color: black;
+
+}
+.titre{
+    margin-top: 10px;
+    margin-left: 250px;
+    font-size: 30px;
+}
+.dark-mode .titre{
+    color: white;
+}
+.info-box {
+    background-color: #ffffff;
+    margin: 1rem auto;
+    padding: 2rem;
+    max-width: 800px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(160, 82, 45, 0.1);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease-out;
+}
+
+.info-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.info-box h3 {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 1.75rem;
+    color: #a0522d;
+    margin-bottom: 1rem;
+}
+
+/* === SOCIALS === */
+#reseauxsociaux i {
+    font-size: 2rem;
+    margin: 0 1rem;
+    transition: transform 0.3s ease;
+}
+
+#reseauxsociaux i:hover {
+    transform: scale(1.2);
+}
+.google-play{
+    font-size: 2rem;
+    margin: 0 1rem;
+    transition: transform 0.3s ease;
+}
+.apple-store{
+    font-size: 2rem;
+    margin: 0 1rem;
+    transition: transform 0.3s ease;
+}
+/* === FOOTER === */
+footer {
+    background-color: #ecd8b1;
+    color:#a0522d;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    font-family: 'Libre Baskerville', serif;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .carousel-caption.custom-caption,
+    .carousel-caption.custom-text {
+        padding: 1rem;
+    }
+    .carouselExampleInterval{
+        height: 10px
+    }
+
+    .btn-group.position-absolute.end-0 {
+        position: static;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+    }
+}
+/* Réduction de la largeur du menu latéral */
+.offcanvas-start {
+    width: 25px; /* Tu peux changer cette valeur selon ce que tu veux */
+}
+
+
+/* Supprime le fond beige derrière les catégories du menu latéral */
+.offcanvas-body .nav,
+.offcanvas-body .nav-link,
+.offcanvas-body nav.nav {
+    background-color: white !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.clickable-box {
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.clickable-box:hover {
+    background-color: #f0e6dc; /* léger beige clair */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body {
+    font-family: Arial, sans-serif;
+
+    margin: 0;
+    padding: 0;
+}
+.stats-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 0;
+    background: url('assets/img/WhatsApp Image 2025-05-21 à 17.06.57_037a393c.jpg') no-repeat center center;
+    background-size: cover;
+}
+.stats-container {
+    display: flex;
+    gap: 40px;
+}
+.stat-box {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid orange;
+    padding: 30px;
+    text-align: center;
+    border-radius: 10px;
+    min-width: 150px;
+}
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+}
+.stat-label {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: white;
+}
+.intro-text {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+.intro-text h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: white;
+}
+.intro-text p {
+    margin: 5px 0;
+    color: white;
+}
+
+/* Effet sur le bouton dark mode */
+.dark-toggle {
+    cursor: pointer;
+    font-size: 1.8rem;
+    background: none;
+    border: none;
+    transition: transform 0.4s ease;
+}
+
+.dark-toggle:active {
+    transform: rotate(360deg);
+}
+
+/* Mode sombre */
+.dark-mode {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+}
+
+.dark-mode nav,
+.dark-mode header,
+.dark-mode footer,
+.dark-mode .info-box {
+    background-color: #2c2c2c !important;
+    color: #f0f0f0 !important;
+}
+
+.dark-mode nav ul li a {
+    color: #f0f0f0;
+}
+
+.dark-mode nav ul li a:hover {
+    color: #ffa500;
+}
+
+.dark-mode .btn-dark {
+    background-color: #555;
+}
+
+.dark-mode .btn-dark:hover {
+    background-color: #888;
+}
+
+
+
+.iconStat{
+    color: white;
+}
