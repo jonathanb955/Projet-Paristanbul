@@ -5,9 +5,6 @@ use bdd\Bdd;
 require_once __DIR__ . '/../bdd/Bdd.php';
 
 
-
-
-
 class UtilisateursRepository {
 
     public function connexion(\modele\Utilisateurs $utilisateur){
@@ -29,31 +26,32 @@ class UtilisateursRepository {
             ]);
         }
 
+
         return null;
     }
-    public function inscription(\modele\Utilisateurs $utilisateur) {
+
+    public function inscription(modele\Utilisateurs $utilisateur) {
         try {
-            $bdd = new Bdd();
-            $database = $bdd->getBdd();
+            $bdd=new Bdd();
+            $database=$bdd->getBdd();
             $hashedMdp = password_hash($utilisateur->getMdp(), PASSWORD_BCRYPT);
+            $req = $database->prepare ("INSERT INTO utilisateurs (nom, prenom,email, mdp, role) VALUES (:nom, :prenom,  :email, :mdp, :role)");
+            var_dump([
+                $req->execute(array(
 
-            $req = $database->prepare("INSERT INTO utilisateurs (nom, prenom, email, mdp, role) 
-                                   VALUES (:nom, :prenom, :email, :mdp, :role)");
+                    'nom' => $utilisateur->getNom(),
+                    'prenom' => $utilisateur->getPrenom(),
+                    'email' => $utilisateur->getEmail(),
+                    'mdp' => $utilisateur->getMdp(),
+                    'role' => $utilisateur->getRole(),
 
-            $req->execute(array(
-                'nom' => $utilisateur->getNom(),
-                'prenom' => $utilisateur->getPrenom(),
-                'email' => $utilisateur->getEmail(),
-                'mdp' => $hashedMdp,
-                'role' => $utilisateur->getRole(),
-            ));
-
+                ))
+            ]);
             return $utilisateur;
         } catch (PDOException $e) {
             die("Erreur SQL : " . $e->getMessage());
         }
     }
-
 
     public function nombreUtilisateur(){
         $bdd = new Bdd();
@@ -88,7 +86,7 @@ class UtilisateursRepository {
             $bdd = new Bdd();
             $database = $bdd->getBdd();
             $req = $database->prepare("UPDATE utilisateurs 
-            SET nom = :nom, prenom = :prenom, email = :email, role = :role  
+            SET nom = :nom, prenom = :prenom,  email = :email, role = :role  
             WHERE id_utilisateur = :id_utilisateur");
 
             $req->execute([

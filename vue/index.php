@@ -121,7 +121,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <nav>
         <ul>
 
-            <li><a href="#catalogue">Catalogue</a></li>
+            <li><a href="catalogue.php">Catalogue</a></li>
             <li><a href="#reseauxsociaux">Nous suivre</a></li>
             <li><a href="#apropos">Informations</a></li>
             <button type="button" class="btn btn-black dropdown-toggle" style="color: #a0522d" data-bs-toggle="dropdown" aria-expanded="false">

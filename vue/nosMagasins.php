@@ -56,39 +56,39 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 <header>
     <div class="d-flex justify-content-center align-items-center position-relative">
 
+    </div>
+
+    <form action="index.php" method="get" class="position-absolute start-0 ms-3">
+        <button type="submit" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Retour
+        </button>
+    </form>
+
+    <div class="logo"><a href="index.php"><img src="../assets/img/LOGO-PARISTANBUL-300x94.png"></a></div>
+    <div class="d-flex justify-content-center align-items-center position-relative ">
+        <div class="btn-group position-absolute end-0 me-3">
+
+
         </div>
 
-        <form action="index.php" method="get" class="position-absolute start-0 ms-3">
-            <button type="submit" class="btn btn-secondary">
-                <i class="bi bi-arrow-left-circle"></i> Retour
+    </div>
+
+    <nav>
+        <ul>
+
+            <li><a href="#catalogue">Catalogue</a></li>
+            <li><a href="#reseauxsociaux">Nous suivre</a></li>
+            <li><a href="#apropos">Informations</a></li>
+            <button type="button" class="btn btn-black dropdown-toggle" style="color: #a0522d" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-square"></i>
             </button>
-        </form>
-
-        <div class="logo"><a href="index.php"><img src="../assets/img/LOGO-PARISTANBUL-300x94.png"></a></div>
-        <div class="d-flex justify-content-center align-items-center position-relative ">
-            <div class="btn-group position-absolute end-0 me-3">
 
 
-            </div>
-
-        </div>
-
-        <nav>
-            <ul>
-
-                <li><a href="#catalogue">Catalogue</a></li>
-                <li><a href="#reseauxsociaux">Nous suivre</a></li>
-                <li><a href="#apropos">Informations</a></li>
-                <button type="button" class="btn btn-black dropdown-toggle" style="color: #a0522d" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-person-square"></i>
-                </button>
+        </ul>
 
 
-            </ul>
-
-
-            </ul>
-        </nav>
+        </ul>
+    </nav>
 
 </header>
 <div class="catalogue">
@@ -109,16 +109,10 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
         
     ');
         $req->execute(['search' => '%' . $search . '%']);
-    } else {
-        $req = $pdo->query('
-        SELECT *
-        FROM magasins
-    ');
-    }
+    } else { $req = $pdo->prepare('SELECT * FROM magasins where ville_magasin =:"villierLeB"');
+        ($magasins = $req->execute());
+        $magasins = $req->fetchAll();
 
-
-
-    while ($magasins = $req->fetch(PDO::FETCH_ASSOC)) {
         $ville = $magasins['ville_magasin'];
         $rue = $magasins['rue'];
         $cp = $magasins['cp'];
@@ -128,12 +122,14 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
         echo '<div class="film-info">';
         echo '<u><h2>magasins: ' . htmlspecialchars($ville) . '</h2></u>';
         echo '<p>' . htmlspecialchars($rue)  . htmlspecialchars($cp) .  '</p>';
-        echo '<form action="index.php" method="get">
+        echo '<form action="../vue/villeMagasin/magasinVillierLeBel1.php" method="get">
               <button type="submit" class="btn btn-dark" name="destination" value="' . htmlspecialchars($ville) . '">voir +</button>
           </form>';
         echo '</div>';
         echo '</div>';
     }
+
+
 
     ?>
 

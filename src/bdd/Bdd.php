@@ -2,7 +2,6 @@
 
 namespace bdd;
 use \PDO;
-use PDOException;
 
 class Bdd
 {

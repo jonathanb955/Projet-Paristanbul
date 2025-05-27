@@ -40,7 +40,7 @@ if (isset($_GET['error']) && $_GET['error'] == 'unauthorized') {
             <button type="submit" class="btn">Se connecter</button>
         </form>
         <p class="footer">Vous n'avez pas de compte ? <a href="pageInscription.php">Créez-en un</a></p>
-        <p class="footer"> <a href="index.php">Retourner à l'accueil</a></p>
+        <p class="footer"> <a href="../index.php">Retourner à l'accueil</a></p>
     </div>
 </div>
 </body>
