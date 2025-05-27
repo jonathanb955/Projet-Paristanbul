@@ -26,7 +26,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <title>Paristanbul</title>
 
     <!-- Feuilles de style -->
-    <link rel="stylesheet" href="../assets/css/nosMagasins.css">
+    <link rel="stylesheet" href="../../assets/css/magasinsVille.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -41,7 +41,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/catalogue.css">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="web site icon" type="png" href="https://previews.123rf.com/images/jovanas/jovanas1602/jovanas160201149/52031915-logo-avi%C3%B3n-volando-alrededor-del-planeta-tierra-azul.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -58,13 +58,13 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
     </div>
 
-    <form action="index.php" method="get" class="position-absolute start-0 ms-3">
+    <form action="../index.php" method="get" class="position-absolute start-0 ms-3">
         <button type="submit" class="btn btn-secondary">
             <i class="bi bi-arrow-left-circle"></i> Retour
         </button>
     </form>
 
-    <div class="logo"><a href="index.php"><img src="../assets/img/LOGO-PARISTANBUL-300x94.png"></a></div>
+    <div class="logo"><a href="../index.php"><img src="../../assets/img/LOGO-PARISTANBUL-300x94.png"></a></div>
     <div class="d-flex justify-content-center align-items-center position-relative ">
         <div class="btn-group position-absolute end-0 me-3">
 
@@ -91,75 +91,40 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     </nav>
 
 </header>
-<div class="catalogue">
+<div class="texte-ambition">
+    <div class="video">
+        <iframe class="elementor-video"  width="500" height="281"  frameborder="0"
+                allowfullscreen
+                allow="autoplay; encrypted-media; picture-in-picture; clipboard-write; accelerometer; gyroscope
+encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                title="SUPERMARCHE PARISTANBUL ( TOUS NOS MAGASINS À L'EXTERIEURE"
+                src="https://www.youtube-nocookie.com/embed/tVr152vEHNY?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1" id="widget2" data-gtm-yt-inspected-9="true"></iframe>
+    </div>
+    <div class="texte" style="border-style: solid; border-radius: 10px; padding: 5px;">
+        <p><em>Notre ambition est de devenir le commerce de proximité préféré et d’être<br>
+                l’acteur de référence en matière de qualité et service, avec une équipe <br>
+                professionnelle et expérimentée qui a pour mission la satisfaction de sa<br>
+                clientèle. <br><br>
+                Nos supermarchés constituent, en effet, un véritable lieu d’échanges et de<br>
+                gourmandises pour une meilleure expérience d’achat.<br><br>
 
-    <?php
+                Voici les raisons pour lesquelles vous choisirez Paristanbul :<br>
 
-    $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+                – Pour ses produits d’exceptions et de qualités,<br>
+                – Pour son personnel chaleureux à votre écoute,<br>
+                – Pour son hygiène irréprochable,<br>
+                – Pour le bon rapport qualité/prix …<br><br>
 
-
-    $search = isset($_GET['search']) ? $_GET['search'] : '';
-
-
-    if ($search) {
-        $req = $pdo->prepare('
-        SELECT *
-        FROM magasins
-        WHERE magasins.ville_magasin LIKE :search
-        
-    ');
-        $req->execute(['search' => '%' . $search . '%']);
-    } else { $req = $pdo->prepare('SELECT * FROM magasins where ville_magasin =:"villierLeB"');
-        ($magasins = $req->execute());
-        $magasins = $req->fetchAll();
-
-        $ville = $magasins['ville_magasin'];
-        $rue = $magasins['rue'];
-        $cp = $magasins['cp'];
-        $image = $magasins['image'];
-        echo '<div class="film-card">';
-        echo '<img src="' . htmlspecialchars($image) . '" alt="Photo de ' . htmlspecialchars($ville) . '" class="magasins-photo">';
-        echo '<div class="film-info">';
-        echo '<u><h2>magasins: ' . htmlspecialchars($ville) . '</h2></u>';
-        echo '<p>' . htmlspecialchars($rue)  . htmlspecialchars($cp) .  '</p>';
-        echo '<form action="../vue/villeMagasin/magasinVillierLeBel1.php" method="get">
-              <button type="submit" class="btn btn-dark" name="destination" value="' . htmlspecialchars($ville) . '">voir +</button>
-          </form>';
-        echo '</div>';
-        echo '</div>';
-}
-
-
-
-
-
-    ?>
-
+                A vous de garnir vos assiettes avec notre large gamme de variétés proposées….</em></p>
+    </div>
 </div>
-
+<br>
+<br>
+<section id="catalogue">
 
 
 <main>
 
-    <div class="recherche">
-        <form id="search-form">
-            <div class="trouver-magasin">
-                <label for="magasin" class="form-label">Trouver un magasin</label>
-                <div class="search-group">
-                    <input type="search" name="magasin" id="magasin" class="form-control" placeholder="Saisir une ville, un code postal...">
-                    <button type="submit" class="search-button" aria-label="Rechercher">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </div>
-        </form>
-
-
-        <div id="map">
-            <!-- Ici la carte -->
-        </div>
-
-    </div>
 
 
 
