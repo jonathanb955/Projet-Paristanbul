@@ -31,20 +31,20 @@
 
     <div>
         <label for="mdp">Mot de passe :</label>
-        <input type="password" id="mdp" name="mdp" minlength="12" required>
+        <input type="password" id="mdp" name="mdp" minlength="2" required>
     </div>
 
     <div>
         <label for="passwordConfirm">Confirmer le mot de passe :</label>
-        <input type="password" id="mdpC" name="mdpC" minlength="12" required>
+        <input type="password" id="mdpC" name="mdpC" minlength="2" required>
     </div>
 
     <?php
     if (isset($_GET['parametre'])) {
         if ($_GET['parametre'] == 'mdp') {
             echo "<p style='color: red;'>❌ Les mots de passe ne correspondent pas.</p>";
-        } elseif ($_GET['parametre'] == 'mdpCourt') {
-            echo "<p style='color: red;'>❌ Le mot de passe doit contenir au moins 12 caractères.</p>";
+       // } //elseif ($_GET['parametre'] == 'mdpCourt') {
+           // echo "<p style='color: red;'>❌ Le mot de passe doit contenir au moins 12 caractères.</p>";
         } elseif ($_GET['parametre'] == 'doublon') {
             echo "<p style='color: red;'>❌ Un compte avec cet email existe déjà.</p>";
         } elseif ($_GET['parametre'] == 'champsVides') {

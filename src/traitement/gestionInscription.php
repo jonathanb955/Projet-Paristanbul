@@ -12,7 +12,7 @@ if (!empty($_POST["email"]) &&
     !empty($_POST["mdp"]) &&
     !empty($_POST["mdpC"])) {
 
-    if (strlen($_POST["mdp"]) < 12) {
+    if (strlen($_POST["mdp"]) < 2) {
         header("Location: ../../vue/pageInscription.php?parametre=mdp");
         exit();
     }
@@ -22,7 +22,7 @@ if (!empty($_POST["email"]) &&
         $hashpassword = password_hash($_POST["mdp"], PASSWORD_DEFAULT);
         session_start();
 
-        $utilisateurRepository = new UtilisateursRepository();
+        $utilisateurRepository = new utilisateursRepository();
         $nbutilisateur=$utilisateurRepository->nombreUtilisateur();
         if($nbutilisateur==0) {
             $role="admin";
@@ -46,6 +46,8 @@ if (!empty($_POST["email"]) &&
             $_SESSION["email"] = $_POST["email"];
             $_SESSION["mdp"] = $_POST["mdp"];
             $_SESSION["role"] = $role;
+            $_SESSION["ville_residence"] = $_POST["ville_residence"];
+            $_SESSION["date_naissance"] = $_POST["date_naissance"];
             $_SESSION["nom"] = $_POST["nom"];
             $_SESSION["prenom"] = $_POST["prenom"];
 
