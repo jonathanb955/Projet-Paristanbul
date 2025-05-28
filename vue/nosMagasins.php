@@ -109,25 +109,53 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
         
     ');
         $req->execute(['search' => '%' . $search . '%']);
-    } else { $req = $pdo->prepare('SELECT * FROM magasins where ville_magasin =:"villierLeB"');
+    } else {
+        $req = $pdo->prepare('SELECT * FROM magasins ');
         ($magasins = $req->execute());
         $magasins = $req->fetchAll();
+        foreach ($magasins as $magasin) {
+            $ville = $magasin['ville_magasin'];
+            $rue = $magasin['rue'];
+            $cp = $magasin['cp'];
+            $image = $magasin['image'];
 
-        $ville = $magasins['ville_magasin'];
-        $rue = $magasins['rue'];
-        $cp = $magasins['cp'];
-        $image = $magasins['image'];
-        echo '<div class="film-card">';
-        echo '<img src="' . htmlspecialchars($image) . '" alt="Photo de ' . htmlspecialchars($ville) . '" class="magasins-photo">';
-        echo '<div class="film-info">';
-        echo '<u><h2>magasins: ' . htmlspecialchars($ville) . '</h2></u>';
-        echo '<p>' . htmlspecialchars($rue)  . htmlspecialchars($cp) .  '</p>';
-        echo '<form action="../vue/villeMagasin/magasinVillierLeBel1.php" method="get">
-              <button type="submit" class="btn btn-dark" name="destination" value="' . htmlspecialchars($ville) . '">voir +</button>
-          </form>';
-        echo '</div>';
-        echo '</div>';
-}
+            // Choix du fichier selon la ville
+            switch (strtolower($ville)) {
+                case 'villiers-le-bel':
+                    $fichier = 'magasinVillierLeBel1.php';
+                    break;
+                case 'drancy':
+                    $fichier = 'magasinDrancy.php';
+                    break;
+                case 'bondy':
+                    $fichier = 'magasinBondy.php';
+                    break;
+                case 'villemomble':
+                    $fichier = 'magasinVillemomble.php';
+                    break;
+                case 'nogent-sur-oise':
+                    $fichier = 'magasinNogentSurOise.php';
+                    break;
+                case 'paris':
+                    $fichier = 'magasinVillierLeBel2.php';
+                    break;
+            }
+
+            echo '<div class="film-card">';
+            echo '<img src="' . htmlspecialchars($image) . '" alt="Photo de ' . htmlspecialchars($ville) . '" class="magasins-photo">';
+            echo '<div class="film-info">';
+            echo '<u><h2>Magasin : ' . htmlspecialchars($ville) . '</h2></u>';
+            echo '<p>' . htmlspecialchars($rue) . " " . htmlspecialchars($cp) . '</p>';
+            echo '<form action="../../vue/villeMagasin/' . $fichier . '" method="get">';
+            echo '<button type="submit" class="btn btn-dark" value="' . htmlspecialchars($ville) . '">Voir +</button>';
+            echo '</form>';
+            echo '</div>';
+            echo '</div>';
+        }
+
+
+
+    }
 
 
 
