@@ -24,11 +24,9 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paristanbul</title>
-    <base href="/paristanbul/" />
 
     <!-- Feuilles de style -->
-    <link rel="stylesheet" href="/assets/css/nosMagasins.css">
-
+    <link rel="stylesheet" href="../assets/css/nosMagasins.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -43,7 +41,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="../assets/css/catalogue.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="web site icon" type="png" href="https://previews.123rf.com/images/jovanas/jovanas1602/jovanas160201149/52031915-logo-avi%C3%B3n-volando-alrededor-del-planeta-tierra-azul.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -60,13 +58,13 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
     </div>
 
-    <form action="../nosMagasinsss.php" method="get" class="position-absolute start-0 ms-3">
+    <form action="index.php" method="get" class="position-absolute start-0 ms-3">
         <button type="submit" class="btn btn-secondary">
             <i class="bi bi-arrow-left-circle"></i> Retour
         </button>
     </form>
 
-    <div class="logo"><a href="../index.php"><img src="../../assets/img/LOGO-PARISTANBUL-300x94.png"></a></div>
+    <div class="logo"><a href="index.php"><img src="../assets/img/LOGO-PARISTANBUL-300x94.png"></a></div>
     <div class="d-flex justify-content-center align-items-center position-relative ">
         <div class="btn-group position-absolute end-0 me-3">
 
@@ -93,19 +91,100 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     </nav>
 
 </header>
+<div class="catalogue">
 
-<br>
-<br>
+    <?php
+
+    $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+
+
+    $search = isset($_GET['search']) ? $_GET['search'] : '';
+
+
+    if ($search) {
+        $req = $pdo->prepare('
+        SELECT *
+        FROM magasins
+        WHERE magasins.ville_magasin LIKE :search
+        
+    ');
+        $req->execute(['search' => '%' . $search . '%']);
+    } else {
+        $req = $pdo->prepare('SELECT * FROM magasins ');
+        ($magasins = $req->execute());
+        $magasins = $req->fetchAll();
+        foreach ($magasins as $magasin) {
+            $ville = $magasin['ville_magasin'];
+            $rue = $magasin['rue'];
+            $cp = $magasin['cp'];
+            $image = $magasin['image'];
+
+            // Choix du fichier selon la ville
+            switch (strtolower($ville)) {
+                case 'villiers-le-bel':
+                    $fichier = 'magasinVillierLeBel1.php';
+                    break;
+                case 'drancy':
+                    $fichier = 'magasinDrancy.php';
+                    break;
+                case 'bondy':
+                    $fichier = 'magasinBondy.php';
+                    break;
+                case 'villemomble':
+                    $fichier = 'magasinVillemomble.php';
+                    break;
+                case 'nogent-sur-oise':
+                    $fichier = 'magasinNogentSurOise.php';
+                    break;
+                case 'paris':
+                    $fichier = 'magasinVillierLeBel2.php';
+                    break;
+            }
+
+            echo '<div class="film-card">';
+            echo '<img src="' . htmlspecialchars($image) . '" alt="Photo de ' . htmlspecialchars($ville) . '" class="magasins-photo">';
+            echo '<div class="film-info">';
+            echo '<u><h2>Magasin : ' . htmlspecialchars($ville) . '</h2></u>';
+            echo '<p>' . htmlspecialchars($rue) . " " . htmlspecialchars($cp) . '</p>';
+            echo '<form action="../../vue/villeMagasin/' . $fichier . '" method="get">';
+            echo '<button type="submit" class="btn btn-dark" value="' . htmlspecialchars($ville) . '">Voir +</button>';
+            echo '</form>';
+            echo '</div>';
+            echo '</div>';
+        }
+
+
+
+    }
+
+
+
+
+
+    ?>
+
+</div>
+
+
 
 <main>
-    <!-- Texte et image du magasin-->
 
-    <div class = "description_magasin">
-        <div class ="image">
+    <div class="recherche">
+        <form id="search-form">
+            <div class="trouver-magasin">
+                <label for="magasin" class="form-label">Trouver un magasin</label>
+                <div class="search-group">
+                    <input type="search" name="magasin" id="magasin" class="form-control" placeholder="Saisir une ville, un code postal...">
+                    <button type="submit" class="search-button" aria-label="Rechercher">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
 
-        </div>
-        <div class ="description">
 
+        <div id="map">
+            <!-- Ici la carte -->
         </div>
 
     </div>

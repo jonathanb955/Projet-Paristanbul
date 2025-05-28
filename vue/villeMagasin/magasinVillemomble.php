@@ -58,7 +58,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 
     </div>
 
-    <form action="../nosMagasins.php" method="get" class="position-absolute start-0 ms-3">
+    <form action="../nosMagasinsss.php" method="get" class="position-absolute start-0 ms-3">
         <button type="submit" class="btn btn-secondary">
             <i class="bi bi-arrow-left-circle"></i> Retour
         </button>

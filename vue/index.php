@@ -41,7 +41,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
 
 
 </head>
@@ -133,9 +133,9 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
                     <li><hr class="dropdown-divider"></li>
 
                     <?php if ($_SESSION['role'] === 'admin'): ?>
-                        <li><a class="dropdown-item" href="../../Projet-Vol/vue/pageAdmin.php"><i class="bi bi-shield-lock-fill"></i> Espace Admin</a></li>
+                        <li><a class="dropdown-item" href="../../Projet-Paristanbul/vue/pageAdmin.php"><i class="bi bi-shield-lock-fill"></i> Espace Admin</a></li>
                     <?php else: ?>
-                        <li><a class="dropdown-item" href="../../Projet-Vol/vue/espaceClient.php"><i class="bi bi-person-circle"></i> Espace Client</a></li>
+                        <li><a class="dropdown-item" href="../../Projet-Paristanbul/vue/espaceClient.php"><i class="bi bi-person-circle"></i> Espace Client</a></li>
                     <?php endif; ?>
 
                     <li><hr class="dropdown-divider"></li>
@@ -231,7 +231,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
         </div>
         <div class="info-box fade-in">
             <i class="bi bi-shop-window" style="font-size: 25px; color:#a0522d "></i>
-            <h3><a href="nosMagasins.php" style="color: #a0522d  ; text-decoration: none;">Nos magasins </a></h3>
+            <h3><a href="nosMagasinsss.php" style="color: #a0522d  ; text-decoration: none;">Nos magasins </a></h3>
             <p>Produits frais, qualité garantie. Retrouvez tout ce dont vous avez besoin chez vous.</p>
         </div>
         <div class="info-box fade-in">
