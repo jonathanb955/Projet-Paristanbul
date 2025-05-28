@@ -51,37 +51,44 @@ if (!isset($_SESSION['connexion']) || $_SESSION['connexion'] !== true || $_SESSI
     <div class="card-grid">
         <div class="admin-card">
             <h5>Utilisateurs</h5>
-            <a href="listeUtilisateurs.php">Accéder</a>
+            <a href="liste/listeUtilisateurs.php">Accéder</a>
         </div>
         <div class="admin-card">
-            <h5>Vols</h5>
+            <h5>Catégories</h5>
+            <a href="listePilotes.php">Accéder</a>
+        </div>
+        <div class="admin-card">
+            <h5>Sous-catégories</h5>
+            <a href="listePilotes.php">Accéder</a>
+        </div>
+        <div class="admin-card">
+            <h5>Produits</h5>
             <a href="listeVols.php">Accéder</a>
         </div>
         <div class="admin-card">
-            <h5>Avions</h5>
-            <a href="listeAvions.php">Accéder</a>
-        </div>
-        <div class="admin-card">
-            <h5>Pilotes</h5>
-            <a href="listePilotes.php">Accéder</a>
+            <h5>Magasins</h5>
+            <a href="liste/listeMagasins.php">Accéder</a>
         </div>
     </div>
 
     <h3 class="text-white mt-5 mb-3">Ajouts</h3>
     <div class="card-grid">
         <div class="admin-card">
-            <h5>Ajout d'un vol</h5>
+            <h5>Ajout d'une catégorie</h5>
             <a href="ajoutVols.php">Accéder</a>
         </div>
         <div class="admin-card">
-            <h5>Ajout d'un avion</h5>
-            <a href="ajoutsAvion.php">Accéder</a>
+            <h5>Ajout d'une sous-catégorie</h5>
+            <a href="ajoutVols.php">Accéder</a>
         </div>
         <div class="admin-card">
-            <h5>Ajout d'un pilote</h5>
-            <a href="ajoutPilote.php">Accéder</a>
+            <h5>Ajout d'un produit</h5>
+            <a href="ajoutVols.php">Accéder</a>
         </div>
-
+        <div class="admin-card">
+            <h5>Ajout d'un magasin</h5>
+            <a href="ajoutsAvion.php">Accéder</a>
+        </div>
     </div>
 
 
@@ -90,7 +97,7 @@ if (!isset($_SESSION['connexion']) || $_SESSION['connexion'] !== true || $_SESSI
 <br>
 <br>
 
-<form action="../index.php" method="get" class="bouton-retour">
+<form action="index.php" method="get" class="bouton-retour">
     <button type="submit" class="btn  partenaire" style="background-color: #0d6efd ; color: white; text-align: center">Retour</button>
 </form>
 </body>
