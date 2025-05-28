@@ -24,9 +24,11 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paristanbul</title>
+    <base href="/paristanbul/" />
 
     <!-- Feuilles de style -->
-    <link rel="stylesheet" href="../../assets/css/magasinsVille.css">
+    <link rel="stylesheet" href="/assets/css/nosMagasins.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -98,15 +100,15 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 <main>
     <!-- Texte et image du magasin-->
 
-<div class = "description_magasin">
-    <div class ="image">
+    <div class = "description_magasin">
+        <div class ="image">
+
+        </div>
+        <div class ="description">
+
+        </div>
 
     </div>
-    <div class ="description">
-
-    </div>
-
-</div>
 
 
 

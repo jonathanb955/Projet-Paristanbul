@@ -98,15 +98,15 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
 <main>
     <!-- Texte et image du magasin-->
 
-<div class = "description_magasin">
-    <div class ="image">
+    <div class = "description_magasin">
+        <div class ="image">
+
+        </div>
+        <div class ="description">
+
+        </div>
 
     </div>
-    <div class ="description">
-
-    </div>
-
-</div>
 
 
 
