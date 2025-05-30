@@ -126,16 +126,13 @@ $connecte = isset($_SESSION['connexion']) && $_SESSION['connexion'] === true;
         echo '<div class="film-info">';
         echo '<u><h2>Produit: ' . htmlspecialchars($nom) . '</h2></u>';
         echo '<form action="reservation.php" method="get">
-              <button type="submit" class="btn btn-dark" name="destination" value="' . htmlspecialchars($nom) . '">Voir les vols</button>
+              <button type="submit" class="btn btn-dark" name="destination" value="' . htmlspecialchars($nom) . '">Voir le produit</button>
           </form>';
         echo '</div>';
         echo '</div>';
     }
 
     ?>
-
-</div>
-
 </body>
 </html>
 

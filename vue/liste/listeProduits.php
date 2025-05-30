@@ -61,7 +61,7 @@ $pdo = $bdd->getBdd();
 $query = "SELECT * FROM produits";
 $stmt = $pdo->prepare($query);
 $stmt->execute();
-$utilisateurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <div class="container mt-5">
@@ -82,16 +82,16 @@ $utilisateurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($utilisateurs as $utilisateur): ?>
+                <?php foreach ($produits as $produit): ?>
                     <tr>
-                        <td><?= htmlspecialchars($utilisateur['id_produit']) ?></td>
-                        <td><?= htmlspecialchars($utilisateur['nom_produit']) ?></td>
-                        <td><?= htmlspecialchars($utilisateur['photo']) ?></td>
-                        <td><?= htmlspecialchars($utilisateur['ref_categorie']) ?></td>
-                        <td><?= htmlspecialchars($utilisateur['ref_sous_categorie']) ?></td>
+                        <td><?= htmlspecialchars($produit['id_produit']) ?></td>
+                        <td><?= htmlspecialchars($produit['nom_produit']) ?></td>
+                        <td><?= htmlspecialchars($produit['photo']) ?></td>
+                        <td><?= htmlspecialchars($produit['ref_categorie']) ?></td>
+                        <td><?= htmlspecialchars($produit['ref_sous_categorie']) ?></td>
                         <td class="text-center">
-                            <a href="../modifAdmin/modifUtilisateur.php?id_utilisateur=<?= $utilisateur['id_utilisateur'] ?>" class="btn btn-warning btn-sm me-2">Modifier</a>
-                            <a href="../suppAdmin/suppUtilisateur.php?id_utilisateur=<?= $utilisateur['id_utilisateur'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">Supprimer</a>
+                            <a href="../modifAdmin/modifUtilisateur.php?id_utilisateur=<?= $produit['id_utilisateur'] ?>" class="btn btn-warning btn-sm me-2">Modifier</a>
+                            <a href="../suppAdmin/suppUtilisateur.php?id_utilisateur=<?= $produit['id_utilisateur'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">Supprimer</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
