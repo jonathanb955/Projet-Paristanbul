@@ -63,7 +63,7 @@ if (!isset($_SESSION['connexion']) || $_SESSION['connexion'] !== true || $_SESSI
         </div>
         <div class="admin-card">
             <h5>Produits</h5>
-            <a href="listeVols.php">Accéder</a>
+            <a href="liste/listeProduits.php">Accéder</a>
         </div>
         <div class="admin-card">
             <h5>Magasins</h5>
@@ -83,7 +83,7 @@ if (!isset($_SESSION['connexion']) || $_SESSION['connexion'] !== true || $_SESSI
         </div>
         <div class="admin-card">
             <h5>Ajout d'un produit</h5>
-            <a href="ajoutVols.php">Accéder</a>
+            <a href="liste/listeProduits.php">Accéder</a>
         </div>
         <div class="admin-card">
             <h5>Ajout d'un magasin</h5>
