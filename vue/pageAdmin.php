@@ -55,11 +55,11 @@ if (!isset($_SESSION['connexion']) || $_SESSION['connexion'] !== true || $_SESSI
         </div>
         <div class="admin-card">
             <h5>Catégories</h5>
-            <a href="listePilotes.php">Accéder</a>
+            <a href="">Accéder</a>
         </div>
         <div class="admin-card">
             <h5>Sous-catégories</h5>
-            <a href="listePilotes.php">Accéder</a>
+            <a href="">Accéder</a>
         </div>
         <div class="admin-card">
             <h5>Produits</h5>

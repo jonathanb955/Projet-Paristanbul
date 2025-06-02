@@ -1,3 +1,4 @@
+
 <?php
 
 use bdd\Bdd;
@@ -10,13 +11,12 @@ if (isset($_GET['logout'])) {
 }
 $connecte = isset($_SESSION['connexion']) && $_SESSION['connexion'] === true;
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Nos magasins</title>
-    <link rel="stylesheet" href="../assets/css/nosMagasins.css">
+    <title>Détail magasin</title>
+    <link rel="stylesheet" href="../assets/css/detailMag.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="web site icon" type="png" href="https://previews.123rf.com/images/jovanas/jovanas1602/jovanas160201149/52031915-logo-avi%C3%B3n-volando-alrededor-del-planeta-tierra-azul.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -26,7 +26,7 @@ $connecte = isset($_SESSION['connexion']) && $_SESSION['connexion'] === true;
 <header>
     <div class="d-flex justify-content-center align-items-center position-relative">
 
-        <form action="index.php" method="get" class="position-absolute start-0 ms-3">
+        <form action="nosMagasins.php" method="get" class="position-absolute start-0 ms-3">
             <button type="submit" class="btn btn-secondary">
                 <i class="bi bi-arrow-left-circle"></i> Retour
             </button>
@@ -51,71 +51,52 @@ $connecte = isset($_SESSION['connexion']) && $_SESSION['connexion'] === true;
             </ul>
         </div>
 
-        <h1 class="mb-0" style="text-transform: capitalize">Supermarché Paristanbul</h1>
+        <h1 class="mb-0" style="text-transform: capitalize"> Paristanbul <?= htmlspecialchars($_GET['ville_magasin']) ?> </h1>
     </div>
 </header>
 
-<h1 class="title"><u>Nos magasins à votre disposition</u></h1>
+<?php
+if (isset($_GET['ville_magasin'])) {
 
 
-<form action="" method="GET">
-    <input type="text" name="search" placeholder="Rechercher une destination..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-    <button type="submit">Rechercher</button>
-</form>
 
-<div class="catalogue">
-
-    <?php
+    $villeMagasin = $_GET['ville_magasin'];
 
     $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $query = 'SELECT * FROM magasins WHERE ville_magasin = :ville_magasin';
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':ville_magasin', $villeMagasin, PDO::PARAM_STR);
+    $stmt->execute();
+
+    $magasins = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($magasins) {
+
+
+        foreach ($magasins as $magasin) {
+           echo '<div class="film-card">';
+    echo '<img src="' . htmlspecialchars($magasin['image']) . '" alt="Image avion">';
+    echo '<div class="film-info">';
+    echo '<u><h5 style="text-align: center">Le magasin Paristanbul de ' . htmlspecialchars($magasin['ville_magasin']) . ' vous souhaite la bienvenue!</h5></u>';
+    echo '<br><p><strong>Adresse :</strong> ' . htmlspecialchars($magasin['rue'])  . ',       '. htmlspecialchars($magasin['cp']) .  '       ' . htmlspecialchars($magasin['ville_magasin']) .'</p>';
+    echo '<p><strong>Téléphone :</strong> ' . htmlspecialchars($magasin['num_tel']) . '</p>';
+    echo '<p><strong>Horaire ouverture :</strong> ' . htmlspecialchars($magasin['horaire_ouverture']) . '</p>';
+    echo '<p><strong>Horaire fermeture :</strong> ' . htmlspecialchars($magasin['horaire_fermeture']) . '</p>';
+    echo '<p><strong>Jours d\'ouvertures :</strong> ' . htmlspecialchars($magasin['jours_ouverture']) . '</p>';
+    echo '<p><strong>Vidéo du magasin :</strong> ' . htmlspecialchars($magasin['video_magasin']) . '</p>';
+    echo '</div>';
+    echo '</div>';
+}
 
 
 
-    $search = isset($_GET['search']) ? $_GET['search'] : '';
-
-
-    if ($search) {
-        $req = $pdo->prepare('
-        SELECT ville_magasin, MIN(image) as image, rue, cp
-        FROM magasins
-        WHERE ville_magasin LIKE :search
-        GROUP BY ville_magasin
-    ');
-        $req->execute(['search' => '%' . $search . '%']);
-    } else {
-        $req = $pdo->query('
-        SELECT ville_magasin, MIN(image) as image, rue, cp
-        FROM magasins
-        GROUP BY ville_magasin
-    ');
     }
+} else {
+    echo '<p>Aucun magasin trouvé pour cette ville.</p>';
 
-
-
-    ($magasins = $req->fetchAll());
-    foreach ($magasins as $magasin) {
-        $nom = $magasin['ville_magasin'];
-        $img = $magasin['image'];
-        $rue=$magasin['rue'];
-        $cp=$magasin['cp'];
-        echo '<div class="film-card">';
-        echo '<img src="' . htmlspecialchars($img) . '" alt="Photo de ' . htmlspecialchars($nom) . '" class="destination-photo">';
-        echo '<div class="film-info">';
-        echo '<h2 style="text-align: center"><u>Ville:</u> ' .  htmlspecialchars($nom) .'</h2>';
-        echo '<h5 style="font-size: 15px; line-height: 15px; text-align: center"><u>Adresse:</u> ' .  htmlspecialchars($rue) . '<br>' .     htmlspecialchars($cp) .  '       ' .   htmlspecialchars($nom) .'</h5>';
-        echo '<form action="detailMag.php" method="get">
-          <button type="submit" class="btn btn-dark" name="ville_magasin" value="' . htmlspecialchars($nom) . '">Détail</button>
-      </form>';
-        echo '</div>';
-        echo '</div>';
-    }
-
-
-
-    ?>
-
-</div>
+}
+?>
 
 </body>
 </html>

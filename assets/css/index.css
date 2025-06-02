@@ -31,6 +31,7 @@ header {
     align-items: center;
     position: relative;
     border-bottom: 2px solid #e0c097;
+    margin-top: 0 !important;
 }
 
 .logo img {
@@ -337,5 +338,216 @@ footer {
 .fade-in.visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+.reseauxEnseigne i {
+    font-size: 2rem;
+    margin: 0 1rem;
+    transition: transform 0.3s ease;
+    text-align: left;
+}
+
+.reseauxEnseigne i:hover {
+    transform: scale(1.2);
+    text-align: left;
+}
+#piedDePageInfo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 40px 80px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#piedDePageInfo h2 {
+    display: none;
+}
+
+#piedDePageInfo h3 {
+    color: #cc5520;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.texteEnseigne,
+.rejoindreEnseigne,
+.reseauxEnseigne {
+    flex: 1 1 200px;
+    margin: 0 20px;
+    min-width: 220px;
+}
+
+#piedDePageInfo a {
+    display: block;
+    color: #000;
+    text-decoration: none;
+    margin-bottom: 8px;
+    transition: color 0.3s ease;
+    font-size: 14px;
+}
+
+#piedDePageInfo a:hover {
+    color: #cc5520;
+}
+
+.reseauxEnseigne i {
+    margin-right: 6px;
+}
+#piedDePageInfo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 30px 60px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    gap: 20px;
+}
+
+#piedDePageInfo h2 {
+    display: none;
+}
+
+#piedDePageInfo h3 {
+    color: #cc5520;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.texteEnseigne,
+.rejoindreEnseigne,
+.reseauxEnseigne {
+    flex: 1 1 200px;
+    min-width: 200px;
+    margin: 0 10px;
+}
+
+#piedDePageInfo a {
+    display: block;
+    color: #000;
+    text-decoration: none;
+    margin-bottom: 3px;
+    font-size: 13.5px;
+    transition: color 0.3s ease;
+}
+
+#piedDePageInfo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 40px 60px;
+    background-color: white;
+    border-top: 1px solid #ccc;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+.footer-col {
+    flex: 1 1 180px;
+    padding: 0 20px;
+    border-right: 1px solid #ddd;
+}
+
+.footer-col:last-child {
+    border-right: none;
+}
+
+.footer-col h2.logo {
+    color: #cc5520;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.footer-col h3 {
+    color: #cc5520;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.footer-col a {
+    display: block;
+    margin-bottom: 6px;
+    color: #000;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-col a:hover {
+    color: #cc5520;
+}
+
+.footer-col i {
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #piedDePageInfo {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .footer-col {
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+        padding: 15px 0;
+    }
+
+    .footer-col:last-child {
+        border-bottom: none;
+    }
+}
+.app-download {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 60px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    flex-wrap: wrap;
+}
+
+.app-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.app-logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.app-text p {
+    font-size: 16px;
+    color: #000;
+    margin: 0;
+}
+
+.app-right {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.store-btn {
+    height: 40px;
+}
+
+@media (max-width: 768px) {
+    .app-download {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+    }
+
+    .app-right {
+        margin-top: 15px;
+    }
 }
 

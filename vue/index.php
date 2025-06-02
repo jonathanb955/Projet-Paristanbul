@@ -122,6 +122,7 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
         <ul>
 
             <li><a href="catalogue.php">Catalogue</a></li>
+            <li><a href="nosMagasins.php">Nos magasins</a></li>
             <li><a href="#reseauxsociaux">Nous suivre</a></li>
             <li><a href="#apropos">Informations</a></li>
             <button type="button" class="btn btn-black dropdown-toggle" style="color: #a0522d" data-bs-toggle="dropdown" aria-expanded="false">
@@ -226,12 +227,12 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
     <section id="apropos">
         <div class="info-box fade-in">
             <i class="bi bi-book" style="font-size: 25px; color:#a0522d "></i>
-            <h3><a href="quiSommesNous.html" style="color: #a0522d ;  text-decoration: none;">À propos de nous</a></h3>
+            <h3><a href="quiSommesNous.html" style="color: #a0522d ;  text-decoration: none;">Notre histoire</a></h3>
             <p>Paristanbul, fondé par Metin Gultekin en 1993, est une entreprise familiale avec une histoire riche et des valeurs fortes.</p>
         </div>
         <div class="info-box fade-in">
             <i class="bi bi-shop-window" style="font-size: 25px; color:#a0522d "></i>
-            <h3><a href="nosMagasinsss.php" style="color: #a0522d  ; text-decoration: none;">Nos magasins </a></h3>
+            <h3><a href="nosMagasins.php" style="color: #a0522d  ; text-decoration: none;">Nos magasins </a></h3>
             <p>Produits frais, qualité garantie. Retrouvez tout ce dont vous avez besoin chez vous.</p>
         </div>
         <div class="info-box fade-in">
@@ -239,7 +240,6 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
             <h3><a href="quiSommesNous.html" style="color: #a0522d;   text-decoration: none;">Nous rejoindre </a></h3>
             <p>Envie de faire partie de l’aventure Paristanbul ? Postulez dès maintenant !</p>
         </div>
-
 
 
 
@@ -283,12 +283,76 @@ if ($connecte && isset($_SESSION['utilisateur']) && isset($_SESSION['utilisateur
             <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" class="text-danger"  data-aos="fade-up"  data-aos-once="true"><i class="bi bi-youtube"></i></a>
             <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" class="text-primary"  data-aos="fade-up"  data-aos-once="true"><i class="bi bi-facebook"></i></a>
             <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-warning" data-aos="fade-up"  data-aos-once="true"><i class="bi bi-instagram" style="color: #c32aa3" ></i></a>
-            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-dark" data-aos="fade-up"  data-aos-once="true"><i class="bi bi-tiktok" ></i></a>
+            <a href="https://www.tiktok.com/@supermarche_paristanbul" class="text-dark" data-aos="fade-up"  data-aos-once="true"><i class="bi bi-tiktok" ></i></a>
         </p>
     </section>
 
-</main>
 
+        <footer id="piedDePageInfo">
+            <div class="footer-col">
+                <h2 class="logo">paristanbul 🧿</h2>
+                <div>
+                    <h3>L’enseigne Paristanbul</h3>
+                    <a href="quiSommesNous.html">Notre histoire</a>
+                    <a href="#">Nos promotions</a>
+                    <a href="catalogue.php">Nos produits</a>
+                    <a href="#" style="color: black; text-decoration: none;"
+                       onclick="openModal(); return false;">Application mobile</a>
+                    <a href="nosMagasins.php">Trouver un magasin</a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h3>Informations légales</h3>
+                <a href="#">Mentions légales</a>
+                <a href="#">Conditions du programme fidélité</a>
+                <a href="#">Conditions de vente</a>
+                <a href="#">Conditions d’utilisation</a>
+            </div>
+
+            <div class="footer-col">
+                <h3>Vos données</h3>
+                <a href="#">Données personnelles</a>
+                <a href="#">Politique cookies</a>
+                <a href="#">Gérer les cookies</a>
+            </div>
+
+            <div class="footer-col">
+                <h3>Nous rejoindre</h3>
+                <a href="#">Nos offres d’emploi</a>
+                <a href="#">Nous contacter</a>
+            </div>
+
+            <div class="footer-col">
+                <h3>Suivez-nous</h3>
+                <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR"><i class="bi bi-facebook"></i> Facebook</a>
+                <a href="https://www.tiktok.com/@supermarche_paristanbul"><i class="bi bi-tiktok"></i> Tiktok</a>
+                <a href="https://www.instagram.com/paristanbul_supermarche/"><i class="bi bi-instagram"></i> Instagram</a>
+                <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe"><i class="bi bi-youtube"></i> Youtube</a>
+            </div>
+        </footer>
+        </section>
+
+    <section class="app-download">
+        <div class="app-left">
+            <img src="https://play-lh.googleusercontent.com/4-hTf32960CWp7N_cBSNN7UnH3UNHMzgye3wGzXqSp69-iAc7-88jwc1jPlkeqDktLE=w480-h960-rw" alt="Logo Paristanbul" class="app-logo">
+            <div class="app-text">
+                <p><strong>Télécharger l’application Paristanbul</strong><br>
+                    Vos produits préférés à portée de main.</p>
+            </div>
+        </div>
+        <div class="app-right">
+            <a href="https://apps.apple.com/id/app/paristanbul-plus/id6743162682" target="_blank">
+                <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" class="store-btn">
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=com.akead.paristanbul" target="_blank">
+                <img src="../assets/img/google-play-badge.cbe2afa.svg" alt="Google Play" class="store-btn">
+
+            </a>
+        </div>
+    </section>
+
+</main>
 <footer>
     <p>&copy; 2025 Paristanbul. Tous droits réservés.</p>
 </footer>
