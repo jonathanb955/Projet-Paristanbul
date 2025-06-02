@@ -1,0 +1,96 @@
+
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #f0f2f5, #dbe9f4);
+    color: #333;
+}
+
+.title {
+    text-align: center;
+    font-size: 2.5em;
+    margin: 30px 0;
+    color: black;
+}
+
+.film-card {
+    background-color: #ffffff;
+    margin: 20px auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 900px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+.film-card:hover {
+    transform: scale(1.02);
+}
+
+.film-card img {
+    max-width: 280px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.film-info {
+    flex: 1;
+    min-width: 250px;
+}
+
+.film-info h5 {
+    margin: 0 0 10px;
+    color: black;
+}
+
+.film-info p {
+    margin: 5px 0;
+    font-size: 1em;
+}
+
+button {
+    background-color: #2563eb;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    font-size: 1em;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #1e40af;
+}
+
+@media (max-width: 768px) {
+    .film-card {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .film-card img {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .film-info {
+        width: 100%;
+        text-align: center;
+    }
+}
+header {
+    background-color: #004080;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
