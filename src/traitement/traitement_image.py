@@ -1,22 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Feb 20 11:46:02 2025
-
-@author: romar
-"""
-
-import pymysql
-import pandas  as pd
-import matplotlib.pyplot as plt
-
-from bs4 import BeautifulSoup as bs
+import pandas as pd
 import requests
+import pymysql
+from bs4 import BeautifulSoup as bs
 import json
-from PIL import Image
-from io import BytesIO
-
-
-#1 Se connecter à la base de données
 conn = pymysql.connect(
     host='localhost',
     user='root',
@@ -39,7 +25,7 @@ with conn.cursor() as cursor:
       print(len(df_produits))
     finally :
      print("Récupération des produits effectué ")        
-conn.close()
+
 #------------------------Rechercche sur internet -----------------------------
 for produit in produits:
 
@@ -59,8 +45,9 @@ for produit in produits:
                 lst_images.append(img_url)
         except Exception as e:
             continue
-    
-    # Affichage des images trouvées
- 
-for img in lst_images :
-    print(img)
+      # Inserer les images dans la table SQL
+            print(f"\nProduit : {nom}")
+            for i, img in enumerate(lst_images[:2]):  # Affiche max les deux premiers
+                print(f"Lien {i + 1} : {img}")
+               
+        
