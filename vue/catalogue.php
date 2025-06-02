@@ -15,7 +15,7 @@ $connecte = isset($_SESSION['connexion']) && $_SESSION['connexion'] === true;
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Catalogue des Vols</title>
+    <title>Catalogue des produits</title>
     <link rel="stylesheet" href="../assets/css/nosMagasins.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -43,6 +43,7 @@ $connecte = isset($_SESSION['connexion']) && $_SESSION['connexion'] === true;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 <body>
+
 <header>
     <div class="d-flex justify-content-center align-items-center position-relative">
 
@@ -82,57 +83,142 @@ $connecte = isset($_SESSION['connexion']) && $_SESSION['connexion'] === true;
 
 </header>
 
-<h1 class="title"> <u>Nos produits disponibles</u></h1>
+<?php
+// Connexion à la base de données
+$pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Récupération du terme de recherche
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
+
+// Requête selon qu'il y a une recherche ou non
+
+if (!empty($search)) {
+    $req = $pdo->prepare('SELECT nom_produit, photo FROM produits WHERE nom_produit LIKE :search');
+    $req->execute(['search' => '%' . $search . '%']);
+} else {
+    $req = $pdo->query('SELECT nom_produit, photo FROM produits ');
+}
+?>
+
 
 
 <form action="" method="GET">
-    <input type="text" name="search" placeholder="Rechercher une destination..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+    <input type="text" name="search" placeholder="Rechercher un produit..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
     <button type="submit">Rechercher</button>
 </form>
 
-<div class="catalogue">
 
-    <?php
+<div class="container mt-4">
+    <h1 class="text-center mb-4"><u>Nos produits disponibles</u></h1>
+    <div id="produit-container" class="catalogue">
+        <?php
+        if ($req->rowCount() > 0) {
+            while ($produits = $req->fetch(PDO::FETCH_ASSOC)) {
+                $nom = htmlspecialchars($produits['nom_produit']);
+                $photo = htmlspecialchars($produits['photo']);
+                echo '<div class="film-card produit-item">';
+                echo '<img src="' . $photo . '" alt="' . $nom . '" class="produit-photo">';
+                echo '<h5>' . $nom . '</h5>';
+                echo '<form action="reservation.php" method="get">
+                    <button type="submit" class="btn btn-dark mt-2" name="destination" value="' . $nom . '">Voir le produit</button>
+                  </form>';
+                echo '</div>';
+            }
+        }
+        ?>
+    </div>
 
-    $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+    <div class="text-center mt-4">
+        <div id="counter" style="margin-bottom: 10px; font-weight: bold;"></div>
+        <button id="loadMoreBtn" class="btn btn-primary">Charger plus de produits</button>
+    </div>
+</div>
 
-
-    $search = isset($_GET['search']) ? $_GET['search'] : '';
-
-
-    if ($search) {
-        $req = $pdo->prepare('
-        SELECT nom_produit, MIN(photo) as photo
-        FROM produits
-        WHERE nom_produits LIKE :search
-        GROUP BY nom_produit
-    ');
-        $req->execute(['search' => '%' . $search . '%']);
-    } else {
-        $req = $pdo->query('
-        SELECT nom_produit, MIN(photo) as photo
-        FROM produits
-        GROUP BY nom_produit
-    ');
-    }
-
-
-
-    while ($produits = $req->fetch(PDO::FETCH_ASSOC)) {
-        $nom = $produits['nom_produit'];
-        $photo = $produits['photo'];
-        echo '<div class="film-card">';
-        echo '<img src="' . htmlspecialchars($photo) . '" alt="Photo de ' . htmlspecialchars($nom) . '" class="destination-photo">';
-        echo '<div class="film-info">';
-        echo '<u><h2>Produit: ' . htmlspecialchars($nom) . '</h2></u>';
-        echo '<form action="reservation.php" method="get">
-              <button type="submit" class="btn btn-dark" name="destination" value="' . htmlspecialchars($nom) . '">Voir le produit</button>
-          </form>';
-        echo '</div>';
-        echo '</div>';
-    }
-
-    ?>
 </body>
 </html>
 
+
+<script>
+    const produits = Array.from(document.querySelectorAll('.film-card'));
+    const container = document.getElementById('produit-container');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const counter = document.getElementById('counter');
+    const itemsPerPage = 8;
+    let itemsToShow = itemsPerPage;
+
+    // Cache initial state: on retire tous les produits du DOM sauf les premiers affichés
+    function init() {
+        container.innerHTML = '';
+        produits.forEach((item, index) => {
+            if (index < itemsToShow) {
+                container.appendChild(item);
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        updateCounter();
+        toggleButton();
+    }
+
+    function updateCounter() {
+        const total = produits.length;
+        const shown = Math.min(itemsToShow, total);
+        counter.textContent = `Affichage ${shown} sur ${total} produits`;
+    }
+
+    function toggleButton() {
+        if (itemsToShow >= produits.length) {
+            loadMoreBtn.style.display = 'none';
+        } else {
+            loadMoreBtn.style.display = 'inline-block';
+        }
+    }
+
+    loadMoreBtn.addEventListener('click', () => {
+        itemsToShow += itemsPerPage;
+        if (itemsToShow > produits.length) {
+            itemsToShow = produits.length;
+        }
+        // Afficher les nouveaux produits
+        for(let i = 0; i < itemsToShow; i++) {
+            produits[i].style.display = 'block';
+            if (!container.contains(produits[i])) {
+                container.appendChild(produits[i]);
+            }
+        }
+        updateCounter();
+        toggleButton();
+    });
+
+    init();
+</script>
+
+<style>
+    .catalogue {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .film-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        display: none; /* caché par défaut, affiché par JS */
+    }
+
+    .film-card:hover {
+        transform: scale(1.05);
+    }
+</style>

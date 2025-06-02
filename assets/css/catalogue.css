@@ -11,7 +11,7 @@ body {
     color: #333;
 }
 
-.catalogue {
+ /* .catalogue {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
@@ -35,7 +35,7 @@ body {
 .film-card:hover {
     transform: scale(1.05);
 }
-
+*/
 .film-card img {
     width: 100%;
     height: 300px;
