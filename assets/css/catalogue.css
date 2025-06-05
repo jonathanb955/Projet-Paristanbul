@@ -1,147 +1,85 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
+    background: #f9f9fb;
+    font-family: 'Segoe UI', sans-serif;
 }
-
-.title {
-    text-align: center;
-    margin: 30px 0;
-    color: #333;
-}
-
- /* .catalogue {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+.banner {
+    background: linear-gradient(to right, #ffe270, #fdd835);
     padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+    border-radius: 15px;
+    margin-bottom: 30px;
 }
-
-.film-card {
-    background: white;
+.badge-custom {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: red;
+    color: white;
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    border-radius: 5px;
+}
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+.product-card {
+    position: relative;
+    padding: 20px;
+    border-radius: 15px;
+    border: none;
+}
+.ajouter-btn {
+    background-color: #5f3dc4;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+}
+.ajouter-btn:hover {
+    background-color: #4c33a2;
+}
+.pagination li > a {
+    color: #5f3dc4;
+}
+.product-card {
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
     transition: transform 0.2s;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
 }
-
-.film-card:hover {
-    transform: scale(1.05);
+.product-card:hover {
+    transform: translateY(-5px);
 }
-*/
-.film-card img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
+.product-icon {
+    font-size: 2rem;
+    margin: 30px auto;
+    display: block;
 }
-
-.film-info {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex-grow: 1;
+.badge-custom {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 0.75rem;
 }
-
-.film-info h2 {
-    margin-top: 0;
-    font-size: 20px;
-    color: #222;
+.card-body {
+    background-color: white;
 }
-
-.film-info p {
-    color: #666;
-    font-size: 14px;
-    flex-grow: 1;
+.old-price {
+    text-decoration: line-through;
+    color: grey;
+    font-size: 0.9rem;
 }
-
-.film-info form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-form button {
-    background-color: #007BFF;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-form button:hover {
-    background-color: #0056b3;
-}
-
-
-form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-}
-
-form input {
-    width: 400px;
-    padding: 12px;
-    border-radius: 50px;
-    border: 2px solid #ccc;
-    font-size: 16px;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-    background-color: #fff;
-}
-
-form input:focus {
-    border-color: #007BFF;
-    outline: none;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
-}
-
-form button {
-    background-color: #007BFF;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    margin-left: 15px;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-form button:hover {
-    background-color: #0056b3;
-}
-header {
-    background-color: #ecd8b1;
-    padding: 0.5rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    border-bottom: 2px solid #e0c097;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: #a0522d;
+.price {
     font-weight: bold;
-    transition: color 0.3s;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
+    color: #3f00ff;
 }
-
-nav ul li a:hover {
-    color: #d35400;
+.add-btn {
+    background-color: #4e2cff;
+    border: none;
+}
+.add-btn:hover {
+    background-color: #3619c6;
+}
+.pagination {
+    justify-content: center;
 }

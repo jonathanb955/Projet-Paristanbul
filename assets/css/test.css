@@ -17,7 +17,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: white;
+  background-color: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
@@ -128,7 +128,7 @@ body {
     border-radius: 8px;
     margin-bottom: 25px;
     margin-left: 25px;
-    border-color: #dddddd;
+border-color: #dddddd;
 }
 
 /* RESPONSIVE */
