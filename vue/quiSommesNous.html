@@ -4,380 +4,349 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Paristanbul</title>
-
-    <!-- Feuilles de style -->
-    <link rel="stylesheet" href="../assets/css/quiSommesNous.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/quiSommesNous.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="web site icon" type="png" href="https://play-lh.googleusercontent.com/4-hTf32960CWp7N_cBSNN7UnH3UNHMzgye3wGzXqSp69-iAc7-88jwc1jPlkeqDktLE">
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Yeseva+One:wght@400;700&display=swap" rel="stylesheet">
-
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
 </head>
-<body>
+<!-- Section bandeau haut -->
+<section class="text-white text-center py-5 position-relative" style="background-color: #541c1c; overflow: hidden;">
+    <!-- Cercles décoratifs -->
+    <div style="position: absolute; width: 300px; height: 300px; background-color: rgba(255,255,255,0.05); border-radius: 50%; top: 0; left: 10%; transform: translateX(-50%);"></div>
+    <div style="position: absolute; width: 300px; height: 300px; background-color: rgba(255,255,255,0.05); border-radius: 50%; top: 0; right: 10%; transform: translateX(50%);"></div>
 
-<!-- En-tête avec le bouton toggle -->
-<header>
-    <button class="btn btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions" style="color: black;font-size: 30px "><i class="bi bi-justify"></i></button>
-
-    <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel" style="width: 250px">
-        <div class="offcanvas-header"  style="background-color:#3a3939">
-            <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel"><u> <div class="logo" ><img src="../assets/img/LOGO-PARISTANBUL-300x94.png" style="width: 160px"></div>
-                <div class="d-flex justify-content-center align-items-center position-relative ">
-                    <div class="btn-group position-absolute end-0 me-3">
-
-
-                    </div>
-
-
-
-                </div></u></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div style="height: 3px; width: 100%; background-color:  #e0c097; margin: 0 auto;"></div>
-
-        <div class="offcanvas-body">
-
-            <div class="row">
-                <div class="col-4">
-                    <nav id="navbar-example3" class="h-100 flex-column align-items-stretch pe-4 border-end">
-                        <nav class="nav  flex-column">
-                            <a class="nav-link" style="color:  darkgrey;   text-decoration: none "><i class="bi bi-caret-right-fill"></i><strong><u>Consulter en ligne</u></strong></a>
-                            <a class="nav-link"   href="#item-5" style="color: #a0522d;   text-decoration: none"><strong><u>Catalogue</u></strong> <i class="bi bi-book-half"></i></a>
-
-                            <a class="nav-link" href="#item-1"><strong><u>Aliments</u></strong></a>
-                            <nav class="nav nav flex-column">
-                                <a class="nav-link ms-3 my-1" href="#item-1-1">Frais</a>
-                                <a class="nav-link ms-3 my-1" href="#item-1-2">Secs</a>
-
-                            </nav>
-
-                            <a class="nav-link" href="#item-2"><strong><u>Produits</u></strong></a>
-                            <nav class="nav  flex-column">
-                                <a class="nav-link ms-3 my-1" href="#item-2-1">Hygiènes</a>
-                                <a class="nav-link ms-3 my-1" href="#item-2-2">Contenants</a>
-                            </nav>
-
-                            <a class="nav-link" href="#item-3"><strong><u>Boissons</u></strong></a>
-                            <nav class="nav  flex-column">
-                                <a class="nav-link ms-3 my-1" href="#item-3-1">Bières</a>
-                                <a class="nav-link ms-3 my-1" href="#item-3-2">Vins</a>
-                            </nav>
-
-                            <a class="nav-link" style="color:  darkgrey;   text-decoration: none "><i class="bi bi-caret-right-fill"></i><strong><u>À propos de Paristanbul</u></strong></a>
-                            <a class="nav-link"   href="#appli" style="color: #a0522d;   text-decoration: none"><strong><u>Télécharger notre application</u></strong> <i class="bi bi-app-indicator"></i></i></a>
-
-
-                        </nav>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="logo"><a href="index.php"><img src="../assets/img/LOGO-PARISTANBUL-300x94.png"></a></div>
-    <div class="d-flex justify-content-center align-items-center position-relative ">
-        <div class="btn-group position-absolute end-0 me-3">
-
-
-        </div>
-
-    </div>
-
-    <nav>
-        <ul>
-
-            <li><a href="#catalogue">Catalogue</a></li>
-            <li><a href="#reseauxsociaux">Nous suivre</a></li>
-            <li><a href="#apropos">Informations</a></li>
-            <button type="button" class="btn btn-black dropdown-toggle" style="color: #a0522d" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-square"></i>
-            </button>
-            <ul class="dropdown-menu text-center">
-                <?php if ($connecte): ?>
-                <span class="dropdown-item-text"><strong>Bienvenue</strong><br><?php echo $_SESSION['prenom'] . ' ' . $_SESSION['nom']; ?></span>
-                <li><hr class="dropdown-divider"></li>
-
-                <?php if ($_SESSION['role'] === 'admin'): ?>
-                <li><a class="dropdown-item" href="../../Projet-Vol/vue/pageAdmin.php"><i class="bi bi-shield-lock-fill"></i> Espace Admin</a></li>
-                <?php else: ?>
-                <li><a class="dropdown-item" href="../../Projet-Vol/vue/espaceClient.php"><i class="bi bi-person-circle"></i> Espace Client</a></li>
-                <?php endif; ?>
-
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="?logout=true"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
-                <?php else: ?>
-                <li><a class="dropdown-item" href="vue/pageConnexion.php">Connexion <i class="bi bi-person-bounding-box"></i></a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="vue/pageInscription.php">Inscription <i class="bi bi-person-plus-fill"></i></a></li>
-                <?php endif; ?>
-            </ul>
-
-
-        </ul>
-    </nav>
-    <button class="dark-toggle" onclick="toggleDarkMode()">
-        <span id="theme-icon">🌙</span>
-    </button>
-</header>
-
-
-<!-- Navigation -->
-
-
-<!-- Contenu principal -->
-<main>
-    <div class="titre"><strong>Qui sommes-nous ?</strong></div>
-
-    <div class="texte-ambition">
-        <div class="video">
-            <iframe class="elementor-video"  width="500" height="281"  frameborder="0"
-                    allowfullscreen
-                    allow="autoplay; encrypted-media; picture-in-picture; clipboard-write; accelerometer; gyroscope
-encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                    title="SUPERMARCHE PARISTANBUL ( TOUS NOS MAGASINS À L'EXTERIEURE"
-                    src="https://www.youtube-nocookie.com/embed/tVr152vEHNY?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1" id="widget2" data-gtm-yt-inspected-9="true"></iframe>
-        </div>
-        <div class="texte" style="border-style: solid; border-radius: 10px; padding: 5px;">
-            <p><em>Notre ambition est de devenir le commerce de proximité préféré et d’être<br>
-                l’acteur de référence en matière de qualité et service, avec une équipe <br>
-                professionnelle et expérimentée qui a pour mission la satisfaction de sa<br>
-                clientèle. <br><br>
-                Nos supermarchés constituent, en effet, un véritable lieu d’échanges et de<br>
-                gourmandises pour une meilleure expérience d’achat.<br><br>
-
-                Voici les raisons pour lesquelles vous choisirez Paristanbul :<br>
-
-                – Pour ses produits d’exceptions et de qualités,<br>
-                – Pour son personnel chaleureux à votre écoute,<br>
-                – Pour son hygiène irréprochable,<br>
-                – Pour le bon rapport qualité/prix …<br><br>
-
-                A vous de garnir vos assiettes avec notre large gamme de variétés proposées….</em></p>
-        </div>
-    </div>
-    <br>
-    <br>
-    <section id="catalogue">
-        <div class="titreCatalogue"  data-aos="fade-bottom" data-aos-once="true"><strong> <a href="catalogue.php" style="color:  #a0522d;  text-decoration: none;"> En ce moment, chez Paristanbul</a></strong></div>
-
-
-
-
-        <div class="container">
-            <div class="colonne-gauche"  data-aos="fade-right" data-aos-once="true"></div>
-            <div class="colonne-droite"  data-aos="fade-left" data-aos-once="true">
-                <div class="bloc-haut" data-aos="fade-left" data-aos-once="true"></div>
-                <div class="bloc-bas"  data-aos="fade-right" data-aos-once="true"></div>
-                <p>Bienvenue chez Paristanbul, votre magasin de proximité où qualité, fraîcheur et diversité se rencontrent au cœur de votre quotidien.
-                    <br>
-
-                    Découvrez un large éventail de fruits et légumes soigneusement sélectionnés pour leur fraîcheur et leur goût, ainsi qu’une crèmerie proposant fromages, yaourts et produits laitiers d’exception. La boucherie et la charcuterie vous régaleront avec des viandes de qualité supérieure, préparées dans le respect des traditions.
-                    <br>
-                    Savourez chaque matin le parfum du pain chaud grâce à notre boulangerie, et laissez-vous tenter par notre espace confiserie & gâteaux pour une touche sucrée.
-                    <br>
-                    Pour votre maison, notre rayon bazar regorge d’articles utiles et pratiques, tandis que notre sélection hygiène répond à tous vos besoins quotidiens.
-                    <br>
-                    Retrouvez également un large choix de produits surgelés, d’huiles alimentaires, de condiments et sauces, ainsi que de fruits et légumes secs, pour agrémenter toutes vos recettes.
-                    <br>
-                    Chez Paristanbul, chaque produit est choisi pour vous offrir le meilleur. Venez découvrir une expérience d’achat authentique, conviviale et pleine de saveurs !</p>
-            </div>
-        </div>
-
-    </section>
-    <br>
-
-
-    <div class="stats-section">
-        <div>
-            <div class="intro-text" style="color: #1e1e1e">
-                <h2>ParIstanbul en Données</h2>
-                <p>ParIstanbul c hella.</p>
-            </div>
-            <div class="stats-container">
-                <div class="stat-box" data-aos="fade-in" data-aos-once="true">
-                    <div class="iconStat" style="font-size: 27px; font-weight: bold"><i class="bi bi-currency-euro"></i></div>
-                    <div class="stat-number">75.000.000</div>
-                    <div class="stat-label">+75Millions € de chiffres d'affaires en 2024</div>
-                </div>
-                <div class="stat-box" data-aos="fade-in" data-aos-once="true">
-                    <div class="iconStat" style="font-size: 27px; font-weight: bold"><i class="bi bi-basket2"></i></div>
-                    <div class="stat-number">12.000</div>
-                    <div class="stat-label">+ de 12 000 produits</div>
-
-                </div> <div class="stat-box" data-aos="fade-in" data-aos-once="true">
-                <div class="iconStat" style="font-size: 27px; font-weight: bold"><i class="bi bi-tags"></i></div>
-                <div class="stat-number">8,000</div>
-                <div class="stat-label">+ de 8 000 références</div>
-
-            </div> <div class="stat-box" data-aos="fade-in" data-aos-once="true">
-                <div class="iconStat" style="font-size: 27px; font-weight: bold"><i class="bi bi-shop"></i></div>
-                <div class="stat-number">6</div>
-                <div class="stat-label">  6 magasins</div>
-
-            </div> <div class="stat-box" data-aos="fade-in" data-aos-once="true">
-                <div class="iconStat" style="font-size: 27px; font-weight: bold"><i class="bi bi-buildings"></i></div>
-                <div class="stat-number">3</div>
-                <div class="stat-label">3 entrepôts</div>
-            </div>
-                <div class="stat-box" data-aos="fade-in" data-aos-once="true">
-                    <div class="iconStat" style="font-size: 27px; font-weight: bold"><i class="bi bi-hourglass-split"></i></div>
-                    <div class="stat-number">1</div>
-                    <div class="stat-label">1 en cours d'ouverture</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <section id="apropos">
-        <div class="info-box fade-in">
-            <h3>Nos magasins</h3>
-            <p>Produits frais, qualité garantie. Retrouvez tout ce dont vous avez besoin chez vous.</p>
-        </div>
-        <div class="info-box fade-in">
-            <h3>Nous rejoindre</h3>
-            <p>Envie de faire partie de l’aventure Paristanbul ? Postulez dès maintenant !</p>
-        </div> <div class="info-box fade-in">
-        <h3>Notre application</h3>
-        <p>Faites des économies en téléchargeant l'application !</p>
-    </div>
-    </section>
-
-    <section id="reseauxsociaux">
-        <div class="titreReseaux" data-aos="fade-up"  data-aos-once="true"><h2>Nous suivre</h2></div>
-        <p>
-            <a href="https://youtu.be/tVr152vEHNY?si=eubKRBimOqZoJhPe" class="text-danger"><i class="bi bi-youtube"></i></a>
-            <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" class="text-primary"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-warning"><i class="bi bi-instagram" style="color: #c32aa3"></i></a>
-            <a href="https://www.instagram.com/paristanbul_supermarche/" class="text-dark"><i class="bi bi-tiktok"></i></a>
+    <div class="container position-relative">
+        <h2 class="fw-bold">Notre Histoire</h2>
+        <p class="mt-2 mb-1 fs-5">Plus de 50 ans d'engagement à vos côtés</p>
+        <p class="mx-auto" style="max-width: 750px;">
+            Depuis notre création en 1970, SuperMarché s'est développé avec une mission claire :
+            offrir des produits de qualité à des prix accessibles tout en soutenant les producteurs
+            locaux et en respectant l'environnement.
         </p>
-    </section>
+    </div>
+</section>
 
+<!-- Section fondateur -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Image grisée -->
+            <div class="col-md-5 mb-4 mb-md-0">
+                <div style="background-color: #e8e7ea; height: 300px; border-radius: 8px;" class="d-flex justify-content-center align-items-center">
+                    <i class="bi bi-person fs-1 text-secondary"></i>
+                </div>
+            </div>
 
+            <!-- Texte du fondateur -->
+            <div class="col-md-7">
+                <h4 class="fw-bold">Notre fondateur</h4>
+                <p>
+                    C'est en 1970 que Pierre Dupont, fils d'agriculteurs, décide d'ouvrir sa première épicerie à Paris.
+                    Avec une vision novatrice pour l'époque, il souhaitait créer un lieu où les produits frais des
+                    agriculteurs locaux pourraient être vendus directement aux consommateurs urbains, à des prix justes pour tous.
+                </p>
+                <p class="fst-italic">« Je voulais créer un pont entre les producteurs que je connaissais depuis mon enfance
+                    et les citadins qui méritaient de manger des produits de qualité sans se ruiner. » – Pierre Dupont, fondateur
+                </p>
+                <p>
+                    Cette philosophie simple mais révolutionnaire a posé les bases de ce qui allait devenir l'un
+                    des plus grands réseaux de supermarchés de France, tout en conservant ses valeurs d'origine :
+                    qualité, proximité et accessibilité.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="bg-light py-5">
+    <div class="container">
+        <h3 class="text-center fw-bold mb-5">Notre parcours à travers les décennies</h3>
 
+        <div class="timeline position-relative">
 
-    <br>
-    <br>
-    <br>
+            <!-- Événement 1970 -->
+            <div class="row timeline-item">
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="fw-bold text-danger">1970</h5>
+                            <p>
+                                Ouverture du premier magasin SuperMarché dans le 11ème arrondissement de Paris.
+                                Une petite épicerie de quartier de 120m² proposant des produits frais issus de fermes de la région parisienne.
+                            </p>
+                            <blockquote class="bg-danger bg-opacity-10 p-2 rounded fst-italic small mb-0">
+                                "Notre premier jour d'ouverture, nous avons vendu tous nos produits frais en moins de 3 heures.
+                                C'est là que j'ai compris que nous répondions à un vrai besoin." – Pierre Dupont
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 d-none d-md-block"></div>
+            </div>
 
-</main>
-<footer>
-    <p>&copy; 2025 Paristanbul. Tous droits réservés.</p>
-</footer>
-</main>
+            <!-- Événement 1975 -->
+            <div class="row timeline-item">
+                <div class="col-md-6 d-none d-md-block"></div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="fw-bold text-danger">1975</h5>
+                            <p>
+                                Après le succès du premier magasin, ouverture de trois nouvelles épiceries à Paris.
+                                Création du premier logo SuperMarché et mise en place d'une centrale d'achats pour soutenir la croissance.
+                            </p>
+                            <div class="text-center">
+                                <div class="bg-danger bg-opacity-10 d-inline-flex p-3 rounded-circle">
+                                    <i class="bi bi-bag fs-3 text-danger"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const elements = document.querySelectorAll('.fade-in');
+            <!-- Événement 1980 -->
+            <div class="row timeline-item">
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="fw-bold text-danger">1980</h5>
+                            <p>
+                                Expansion en dehors de Paris avec l'ouverture du premier supermarché de 1000m² à Lyon.
+                                Introduction des premiers produits à marque propre "Les Essentiels de SuperMarché".
+                            </p>
+                            <div class="bg-danger text-white text-center fw-semibold py-2 px-3 rounded w-auto">
+                                Premier supermarché
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 d-none d-md-block"></div>
+            </div>
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    // Pour déclencher une seule fois :
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
+        </div>
+    </div>
+</section>
 
-        elements.forEach(el => observer.observe(el));
-    });
-</script>
+<!-- Nos valeurs fondamentales -->
+<section class="bg-white py-5">
+    <div class="container">
+        <h3 class="text-center fw-bold mb-5">Nos valeurs fondamentales</h3>
+        <div class="row g-4 justify-content-center">
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-    AOS.init();
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const counters = document.querySelectorAll('.stat-number');
-        let animationStarted = false;
+            <!-- Proximité -->
+            <div class="col-md-4">
+                <div class="card text-center border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 bg-danger bg-opacity-10 d-flex align-items-center justify-content-center rounded-circle" style="width: 64px; height: 64px;">
+                            <i class="bi bi-people-fill text-danger fs-4"></i>
+                        </div>
+                        <h6 class="fw-bold">Proximité</h6>
+                        <p class="mb-0 small">
+                            Nous privilégions les relations durables avec nos clients, nos collaborateurs et nos fournisseurs. Nous soutenons les producteurs locaux et contribuons à la vie des communautés où nous sommes implantés.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-        // Format le nombre en français (avec espace ou point selon le navigateur)
-        function formatNumber(numStr) {
-            return Number(numStr).toLocaleString('fr-FR');
-        }
+            <!-- Qualité -->
+            <div class="col-md-4">
+                <div class="card text-center border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 bg-danger bg-opacity-10 d-flex align-items-center justify-content-center rounded-circle" style="width: 64px; height: 64px;">
+                            <i class="bi bi-shield-check text-danger fs-4"></i>
+                        </div>
+                        <h6 class="fw-bold">Qualité</h6>
+                        <p class="mb-0 small">
+                            Nous sélectionnons rigoureusement nos produits pour garantir fraîcheur et saveur. Notre engagement pour la qualité s’étend à tous nos services, avec l’ambition de dépasser les attentes de nos clients.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-        // L'animation de comptage
-        function animateCounters() {
-            counters.forEach(counter => {
-                const targetText = counter.textContent.replace(/[^0-9]/g, '');
-                const target = parseInt(targetText);
-                let current = 0;
-                const duration = 2000;
-                const stepTime = Math.max(Math.floor(duration / target), 10);
+            <!-- Responsabilité -->
+            <div class="col-md-4">
+                <div class="card text-center border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="mx-auto mb-3 bg-danger bg-opacity-10 d-flex align-items-center justify-content-center rounded-circle" style="width: 64px; height: 64px;">
+                            <i class="bi bi-globe text-danger fs-4"></i>
+                        </div>
+                        <h6 class="fw-bold">Responsabilité</h6>
+                        <p class="mb-0 small">
+                            Nous agissons de manière éthique et responsable envers l’environnement et la société. Nous nous engageons à réduire notre impact écologique et à promouvoir une consommation durable.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-                const updateCounter = () => {
-                    current += Math.ceil(target / (duration / stepTime));
-                    if (current >= target) {
-                        counter.textContent = formatNumber(targetText);
-                    } else {
-                        counter.textContent = formatNumber(current.toString());
-                        setTimeout(updateCounter, stepTime);
-                    }
-                };
+        </div>
+    </div>
+</section>
 
-                updateCounter();
-            });
-        }
+<!-- Notre équipe dirigeante -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h3 class="text-center fw-bold mb-5">Notre équipe dirigeante</h3>
+        <div class="row g-4 justify-content-center">
 
-        // IntersectionObserver : déclenche quand on voit la section
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !animationStarted) {
-                    animateCounters();
-                    animationStarted = true;
-                    obs.disconnect(); // On arrête d'observer après la première fois
-                }
-            });
-        }, {
-            threshold: 0.5 // Lancer quand 50% de la section est visible
-        });
+            <!-- Carte 1 -->
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="bg-secondary bg-opacity-10 text-center py-5">
+                        <i class="bi bi-person fs-1 text-secondary"></i>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-0">Marie Dupont</h6>
+                        <p class="text-danger small mb-2">PDG</p>
+                        <p class="small">Fille du fondateur, Marie a rejoint l’entreprise en 1995 et en a pris la direction en 2000. Elle poursuit la vision de son père tout en modernisant l’entreprise.</p>
+                    </div>
+                </div>
+            </div>
 
-        const statsSection = document.querySelector('.stats-section');
-        if (statsSection) {
-            observer.observe(statsSection);
-        }
-    });
-</script>
+            <!-- Carte 2 -->
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="bg-secondary bg-opacity-10 text-center py-5">
+                        <i class="bi bi-person fs-1 text-secondary"></i>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-0">Thomas Martin</h6>
+                        <p class="text-danger small mb-2">Directeur des Opérations</p>
+                        <p class="small">Avec plus de 20 ans d’expérience dans la grande distribution, Thomas supervise l’ensemble des opérations de nos magasins.</p>
+                    </div>
+                </div>
+            </div>
 
-<!-- Script mode sombre -->
-<script>
-    function toggleDarkMode() {
-        const body = document.body;
-        const icon = document.getElementById("theme-icon");
-        body.classList.toggle("dark-mode");
+            <!-- Carte 3 -->
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="bg-secondary bg-opacity-10 text-center py-5">
+                        <i class="bi bi-person fs-1 text-secondary"></i>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-0">Sophie Leroy</h6>
+                        <p class="text-danger small mb-2">Directrice du Développement Durable</p>
+                        <p class="small">Engagée depuis toujours pour l’environnement, Sophie pilote notre stratégie RSE et nos initiatives écologiques.</p>
+                    </div>
+                </div>
+            </div>
 
-        const isDark = body.classList.contains("dark-mode");
-        localStorage.setItem("darkMode", isDark ? "on" : "off");
+            <!-- Carte 4 -->
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="bg-secondary bg-opacity-10 text-center py-5">
+                        <i class="bi bi-person fs-1 text-secondary"></i>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-0">Lucas Bernard</h6>
+                        <p class="text-danger small mb-2">Directeur de l’Innovation</p>
+                        <p class="small">Passionné par les nouvelles technologies, Lucas dirige notre transformation numérique et développe nos services connectés.</p>
+                    </div>
+                </div>
+            </div>
 
-        // Icône avec effet
-        icon.textContent = isDark ? "☀️" : "🌙";
-    }
+        </div>
+    </div>
+</section>
+<!-- Section témoignages -->
+<section class="bg-white py-5">
+    <div class="container">
+        <h3 class="text-center fw-bold mb-5">Ils nous accompagnent depuis des années</h3>
+        <div class="row g-4">
 
-    // Appliquer le mode sombre si déjà activé
-    window.addEventListener("DOMContentLoaded", () => {
-        const isDark = localStorage.getItem("darkMode") === "on";
-        if (isDark) {
-            document.body.classList.add("dark-mode");
-            document.getElementById("theme-icon").textContent = "☀️";
-        }
-    });
-</script>
-</body>
-</html>
+            <!-- Jean Moreau -->
+            <div class="col-md-4">
+                <div class="border-start border-4 border-danger rounded bg-light p-4 h-100 shadow-sm">
+                    <h6 class="fw-bold mb-1 text-danger">Jean Moreau</h6>
+                    <p class="small text-muted mb-2">Client depuis 1975</p>
+                    <p class="small mb-0">"Je me souviens encore du premier SuperMarché qui a ouvert près de chez moi. C’était révolutionnaire ! […] Je suis toujours client à l’époque de mes enfants et je suis et évoluer tout en gardant ses valeurs."</p>
+                </div>
+            </div>
+
+            <!-- Michel Dubois -->
+            <div class="col-md-4">
+                <div class="border-start border-4 border-success rounded bg-light p-4 h-100 shadow-sm">
+                    <h6 class="fw-bold mb-1 text-success">Michel Dubois</h6>
+                    <p class="small text-muted mb-2">Producteur de fruits, partenaire depuis 1990</p>
+                    <p class="small mb-0">"SuperMarché a été le premier à me proposer un partenariat équitable […]. Grâce à eux, j’ai pu développer mon activité en agriculture biologique."</p>
+                </div>
+            </div>
+
+            <!-- Isabelle Laurent -->
+            <div class="col-md-4">
+                <div class="border-start border-4 border-primary rounded bg-light p-4 h-100 shadow-sm">
+                    <h6 class="fw-bold mb-1 text-primary">Isabelle Laurent</h6>
+                    <p class="small text-muted mb-2">Employée depuis 2005</p>
+                    <p class="small mb-0">"J’ai commencé comme caissière à temps partiel […]. SuperMarché m’a toujours soutenue dans mon évolution professionnelle."</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Section vision pour l'avenir -->
+<section class="bg-danger text-white py-5">
+    <div class="container text-center">
+        <h3 class="fw-bold mb-3">Notre vision pour l’avenir</h3>
+        <p class="mb-5">Chez SuperMarché, nous continuons à innover tout en restant fidèles à nos racines. Notre ambition est de devenir le leader de la distribution alimentaire responsable en France.</p>
+
+        <div class="row justify-content-center g-4 mb-4">
+            <!-- Zéro déchet -->
+            <div class="col-md-3">
+                <div class="bg-white bg-opacity-10 rounded p-4 h-100">
+                    <i class="bi bi-recycle fs-2 mb-2"></i>
+                    <h6 class="fw-bold">Zéro déchet</h6>
+                    <p class="small mb-0">Éliminer tous les emballages plastiques à usage unique d’ici 2025</p>
+                </div>
+            </div>
+
+            <!-- 100% local -->
+            <div class="col-md-3">
+                <div class="bg-white bg-opacity-10 rounded p-4 h-100">
+                    <i class="bi bi-geo-alt fs-2 mb-2"></i>
+                    <h6 class="fw-bold">100% local</h6>
+                    <p class="small mb-0">Atteindre 80% de produits locaux dans nos rayons d’ici 2030</p>
+                </div>
+            </div>
+
+            <!-- Neutralité carbone -->
+            <div class="col-md-3">
+                <div class="bg-white bg-opacity-10 rounded p-4 h-100">
+                    <i class="bi bi-shield-check fs-2 mb-2"></i>
+                    <h6 class="fw-bold">Neutralité carbone</h6>
+                    <p class="small mb-0">Devenir une entreprise neutre en carbone d’ici 2040</p>
+                </div>
+            </div>
+        </div>
+
+        <a href="#" class="btn btn-light text-danger fw-semibold px-4 rounded-pill">Découvrir notre plan d’action</a>
+    </div>
+</section>
+
+<!-- Section offres d’emploi -->
+<section class="bg-light py-5">
+    <div class="container d-flex justify-content-center">
+        <div class="row shadow rounded overflow-hidden bg-white" style="max-width: 900px;">
+
+            <!-- Colonne gauche -->
+            <div class="col-md-6 p-4">
+                <h5 class="fw-bold text-dark">Rejoignez l’aventure<br>SuperMarché</h5>
+                <p class="small mb-4">
+                    Nous sommes toujours à la recherche de talents passionnés qui partagent nos valeurs et souhaitent contribuer à notre mission.
+                </p>
+                <ul class="list-unstyled small mb-4">
+                    <li><i class="bi bi-check-circle-fill text-danger me-2"></i> Plus de 5000 collaborateurs</li>
+                    <li><i class="bi bi-check-circle-fill text-danger me-2"></i> Plus de 50 métiers différents</li>
+                    <li><i class="bi bi-check-circle-fill text-danger me-2"></i> 75% de promotion interne</li>
+                </ul>
+                <a href="#" class="btn btn-danger fw-semibold">Voir nos offres d’emploi</a>
+            </div>
+
+            <!-- Colonne droite : fond gris et icône -->
+            <div class="col-md-6 d-flex align-items-center justify-content-center" style="background-color: #e9e7ea; min-height: 280px;">
+                <i class="bi bi-people-fill display-3 text-secondary"></i>
+            </div>
+
+        </div>
+    </div>
+</section>

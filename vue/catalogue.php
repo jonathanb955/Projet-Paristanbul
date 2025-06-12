@@ -1,180 +1,260 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catalogue Produits</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Catalogue des produits</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fefefe;
+            margin: 0;
+            padding: 0;
+        }
 
+        header {
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #ffffff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1d1d1f;
+        }
+
+        .logo i {
+            color: #cc3d3d;
+            margin-right: 8px;
+        }
+
+        .nav-links a {
+            margin: 0 12px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .nav-links a.active {
+            color: #cc3d3d;
+        }
+
+        .search-cart {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-bar {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 999px;
+            width: 250px;
+        }
+
+        .search-bar::placeholder {
+            color: #aaa;
+        }
+
+        .cart-btn {
+            background-color: #cc3d3d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+        }
+
+        .hero {
+            background-color: #6c2320;
+            padding: 60px 30px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before, .hero::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .hero::before {
+            width: 300px;
+            height: 300px;
+            top: 0;
+            left: 10%;
+        }
+
+        .hero::after {
+            width: 400px;
+            height: 400px;
+            bottom: 0;
+            right: 10%;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .hero .btn {
+            margin-top: 30px;
+            background: white;
+            color: #cc3d3d;
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 50px;
+        }
+
+        .categories {
+            padding: 40px 30px;
+            background-color: #fefefe;
+        }
+
+        .categories h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .category-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .category-tags .btn {
+            border-radius: 999px;
+            font-weight: 600;
+            padding: 8px 18px;
+        }
+
+        .btn-primary {
+            background-color: #cc3d3d;
+            border: none;
+        }
+
+        .btn-outline-secondary {
+            background-color: #e6e6ea;
+            border: none;
+            color: #333;
+        }
+    </style>
 </head>
-<body class="container py-4">
+<?php
+$pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
 
-<!-- Bannière -->
-<div class="banner text-dark">
-    <h3><strong>Offres de la semaine</strong></h3>
-    <p>Découvrez nos promotions exclusives jusqu'à -30%</p>
-    <button class="btn btn-primary">Voir les offres</button>
-</div>
+if (!empty($search)) {
+// Recherche par mot-clé
+    $req = $pdo->prepare('SELECT nom_produit, photo FROM produits WHERE nom_produit LIKE :search');
+    $req->execute(['search' => '%' . $search . '%']);
 
-<!-- Recherche + filtres -->
-<div class="d-flex mb-4 gap-2">
-    <input type="text" class="form-control" placeholder="Rechercher un produit...">
-    <button class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
-    <select class="form-select w-auto">
-        <option>Trier par</option>
-    </select>
-    <button class="btn btn-outline-secondary"><i class="bi bi-funnel"></i> Filtres</button>
-</div>
+} elseif (isset($_GET['categorie'], $_GET['souscategorie'])) {
+// Affichage par catégorie + sous-catégorie
+    $categorie = $_GET['categorie'];
+    $souscategorie = $_GET['souscategorie'];
 
-<!-- Catégories -->
-<div class="mb-4">
-    <button class="btn btn-secondary rounded-pill me-2">Tous les produits</button>
-    <button class="btn btn-light rounded-pill me-2">Fruits & Légumes</button>
-    <button class="btn btn-light rounded-pill me-2">Boulangerie</button>
-    <button class="btn btn-light rounded-pill me-2">Produits laitiers</button>
-    <button class="btn btn-light rounded-pill me-2">Viandes</button>
-    <button class="btn btn-light rounded-pill me-2">Boissons</button>
-    <button class="btn btn-light rounded-pill me-2">Épicerie</button>
-</div>
+    $req = $pdo->prepare('SELECT nom_produit, photo FROM produits WHERE ref_categorie = :cat AND ref_sous_categorie = :souscat');
+    $req->execute(['cat' => $categorie, 'souscat' => $souscategorie]);
 
-<!-- Produits -->
-<body class="bg-light">
+} else {
+// Par défaut : afficher tous les produits
+    $req = $pdo->query('SELECT nom_produit, photo FROM produits');
+}
+?>
+<body>
 
-<div class="container py-5">
-    <div class="row g-4">
-        <!-- Produit 1 -->
-        <div class="col-md-3">
-            <div class="product-card bg-warning bg-opacity-25 position-relative p-3">
-                <span class="badge bg-danger text-white badge-custom">-20%</span>
-                <i class="bi bi-eye-fill product-icon text-warning"></i>
-                <div class="card-body text-center">
-                    <h6> <strong>Bananes Bio</strong></h6>
-                    <small class="text-muted">Origine: Équateur</small><br>
-                    <span class="old-price">2,50€</span> <span class="price">1,99€</span><br>
-                    <small>Le kg</small><br>
-                    <button class="btn btn-primary mt-2 add-btn"><i class="bi bi-cart"></i> Ajouter au panier</button>
-                </div>
-            </div>
+<header>
+    <div class="logo">
+        <i class="bi bi-bag-fill"></i> SuperMarché
+    </div>
+    <div class="nav-links">
+        <a href="#">Accueil</a>
+        <a href="#" class="active">Catalogue</a>
+        <a href="#">Promotions</a>
+        <a href="#">Contact</a>
+    </div>
+    <div class="search-cart">
+        <input class="search-bar" type="text" placeholder="🔍 Rechercher...">
+        <button class="cart-btn"><i class="bi bi-cart"></i></button>
+    </div>
+</header>
+
+<section class="hero">
+    <h1>Catalogue des produits</h1>
+    <p>Découvrez notre sélection de produits frais et de qualité</p>
+    <button class="btn">Voir les promotions</button>
+</section>
+
+<section class="categories">
+    <h2>Catégories</h2>
+    <div class="category-tags">
+        <button class="btn btn-primary">Tous les produits</button>
+        <button class="btn btn-outline-secondary">Fruits & Légumes</button>
+        <button class="btn btn-outline-secondary">Boulangerie</button>
+        <button class="btn btn-outline-secondary">Produits laitiers</button>
+        <button class="btn btn-outline-secondary">Viandes</button>
+        <button class="btn btn-outline-secondary">Boissons</button>
+        <button class="btn btn-outline-secondary">Épicerie</button>
+    </div>
+</section>
+
+<div class="col-md-3 d-flex">
+    <div class="card w-100 h-100 d-flex flex-column">
+        <div class="position-relative text-center p-4 rounded-top bg-light" style="min-height: 130px;">
+            <span class="badge bg-danger position-absolute top-0 start-0 m-2">-20%</span>
+            <div class="fs-1">●</div>
         </div>
+        <div class="card-body d-flex flex-column justify-content-between flex-grow-1">
+            <div>
+                <?php
+                if ($req->rowCount() > 0) {
+                    while ($produits = $req->fetch(PDO::FETCH_ASSOC)) {
+                        $nom = htmlspecialchars($produits['nom_produit']);
+                        $photo = htmlspecialchars($produits['photo']);
+                        echo '<div class="film-card produit-item">';
+                        echo '<img src="' . $photo . '" alt="' . $nom . '" class="produit-photo" onerror="this.onerror=null; this.src=\'../../assets/img/error.png\';">';
 
-        <!-- Produit 2 -->
-        <div class="col-md-3">
-            <div class="product-card bg-danger bg-opacity-10 position-relative p-3">
-                <i class="bi bi-arrow-return-left product-icon text-danger"></i>
-                <div class="card-body text-center">
-                    <h6><strong>Pain de campagne</strong></h6>
-                    <small class="text-muted">Boulangerie artisanale</small><br>
-                    <span class="price">3,20€</span><br>
-                    <small>400g</small><br>
-                    <button class="btn btn-primary mt-2 add-btn"><i class="bi bi-cart"></i> Ajouter au panier</button>
-                </div>
+                        echo '<h5>' . $nom . '</h5>';
+                        echo '<form action="reservation.php" method="get">
+                    <button type="submit" class="btn btn-dark mt-2" name="destination" value="' . $nom . '">Voir le produit</button>
+                  </form>';
+                        echo '</div>';
+                    }
+                }
+                ?>
+                <h6 class="fw-bold">Pommes Bio <span class="text-danger float-end">2,80€</span></h6>
+                <p class="text-muted small mb-1"><s>3,50€</s></p>
+                <p class="text-muted small">1kg – Origine France</p>
+                <div class="text-warning small mb-2">★★★★★ <span class="text-muted">(128)</span></div>
             </div>
-        </div>
-
-        <!-- Produit 3 -->
-        <div class="col-md-3">
-            <div class="product-card bg-primary bg-opacity-10 position-relative p-3">
-                <span class="badge bg-success badge-custom">Nouveau</span>
-                <i class="bi bi-box-fill product-icon text-primary"></i>
-                <div class="card-body text-center">
-                    <h6><strong>Yaourt nature</strong></h6>
-                    <small class="text-muted">Ferme locale</small><br>
-                    <span class="price">2,75€</span><br>
-                    <small>Pack de 4</small><br>
-                    <button class="btn btn-primary mt-2 add-btn"><i class="bi bi-cart"></i> Ajouter au panier</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Produit 4 -->
-        <div class="col-md-3">
-            <div class="product-card bg-success bg-opacity-10 position-relative p-3">
-                <span class="badge bg-danger text-white badge-custom">-15%</span>
-                <i class="bi bi-heart-fill product-icon text-success"></i>
-                <div class="card-body text-center">
-                    <h6><strong>Tomates cerises</strong></h6>
-                    <small class="text-muted">Agriculture raisonnée</small><br>
-                    <span class="old-price">3,50€</span> <span class="price">2,99€</span><br>
-                    <small>Barquette 250g</small><br>
-                    <button class="btn btn-primary mt-2 add-btn"><i class="bi bi-cart"></i> Ajouter au panier</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Produit 5 -->
-        <div class="col-md-3">
-            <div class="product-card bg-purple bg-opacity-10 position-relative p-3">
-                <i class="bi bi-people-fill product-icon text-purple"></i>
-                <div class="card-body text-center">
-                    <h6><strong>Filet de poulet</strong></h6>
-                    <small class="text-muted">Élevage français</small><br>
-                    <span class="price">8,90€</span><br>
-                    <small>500g</small><br>
-                    <button class="btn btn-primary mt-2 add-btn"><i class="bi bi-cart"></i> Ajouter au panier</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Produit 6 -->
-        <div class="col-md-3">
-            <div class="product-card bg-warning bg-opacity-10 position-relative p-3">
-                <i class="bi bi-info-circle-fill product-icon text-warning"></i>
-                <div class="card-body text-center">
-                    <h6><strong>Jus d’orange</strong></h6>
-                    <small class="text-muted">Pressé à froid</small><br>
-                    <span class="price">3,45€</span><br>
-                    <small>1L</small><br>
-                    <button class="btn btn-primary mt-2 add-btn"><i class="bi bi-cart"></i> Ajouter au panier</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Produit 7 -->
-        <div class="col-md-3">
-            <div class="product-card bg-secondary bg-opacity-10 position-relative p-3">
-                <span class="badge bg-success badge-custom">Bio</span>
-                <i class="bi bi-plus-circle-fill product-icon text-secondary"></i>
-                <div class="card-body text-center">
-                    <h6><strong>Riz complet</strong></h6>
-                    <small class="text-muted">Agriculture biologique</small><br>
-                    <span class="price">2,80€</span><br>
-                    <small>500g</small><br>
-                    <button class="btn btn-primary mt-2 add-btn"><i class="bi bi-cart"></i> Ajouter au panier</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Produit 8 -->
-        <div class="col-md-3">
-            <div class="product-card bg-danger bg-opacity-10 position-relative p-3">
-                <span class="badge bg-primary badge-custom">Lot</span>
-                <i class="bi bi-arrow-left-right product-icon text-danger"></i>
-                <div class="card-body text-center">
-                    <h6><strong>Chocolat noir</strong></h6>
-                    <small class="text-muted">70% cacao</small><br>
-                    <span class="price">4,50€</span><br>
-                    <small>Lot de 3 tablettes</small><br>
-                    <button class="btn btn-primary mt-2 add-btn"><i class="bi bi-cart"></i> Ajouter au panier</button>
-                </div>
+            <div class="mt-auto">
+                <button class="btn btn-danger w-100"><i class="bi bi-cart"></i> Ajouter au panier</button>
             </div>
         </div>
     </div>
-
-    <!-- Pagination -->
-    <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#">«</a></li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">…</a></li>
-            <li class="page-item"><a class="page-link" href="#">8</a></li>
-            <li class="page-item"><a class="page-link" href="#">»</a></li>
-        </ul>
-    </nav>
-
 </div>
+
+<!-- Bootstrap JS + Icons -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
 </body>
 </html>

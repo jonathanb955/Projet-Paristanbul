@@ -10,18 +10,20 @@
 
 <header>
     <nav class="navbar">
-        <div class="logo"><img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" style="width: 200px"></div>
+        <div class="logo"><img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" style="width: 300px"></div>
         <ul class="nav-links">
             <li><a href="#" class="active">Accueil</a></li>
-            <li><a href="#">Nos produits</a></li>
+            <li><a href="catalogue.php">Nos produits</a></li>
             <li><a href="#" >Promotions</a></li>
             <li><a href="#">Nouveautés</a></li>
-            <li><a href="#">Nos magasins</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="nosMagasins.php">Nos magasins</a></li>
+            <li><a href="quiSommesNous.html">Notre histoire</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="postuler.php">Postuler</a></li>
         </ul>
         <div class="nav-buttons">
-            <a href="#" class="btn-light">Inscription</a>
-            <a href="#" class="btn-dark">Connexion</a>
+            <a href="pageInscription.php" class="btn-light">Inscription</a>
+            <a href="pageConnexion.php" class="btn-dark">Connexion</a>
         </div>
     </nav>
 </header>
@@ -37,8 +39,22 @@
                 </div>
             </div>
             <div class="hero-image">
-                <img src="../assets/img/video-paristanbul.gif" style="width: 600px" alt="Illustration" />
+                <div class="video-container" style="overflow: hidden; border-radius: 20px; width: fit-content;">
+                    <iframe
+                            width="120%"
+                            height="400"
+                            style="margin-right: 270px; border-radius: 20px;"
+                            src="https://www.youtube.com/embed/WgkwUxDKi_0?autoplay=1&mute=1"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                    </iframe>
+                </div>
             </div>
+
+
+
         </div>
     </header>
     <?php
@@ -49,7 +65,7 @@
             <h2 class="section-title">Nos rayons</h2>
             <p class="section-subtitle">Découvrez la diversité de nos produits frais et de qualité.</p>
             <div class="btn-add-rayon">
-                <a href="#" class="btn-green" style="background-color: #003366">Découvrir nos rayons</a>
+                <a href="catalogue.php" class="btn-green" style="background-color: #003366">Découvrir nos rayons</a>
             </div>
             <div class="rayons-grid">
                 <div class="rayon-card">
@@ -117,6 +133,7 @@
     <section class="produits-populaires">
         <div class="container">
             <h2 class="section-title">Nos produits populaires</h2>
+
             <p class="section-subtitle">Les produits préférés de nos clients.</p>
 
             <div class="produits-grid">
@@ -192,74 +209,33 @@
             <h2 class="section-title">Nouveautés</h2>
             <p class="section-subtitle">Découvrez nos derniers produits arrivés en magasin.</p>
 
-            <div class="produits-grid">
-                <div class="produit-card">
-                    <div class="badge">NOUVEAU</div>
-                    <div class="produit-image"><img src="placeholder.png" alt="Quinoa Bio" /></div>
-                    <div class="produit-info">
-                        <h3>Quinoa Bio</h3>
-                        <p>Quinoa biologique de haute qualité, riche en protéines.</p>
-                        <div class="produit-footer">
-                            <span class="prix">4,99 €</span><span class="poids">/ 500g</span>
-                            <span class="panier"><img src="icon-cart.png" alt="Ajouter au panier" /></span>
-                        </div>
-                    </div>
-                </div>
+            <div class="produits-grid"> <!-- DOIT être en dehors de la boucle -->
+                <?php
+                $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+                $query = "SELECT nom_produit, photo FROM produits ORDER BY id_produit DESC LIMIT 5";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute();
+                $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                <div class="produit-card">
-                    <div class="badge">NOUVEAU</div>
-                    <div class="produit-image"><img src="placeholder.png" alt="Huile d'olive extra vierge" /></div>
-                    <div class="produit-info">
-                        <h3>Huile d'olive extra vierge</h3>
-                        <p>Huile d’olive premium pressée à froid.</p>
-                        <div class="produit-footer">
-                            <span class="prix">8,75 €</span><span class="poids">/ 750ml</span>
-                            <span class="panier"><img src="icon-cart.png" alt="Ajouter au panier" /></span>
+                foreach ($produits as $produit): ?>
+                    <div class="produit-card">
+                        <div class="badge">NOUVEAU</div>
+                        <div class="produit-image">
+                            <img src="<?= htmlspecialchars($produit['photo']) ?>" alt="<?= htmlspecialchars($produit['nom_produit']) ?>">
+                        </div>
+                        <div class="produit-info">
+                            <h3><?= htmlspecialchars($produit['nom_produit']) ?></h3>
+                            <p>Description générique du produit.</p>
+                            <div class="produit-footer">
+                                <span class="panier"><img src="icon-cart.png" alt="Ajouter au panier" /></span>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="produit-card">
-                    <div class="badge">NOUVEAU</div>
-                    <div class="produit-image"><img src="placeholder.png" alt="Chocolat noir 85%" /></div>
-                    <div class="produit-info">
-                        <h3>Chocolat noir 85%</h3>
-                        <p>Chocolat noir intense, faible en sucre et riche en cacao.</p>
-                        <div class="produit-footer">
-                            <span class="prix">2,99 €</span><span class="poids">/ 100g</span>
-                            <span class="panier"><img src="icon-cart.png" alt="Ajouter au panier" /></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="produit-card">
-                    <div class="badge">NOUVEAU</div>
-                    <div class="produit-image"><img src="placeholder.png" alt="Thé vert matcha" /></div>
-                    <div class="produit-info">
-                        <h3>Thé vert matcha</h3>
-                        <p>Thé vert matcha japonais de qualité supérieure.</p>
-                        <div class="produit-footer">
-                            <span class="prix">12,50 €</span><span class="poids">/ 50g</span>
-                            <span class="panier"><img src="icon-cart.png" alt="Ajouter au panier" /></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="produit-card">
-                    <div class="badge">NOUVEAU</div>
-                    <div class="produit-image"><img src="placeholder.png" alt="Miel de montagne" /></div>
-                    <div class="produit-info">
-                        <h3>Miel de montagne</h3>
-                        <p>Miel artisanal récolté dans les montagnes françaises.</p>
-                        <div class="produit-footer">
-                            <span class="prix">7,90 €</span><span class="poids">/ 250g</span>
-                            <span class="panier"><i class="bi bi-cart-fill"></i></span>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
+
 
     <section class="promotions">
         <div class="container">
@@ -311,10 +287,10 @@
     <section class="magasins">
         <div class="container">
             <h2 class="section-title">Nos magasins</h2>
-            <p class="section-subtitle">Trouvez le SuperFrais le plus proche de chez vous.</p>
+            <p class="section-subtitle" >Trouvez le Paristanbul le plus proche de chez vous.</p>
 
             <div class="btn-add-rayon">
-                <a href="#" class="btn-green">Nos magasins</a>
+                <a href="nosMagasins.php" class="btn-green" style="background-color: #003366">Nos magasins</a>
             </div>
 
             <div class="magasins-grid">

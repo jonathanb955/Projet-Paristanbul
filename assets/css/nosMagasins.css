@@ -1,116 +1,185 @@
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f8fa;
-    color: #333;
-}
-
-header {
-    background-color: #0d6efd;
-    color: white;
-    padding: 20px 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-header h1 {
-    font-size: 30px;
-    font-weight: bold;
-}
-
-.title {
-    text-align: center;
-    margin: 30px auto 10px auto;
-    font-size: 28px;
-    font-weight: bold;
-    color: #0d6efd;
-}
-
-form {
-    display: flex;
-    justify-content: center;
-    margin: 20px auto;
-}
-
-form input[type="text"] {
-    padding: 10px;
-    width: 300px;
-    border: 1px solid #ccc;
-    border-radius: 8px 0 0 8px;
-    outline: none;
-    font-size: 14px;
-}
-
-form button {
-    padding: 10px 20px;
-    background-color: #0d6efd;
-    color: white;
-    border: none;
-    border-radius: 0 8px 8px 0;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-form button:hover {
-    background-color: #0b5ed7;
-}
-
-.catalogue {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 25px;
-    padding: 30px 50px;
-}
-
-.film-card {
-    background-color: white;
-    border-radius: 16px;
+.magasins-banner {
+    background-color: #6c2320;
+    position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.film-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+.magasins-banner::before,
+.magasins-banner::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
-.destination-photo {
+.magasins-banner::before {
+    width: 300px;
+    height: 300px;
+    top: 20%;
+    left: 10%;
+}
+
+.magasins-banner::after {
+    width: 400px;
+    height: 400px;
+    bottom: 0;
+    right: 10%;
+}
+
+.search-input {
+    border-radius: 10px;
+    padding: 10px 15px;
+    max-width: 450px;
     width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-bottom: 1px solid #eee;
+}
+.map-marker {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background-color: #d43b3b;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.film-info {
-    padding: 20px;
-    text-align: center;
-}
-
-.film-info h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-    color: #212529;
-}
-
-.film-info h5 {
-    margin: 10px 0;
-    font-weight: normal;
-    color: #6c757d;
-}
-
-.film-info button {
-    margin-top: 10px;
-    padding: 8px 16px;
+.map-marker::after {
+    content: "\f3c5";
+    font-family: "Bootstrap-icons", serif;
+    position: absolute;
     font-size: 14px;
-    border-radius: 8px;
-    border: none;
-    background-color: #198754;
     color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    top: 4px;
+    left: 4px;
+}
+.magasin-card {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
 }
 
-.film-info button:hover {
-    background-color: #157347;
+.magasin-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.badge-service {
+    margin-right: 5px;
+    font-size: 0.75rem;
+}
+
+.distance {
+    font-size: 0.9rem;
+    color: #666;
+}
+.magasin-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border: 1px solid #eee;
+    transition: transform 0.2s ease;
+}
+.magasin-card:hover {
+    transform: translateY(-3px);
+}
+.magasin-card {
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.magasin-icon {
+    font-size: 2.5rem;
+}
+
+.bg-purple {
+    background-color: #d6b3ff !important;
+    color: #fff !important;
+}
+.service-icon {
+    width: 64px;
+    height: 64px;
+    background-color: rgba(220, 53, 69, 0.1); /* Rouge clair */
+    border-radius: 50%; /* Cercle parfait */
+}
+ #map { height: 450px; border-radius: 10px; }
+
+.magasin-card {
+    overflow: hidden;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.magasin-icon {
+    font-size: 3rem;
+}
+
+.bg-purple {
+    background-color: #a070ff !important;
+    color: white !important;
+}
+.badge {
+    color: white !important;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1rem 1rem 0.5rem; /* top right bottom left */
+
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2d9b47;
+
+}
+.video-container {
+    margin-left: 50px; /* Ajuste la valeur selon ton besoin */
+    border-radius: 20px;
+    overflow: hidden; /* Nécessaire pour que le border-radius s’applique à l’intérieur */
+    max-width: 700px; /* Pour limiter la taille de la vidéo si besoin */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Optionnel pour plus de style */
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links a.active,
+.nav-links a:hover {
+    color: #0b4c8c;
+}
+
+.nav-buttons a {
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-right: 1rem;
+
+}
+
+.btn-light {
+    background-color: lightblue;
+    color: #003366;
+}
+
+.btn-dark {
+    background-color: #003366;
+    color: #fff;
 }
