@@ -90,8 +90,8 @@ $utilisateurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= htmlspecialchars($utilisateur['email']) ?></td>
                         <td><?= htmlspecialchars($utilisateur['role']) ?></td>
                         <td class="text-center">
-                            <a href="../modifAdmin/modifUtilisateur.php?id_utilisateur=<?= $utilisateur['id_utilisateur'] ?>" class="btn btn-warning btn-sm me-2">Modifier</a>
-                            <a href="../suppAdmin/suppUtilisateur.php?id_utilisateur=<?= $utilisateur['id_utilisateur'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">Supprimer</a>
+                            <a href="../Admin/modifUtilisateur.php?id_utilisateur=<?= $utilisateur['id_utilisateur'] ?>" class="btn btn-warning btn-sm me-2">Modifier</a>
+                            <a href="../Admin/suppUtilisateur.php?id_utilisateur=<?= $utilisateur['id_utilisateur'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">Supprimer</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

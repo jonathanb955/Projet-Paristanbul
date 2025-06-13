@@ -107,7 +107,7 @@ $magasins = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <?php endif; ?>
                         </td>
                         <td class="text-center">
-                            <a href="../modifAdmin/modifMagasin.php?id_magasin=<?= $magasin['id_magasin'] ?>" class="btn btn-warning btn-sm me-2">Modifier</a>
+                            <a href="../Admin/modifMagasin.php?id_magasin=<?= $magasin['id_magasin'] ?>" class="btn btn-warning btn-sm me-2">Modifier</a>
                             <a href="../suppAdmin/suppMagasin.php?id_magasin=<?= $magasin['id_magasin'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer ce magasin ?');">Supprimer</a>
                         </td>
                     </tr>

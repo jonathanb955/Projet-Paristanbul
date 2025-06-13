@@ -169,79 +169,59 @@
             <h3 class="text-center fw-bold">Nos offres d'emploi</h3>
             <p class="text-center mb-4">Découvrez nos opportunités actuelles et rejoignez une équipe dynamique et engagée. Nous recherchons des talents dans différents domaines pour accompagner notre développement.</p>
 
-            <!-- Filtres -->
-            <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
-                <button class="btn btn-danger btn-sm">Tous les postes</button>
-                <button class="btn btn-outline-secondary btn-sm">Magasins</button>
-                <button class="btn btn-outline-secondary btn-sm">Logistique</button>
-                <button class="btn btn-outline-secondary btn-sm">Siège</button>
-                <button class="btn btn-outline-secondary btn-sm">Alternance/Stage</button>
-            </div>
+
 
             <!-- Cartes offres -->
             <div class="row g-4 justify-content-center">
 
-                <!-- Offre 1 -->
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div class="bg-danger text-white p-3">
-                            <span class="badge bg-light text-danger mb-2">Magasins</span>
-                            <h6 class="fw-bold">Responsable de rayon</h6>
-                            <small>Paris (75) - CDI</small>
-                        </div>
-                        <div class="card-body">
-                            <p class="small">Vous serez en charge de la gestion d’un rayon, de l’animation de votre équipe et de la satisfaction client. Vous veillerez à l’approvisionnement, à la mise en valeur des produits et à l’atteinte des objectifs commerciaux.</p>
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                <span class="badge bg-light text-dark">Management</span>
-                                <span class="badge bg-light text-dark">Commerce</span>
-                                <span class="badge bg-light text-dark">Gestion</span>
-                            </div>
-                            <a href="#" class="btn btn-danger btn-sm w-100">Voir l’offre</a>
-                        </div>
-                    </div>
-                </div>
+            <?php
+$pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
 
-                <!-- Offre 2 -->
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div class="bg-danger text-white p-3">
-                            <span class="badge bg-light text-danger mb-2">Logistique</span>
-                            <h6 class="fw-bold">Préparateur de commandes</h6>
-                            <small>Lyon (69) - CDI</small>
-                        </div>
-                        <div class="card-body">
-                            <p class="small">Au sein de notre entrepôt, vous préparez les commandes destinées à nos magasins ou à nos clients en ligne. Vous assurez la qualité des préparations et le respect des délais dans le respect des règles de sécurité.</p>
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                <span class="badge bg-light text-dark">Logistique</span>
-                                <span class="badge bg-light text-dark">CACES</span>
-                                <span class="badge bg-light text-dark">Rigueur</span>
-                            </div>
-                            <a href="#" class="btn btn-danger btn-sm w-100">Voir l’offre</a>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Offre 3 -->
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div class="bg-danger text-white p-3">
-                            <span class="badge bg-light text-danger mb-2">Siège</span>
-                            <h6 class="fw-bold">Chef de projet marketing</h6>
-                            <small>Paris (75) - CDI</small>
-                        </div>
-                        <div class="card-body">
-                            <p class="small">Vous piloterez nos campagnes marketing et participerez à l’élaboration de notre stratégie de communication. Vous serez en charge du développement de notre image de marque et de la fidélisation client.</p>
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                <span class="badge bg-light text-dark">Marketing</span>
-                                <span class="badge bg-light text-dark">Communication</span>
-                                <span class="badge bg-light text-dark">Digital</span>
-                            </div>
-                            <a href="#" class="btn btn-danger btn-sm w-100">Voir l’offre</a>
-                        </div>
 
-                    </div>
+    // Produits par catégorie via sous-catégorie
+    $req = $pdo->prepare("
+        SELECT  secteur_activite, titre_poste, ville, departement, type_contrat, detail_poste
+        FROM offre_emplois 
+       
+    ");
+            $req->execute();
 
-                </div>
+
+if ($req->rowCount() > 0) {
+    while ($offres = $req->fetch(PDO::FETCH_ASSOC)) {
+        $secteur_activite = $offres['secteur_activite'];
+        $titre_poste = $offres['titre_poste'];
+        $ville = $offres['ville'];
+        $departement = $offres['departement'];
+        $type_contrat = $offres['type_contrat'];
+        $detail_poste = $offres['detail_poste'];
+
+        echo'        <div class="col-md-4">';
+        echo'        <div class="card h-100 shadow-sm border-0">';
+        echo' <div class="bg-danger text-white p-3">';
+        echo'                    <span class="badge bg-light text-danger mb-2">'.$secteur_activite.'.</span>';
+        echo'                    <h6 class="fw-bold">'.$titre_poste.'</h6>';
+        echo' <small>'.$ville.' ('.$departement.') - '.$type_contrat.'</small>';
+        echo'                </div>';
+        echo'                <div class="card-body">';
+        echo'                    <p class="small">'.$detail_poste.'</p>';
+        echo'                    <div class="d-flex flex-wrap gap-2 mb-3">';
+        echo'                        <span class="badge bg-light text-dark"> </span>';
+        echo'                        <span class="badge bg-light text-dark"></span>';
+        echo'                        <span class="badge bg-light text-dark"></span>';
+        echo'                    </div>';
+        echo'                    <a href="#" class="btn btn-danger btn-sm w-100">Voir l’offre</a>';
+        echo'                </div>';
+        echo'           </div>';
+
+        echo'        </div>';
+    }
+} else {
+    echo '<div class="col-12"><p>Aucun offre actuellement.</p></div>';
+}
+?>
+
 
             </div>
             <div class="text-center mt-4">
