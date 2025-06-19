@@ -4,8 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Paristanbul</title>
-    <link rel="stylesheet" href="../assets/css/test.css" />
+    <link rel="stylesheet" href="../assets/css/index.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
 </head>
 
 <header>
@@ -120,7 +123,7 @@
         </div>
     </section>
     <?php
-     $pdo=""
+    $pdo=""
     ?>
     <?php
     $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
@@ -286,35 +289,35 @@
 
     <section class="magasins">
         <div class="container">
-            <h2 class="section-title">Nos magasins</h2>
+            <h2 class="section-title">Quelques magasins</h2>
             <p class="section-subtitle" >Trouvez le Paristanbul le plus proche de chez vous.</p>
 
             <div class="btn-add-rayon">
-                <a href="nosMagasins.php" class="btn-green" style="background-color: #003366">Nos magasins</a>
+                <a href="nosMagasins.php" class="btn-green" style="background-color: #003366">Tous nos magasins</a>
             </div>
 
             <div class="magasins-grid">
                 <div class="magasin-card">
-                    <h3>SuperFrais Paris Centre</h3>
-                    <p><i class="bi bi-geo-alt-fill"></i> 123 Rue de Rivoli, 75001 Paris</p>
-                    <p><i class="bi bi-clock-fill"></i> Lun-Sam: 8h–21h, Dim: 9h–13h</p>
-                    <p><i class="bi bi-telephone-fill"></i> 01 23 45 67 89</p>
+                    <h3>Paristanbul Villiers le bel</h3>
+                    <p><i class="bi bi-geo-alt-fill"></i>117 Avenue Pierre Semard, 95400 Villiers‑le‑Bel</p>
+                    <p><i class="bi bi-clock-fill"></i> Lun-Dim: 8h30–20h</p>
+                    <p><i class="bi bi-telephone-fill"></i> +33 7 49 82 61 33</p>
                     <a href="#" class="itineraire-btn">Itinéraire</a>
                 </div>
 
                 <div class="magasin-card">
-                    <h3>SuperFrais Lyon</h3>
-                    <p><i class="bi bi-geo-alt-fill"></i> 45 Rue de la République, 69002 Lyon</p>
-                    <p><i class="bi bi-clock-fill"></i> Lun-Sam: 8h30–20h30, Dim: 9h–12h30</p>
-                    <p><i class="bi bi-telephone-fill"></i> 04 56 78 90 12</p>
+                    <h3>Paristanbul Bondy</h3>
+                    <p><i class="bi bi-geo-alt-fill"></i> 116 Avenue Gallieni, 93140 Bondy</p>
+                    <p><i class="bi bi-clock-fill"></i> Lun-Dim: 8h30–20h</p>
+                    <p><i class="bi bi-telephone-fill"></i>+33 7 49 82 61 33</p>
                     <a href="#" class="itineraire-btn">Itinéraire</a>
                 </div>
 
                 <div class="magasin-card">
-                    <h3>SuperFrais Marseille</h3>
-                    <p><i class="bi bi-geo-alt-fill"></i> 78 La Canebière, 13001 Marseille</p>
-                    <p><i class="bi bi-clock-fill"></i> Lun-Sam: 8h–20h, Dim: Fermé</p>
-                    <p><i class="bi bi-telephone-fill"></i> 04 91 23 45 67</p>
+                    <h3>Paristanbul Drancy</h3>
+                    <p><i class="bi bi-geo-alt-fill"></i> 83 Avenue Marceau, 93700 Drancy</p>
+                    <p><i class="bi bi-clock-fill"></i>Lun-Dim: 8h30–20h30</p>
+                    <p><i class="bi bi-telephone-fill"></i>+33 7 49 82 61 33</p>
                     <a href="#" class="itineraire-btn">Itinéraire</a>
                 </div>
             </div>
@@ -374,55 +377,110 @@
         </div>
     </section>
 </main>
+
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Footer Paristanbul</title>
+    <link rel="stylesheet" href="footer.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+
 <footer class="footer">
-    <div class="container footer-content">
-        <div class="footer-column">
+    <div class="footer-container">
+
+        <!-- Colonne 1 -->
+        <div class="footer-column paristanbul-col">
             <h3>Paristanbul</h3>
-            <p>Nous créons des solutions numériques innovantes pour transformer votre vision en réalité.</p>
+            <p>
+                Rejoignez-nous sur les réseaux et accédez à nos<br>
+                offres et nouveautés en exclusivité.
+            </p>
             <div class="social-icons">
-                <a href="#"><i class="bi bi-facebook"></i></a>
-                <a href="#"><i class="bi bi-instagram"></i></a>
-                <a href="#"><i class="bi bi-tiktok"></i></a>
-                <a href="#"><i class="bi bi-youtube"></i></a>
+                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="tiktok"><i class="bi bi-tiktok"></i></a>
+                <a href="#" class="youtube"><i class="bi bi-youtube"></i></a>
+                <a href="#" class="paristanbul"><img src="../assets/img/logo.app.pi.webp" alt="Paristanbul"></a>
             </div>
         </div>
 
+            <!-- Colonne 2 -->
         <div class="footer-column">
-            <h4>Liens rapides</h4>
+            <h3>L'enseigne Paristanbul</h3>
             <ul>
-                <li><a href="#">Accueil</a></li>
-                <li><a href="#">Catalogue</a></li>
-                <li><a href="#">Nos promotions</a></li>
-                <li><a href="#">Nos nouveautés</a></li>
                 <li><a href="#">Notre histoire</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="#">Trouver un magasin</a></li>
+                <li><a href="#">Nous contacter</a></li>
             </ul>
         </div>
 
+        <!-- Colonne 3 -->
         <div class="footer-column">
-            <h4>Services</h4>
+            <h3>Actualités</h3>
             <ul>
-                <li><a href="#">Conception Web</a></li>
-                <li><a href="#">Applications Mobiles</a></li>
-                <li><a href="#">Marketing Digital</a></li>
-                <li><a href="#">Référencement SEO</a></li>
+                <li><a href="#">Nos nouveautés</a></li>
+                <li><a href="#">Nos promotions</a></li>
+                <li><a href="#">Télécharger l'application</a></li>
             </ul>
         </div>
 
+        <!-- Colonne 4 -->
         <div class="footer-column">
-            <h4>Newsletter</h4>
-            <p>Abonnez-vous à notre newsletter pour recevoir nos dernières actualités.</p>
-            <form class="newsletter-form">
-                <input type="email" placeholder="Votre email" required />
-                <button type="submit"><i class="bi bi-arrow-right"></i></button>
-            </form>
+            <h3>Nous rejoindre</h3>
+            <ul>
+                <li><a href="#">Nos offres d'emploi</a></li>
+                <li><a href="#">Télécharger l'application</a></li>
+            </ul>
         </div>
-    </div>
-    <div class="footer-bottom">
-        &copy; 2025 Paristanbul. Tous droits réservés.
+
+        <!-- Colonne 5 -->
+        <div class="footer-column newsletter-col">
+            <h3>Newsletters</h3>
+            <p>
+                Abonnez-vous à notre newsletter pour recevoir nos dernières actualités.
+            </p>
+            <div class="newsletter-form">
+                <input type="email" placeholder="Votre email" class="newsletter-field" />
+                <button class="newsletter-submit">
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
     </div>
 </footer>
 
 
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById('app-store-link').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            if (/android/i.test(userAgent)) {
+                window.location.href = "https://play.google.com/store/apps/details?id=com.tonapp.nom"; // Android
+            } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                window.location.href = "https://apps.apple.com/fr/app/ton-app/idXXXXXXXXX"; // iOS
+            } else {
+                window.location.href = "https://paristanbul.fr/telecharger"; // Par défaut (PC etc.)
+            }
+        });
+    });
+</script>
+
 </body>
+
+
 </html>
