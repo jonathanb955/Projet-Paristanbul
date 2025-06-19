@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Tableau de bord{% endblock %}
+
+{% block content %}
+    <h1>Tableau de bord</h1>
+
+    <div class="cards">
+        <div class="card">
+            <div class="label">Utilisateurs</div>
+            <div class="value">{{ nb_utilisateurs }}</div>
+            <div class="change positive">↑ +12% ce mois</div>
+            <div class="icon-circle icon-users">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zM8 11c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="label">Magasins</div>
+            <div class="value">{{ nb_magasins }}</div>
+            <div class="change positive">↑ +3% ce mois</div>
+            <div class="icon-circle icon-stores">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M3 9h18v2H3zM5 11v9h14v-9H5zm7-8L5 6h14l-7-3z"/></svg>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="label">Offres d'emploi</div>
+            <div class="value">{{ nb_offres }}</div>
+            <div class="change negative">↓ -5% ce mois</div>
+            <div class="icon-circle icon-jobs">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H10v3H5v16h14V5h-5V2z"/></svg>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="label">Candidatures</div>
+            <div class="value">{{ nb_candidatures }}</div>
+            <div class="change positive">↑ +18% ce mois</div>
+            <div class="icon-circle icon-visits">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M3 17h2v-7H3v7zm4-3h2v-4H7v4zm4 5h2v-9h-2v9zm4-11h2v-1h-2v1zm4-2v13h2V6h-2z"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="activity">
+        <span>Activité récente</span>
+        <a href="{{ path('dashboard') }}">Voir tout</a>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Action</th>
+            <th>Utilisateur</th>
+            <th>Date</th>
+            <th>Détails</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+            <tr>
+                <td>{{ log.action }}</td>
+                <td>
+                    {% if log.utilisateur %}
+                        {{ log.utilisateur.prenom }} {{ log.utilisateur.nom }}
+                    {% else %}
+                        <em>Non identifié</em>
+                    {% endif %}
+                </td>
+                <td>{{ log.date|date('d/m/Y H:i') }}</td>
+                <td>{{ log.detail }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucune activité récente.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

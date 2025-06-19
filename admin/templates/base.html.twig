@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Tableau de bord{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+</head>
+<body>
+
+<header>
+    <img src="{{ asset('assets/img/paristanbul_logo_1200x350-1024x299.png') }}" alt="Logo" style="width: 300px;">
+
+    <nav>
+        <a href="{{ path('utilisateurs') }}">Gestion utilisateurs</a>
+        <a href="{{ path('magasins') }}">Gestions magasins</a>
+        <a href="{{ path('app_offres_emplois_index') }}">Gestion offres d'emplois</a>
+    </nav>
+    <div>
+        <button class="btn-inscription">Inscription</button>
+        <button class="btn-connexion">Connexion</button>
+    </div>
+</header>
+
+<div class="container">
+    <aside>
+        <a href="{{ path('dashboard') }}" class="active">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18zM12 5a7 7 0 110 14 7 7 0 010-14z"/><path d="M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+            Tableau de bord
+        </a>
+        <a href="{{ path('utilisateurs') }}">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M5 7h14v2H5V7zm0 6h14v2H5v-2z"/></svg>
+            Utilisateurs
+        </a>
+        <a href="{{ path('magasins') }}">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M4 6h16v12H4z" fill="none"/><path d="M4 6h16v12H4z" opacity=".3"/><path d="M4 18h16v2H4z"/></svg>
+            Magasins
+        </a>
+        <a href="{{ path('app_offres_emplois_index') }}">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M4 9h16v6H4z" fill="none"/><path d="M4 9h16v6H4z" opacity=".3"/><path d="M4 15h16v2H4z"/></svg>
+            Offres d'emploi
+        </a>
+        <a href="#">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l4 7h-8l4-7zM7 9h10l1 13H6l1-13z"/></svg>
+            Paramètres
+        </a>
+        <button class="logout">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3h-8v2h8v14h-8v2h8a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
+            Déconnexion
+        </button>
+    </aside>
+
+    <main>
+
+
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+</body>
+</html>

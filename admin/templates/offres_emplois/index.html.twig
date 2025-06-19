@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+
+{% block content %}
+    {% if app.request.get('message') %}
+        {% set type = app.request.get('type') ?? 'success' %}
+        <div class="alert alert-{{ type == 'error' ? 'danger' : 'success' }}">
+            {{ app.request.get('message') }}
+        </div>
+    {% endif %}
+    <h1>OffresEmplois </h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Secteur_activite</th>
+                <th>Titre_poste</th>
+                <th>Ville</th>
+                <th>Departement</th>
+                <th>Type_contrat</th>
+                <th>Detail_poste</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for offres_emploi in offres_emplois %}
+            <tr>
+                <td>{{ offres_emploi.id }}</td>
+                <td>{{ offres_emploi.secteurActivite }}</td>
+                <td>{{ offres_emploi.titrePoste }}</td>
+                <td>{{ offres_emploi.ville }}</td>
+                <td>{{ offres_emploi.departement }}</td>
+                <td>{{ offres_emploi.typeContrat }}</td>
+                <td>{{ offres_emploi.detailPoste }}</td>
+                <td>
+                    <a href="{{ path('app_offres_emplois_show', {'id': offres_emploi.id}) }}">👁 Afficher</a>
+                    <a href="{{ path('app_offres_emplois_edit', {'id': offres_emploi.id}) }}">✏️ Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_offres_emplois_new') }}">Creer une offre</a>
+    <a href="{{ path('dashboard') }}">Retour</a>
+
+{% endblock %}

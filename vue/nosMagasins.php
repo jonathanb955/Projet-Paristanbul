@@ -90,70 +90,73 @@
     <div class="row" id="magasin-list"></div>
 </div>
 
+
+
+
+
+
+
+
+
+<!-- SCRIPT -->
+<?php
+$pdo = new PDO("mysql:host=localhost;dbname=bdd_paristanbul;charset=latin1", "root", "");
+
+// coordonnées GPS par ville
+$coords = [
+    'Nogent-sur-Oise' => [49.278948, 2.464688],
+    'Villemomble' => [48.8890, 2.5040],
+    'Bondy' => [48.9022, 2.48278],
+    'Drancy' => [48.924298, 2.445676],
+    'Villiers-le-Bel' => [49.0094, 2.3911]
+];
+
+$magasins = [];
+
+$stmt = $pdo->query("SELECT * FROM magasins");
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $ville = trim($row['ville_magasin']);
+    $lat = $coords[$ville][0] ?? 48.85;
+    $lon = $coords[$ville][1] ?? 2.35;
+
+    $magasins[] = [
+        "nom" => "Paristanbul " . $ville,
+        "adresse" => $row['rue'] . ", " . $row['cp'] . " " . $ville,
+        "tel" => $row['num_tel'],
+        "horaires" => $row['jours_ouverture'] . " : " . substr($row['horaire_ouverture'], 0, 5) . "–" . substr($row['horaire_fermeture'], 0, 5),
+        "lat" => $lat,
+        "lon" => $lon,
+        "services" => ["Boucherie", "Épicerie"],
+        "color" => "bg-danger",
+        "image" => $row['image']
+    ];
+}
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Nos magasins</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 400px; }
+    </style>
+</head>
+<body>
+
+<div class="container my-5">
+    <h2 class="mb-4">Nos magasins</h2>
+    <div id="map" class="mb-4 rounded shadow-sm"></div>
+    <button id="locateMe" class="btn btn-primary mb-4">📍 Me localiser</button>
+    <div class="row" id="magasin-list"></div>
+</div>
+
 <!-- SCRIPT -->
 <script>
-    const magasins = [
-        {
-        nom: "Paristanbul Nogent-sur-Oise",
-        adresse: "171 Rue Jean Monnet, 60180 Nogent-sur-Oise",
-        tel: "+33 7 49 82 61 33",
-        horaires: "Lun‑Dim : 08h30–20h00",
-        lat: 49.278948,
-        lon: 2.464688,
-        services: ["Boucherie", "Épicerie", "Primeur"],
-        color: "bg-danger"
-    },
-    {
-        nom: "Paristanbul Villemomble",
-            adresse: "68 Allée du Plateau, 93250 Villemomble",
-        tel: "+33 7 49 82 61 33",
-        horaires: "Lun‑Dim : 08h30–20h00",
-        lat: 48.8890,
-        lon: 2.5040,
-        services: ["Boucherie", "Primeur"],
-        color: "bg-danger"
-    },
-    {
-        nom: "Paristanbul Bondy",
-            adresse: "116 Avenue Gallieni, 93140 Bondy",
-        tel: "+33 7 49 82 61 33",
-        horaires: "Lun‑Dim : 08h30–20h00",
-        lat: 48.9022,
-        lon: 2.48278,
-        services: ["Boucherie", "Drive", "Parking"],
-        color: "bg-danger"
-    },
-    {
-        nom: "Paristanbul Drancy",
-            adresse: "83 Avenue Marceau, 93700 Drancy",
-        tel: "+33 7 49 82 61 33",
-        horaires: "Lun‑Dim : 08h30–20h30",
-        lat: 48.924298,
-        lon: 2.445676,
-        services: ["Boucherie", "Épicerie"],
-        color: "bg-danger"
-    },
-    {
-        nom: "Paristanbul Villiers-le-Bel",
-            adresse: "117 Avenue Pierre Semard, 95400 Villiers‑le‑Bel",
-        tel: "+33 7 49 82 61 33",
-        horaires: "Lun‑Dim : 08h30–20h00",
-        lat: 49.0094,
-        lon: 2.3911,
-        services: ["Boucherie", "Épicerie"],
-        color: "bg-danger"
-    },
-    {
-        nom: "Paristanbul Villiers-le-Bel",
-            adresse: "3 Avenue des Entrepreneurs, 95400 Villiers‑le‑Bel",
-        tel: "+33 7 49 82 61 33",
-        horaires: "Lun‑Dim : 08h30–20h00",
-        lat: 49.0094,
-        lon: 2.3911,
-        services: ["Boucherie", "Épicerie"],
-        color: "bg-danger"
-    }
-    ];
+    const magasins = <?php echo json_encode($magasins, JSON_UNESCAPED_UNICODE); ?>;
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
         const R = 6371;
@@ -162,7 +165,6 @@
         const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
         return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))).toFixed(1);
     }
-
     function renderCards(userLat = null, userLon = null) {
         const container = document.getElementById('magasin-list');
         container.innerHTML = '';
@@ -187,7 +189,9 @@
         <div class="col-md-4 mb-4">
           <div class="magasin-card border rounded shadow-sm">
             <div class="p-4 ${magasin.color} bg-opacity-10 text-center position-relative">
-              <i class="bi bi-buildings magasin-icon ${magasin.color.replace('bg-', 'text-')}"></i>
+              <div class="image-wrapper mb-3">
+                <img src="${magasin.image}" class="img-fluid" alt="Image magasin">
+              </div>
               <span class="badge bg-success position-absolute top-0 end-0 m-2">Ouvert</span>
             </div>
             <div class="p-3 bg-white">
@@ -207,12 +211,10 @@
               </div>
             </div>
           </div>
-        </div>
-      `;
+        </div>`;
         });
     }
 
-    // Initialisation carte
     const map = L.map('map').setView([46.6031, 1.8883], 6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
@@ -222,7 +224,7 @@
         L.marker([m.lat, m.lon]).addTo(map).bindPopup(`<strong>${m.nom}</strong><br>${m.adresse}`);
     });
 
-    renderCards(); // chargement initial
+    renderCards();
 
     document.getElementById('locateMe').addEventListener('click', () => {
         if (!navigator.geolocation) {
@@ -236,14 +238,6 @@
 
             map.setView([userLat, userLon], 10);
             L.marker([userLat, userLon]).addTo(map).bindPopup("📍 Vous êtes ici").openPopup();
-
-            magasins.forEach(m => {
-                const dist = calculateDistance(userLat, userLon, m.lat, m.lon);
-                const itineraire = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLon}&destination=${m.lat},${m.lon}`;
-                L.marker([m.lat, m.lon])
-                    .addTo(map)
-                    .bindPopup(`<strong>${m.nom}</strong><br>${m.adresse}<br>🧭 ${dist} km<br><a href="${itineraire}" target="_blank">🔗 Itinéraire</a>`);
-            });
 
             renderCards(userLat, userLon);
         }, () => {

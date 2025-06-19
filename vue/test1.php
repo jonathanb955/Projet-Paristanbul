@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Tableau de bord - Paristanbul</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo-side">Paristanbul</div>
+        <ul>
+            <li onclick="showPage('dashboard')"><i class="bi bi-speedometer2"></i> Tableau de bord</li>
+            <li onclick="showPage('utilisateurs')"><i class="bi bi-people-fill"></i> Utilisateurs</li>
+            <li onclick="showPage('magasins')"><i class="bi bi-shop"></i> Magasins</li>
+            <li onclick="showPage('offres')"><i class="bi bi-briefcase-fill"></i> Offres d'emploi</li>
+            <li onclick="showPage('parametres')"><i class="bi bi-gear-fill"></i> Paramètres</li>
+            <li class="logout"><i class="bi bi-box-arrow-right"></i> Déconnexion</li>
+        </ul>
+    </aside>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <!-- Header personnalisé -->
+        <header>
+            <nav class="navbar">
+                <div class="logo">
+                    <a href="{{ path('app_index') }}">
+                        <img src="{{ asset('assets/img/paristanbul_logo_1200x350-1024x299.png') }}" alt="Logo" style="width: 300px;">
+                    </a>
+                </div>
+
+                <ul class="nav-links">
+                    <li><a href="{{ path('app_utilisateur_index') }}">Gestion utilisateurs</a></li>
+                    <li><a href="{{ path('app_magasins_index') }}">Gestions magasins</a></li>
+                    <li><a href="{{ path('app_offres_emplois_index') }}">Gestion offres d'emplois</a></li>
+                </ul>
+
+                <div class="nav-buttons">
+                    <a href="" class="btn-light">Inscription</a>
+                    <a href="" class="btn-dark">Connexion</a>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Pages dynamiques -->
+        <section id="dashboard" class="page active">📊 Tableau de bord ici</section>
+        <section id="utilisateurs" class="page">👥 Liste des utilisateurs ici</section>
+        <section id="magasins" class="page">🏬 Liste des magasins ici</section>
+        <section id="offres" class="page">📄 Offres d'emploi ici</section>
+        <section id="parametres" class="page">⚙️ Paramètres ici</section>
+    </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
+<style>body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    #app {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 220px;
+        background-color: #2c3e50;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        padding-top: 20px;
+    }
+
+    .sidebar .logo-side {
+        font-size: 1.4rem;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar ul li {
+        padding: 15px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .sidebar ul li:hover {
+        background-color: #34495e;
+    }
+
+    .sidebar .logout {
+        margin-top: auto;
+        color: #e74c3c;
+        font-weight: bold;
+    }
+
+    /* Header personnalisé */
+    .navbar {
+        background-color: white;
+        padding: 15px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .navbar .logo img {
+        height: auto;
+        max-height: 50px;
+    }
+
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-links li a {
+        text-decoration: none;
+        color: #2c3e50;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .nav-links li a:hover {
+        color: #e74c3c;
+    }
+
+    .nav-buttons a {
+        margin-left: 15px;
+        padding: 8px 16px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .btn-light {
+        background-color: white;
+        border: 1px solid #e74c3c;
+        color: #e74c3c;
+    }
+
+    .btn-dark {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+    }
+
+    /* Main content */
+    .main-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+        padding: 20px;
+        transition: all 0.3s ease-in-out;
+        position: relative;
+    }
+
+    /* Pages dynamiques */
+    .page {
+        display: none;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s ease;
+    }
+
+    .page.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+<script>
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        const target = document.getElementById(id);
+        if (target) {
+            target.classList.add('active');
+        }
+    }
+
+</script>

@@ -1,0 +1,13 @@
+parameters:
+    external_site_url: '%env(EXTERNAL_SITE_BASE_URL)%'
+
+services:
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+        autowire: true
+        autoconfigure: true
+        public: false

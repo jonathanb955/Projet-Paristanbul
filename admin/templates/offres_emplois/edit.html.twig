@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit OffresEmplois{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <h1>Modifier l'offre d'emploi</h1>
+
+    <div class="form-container">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-primary">Enregistrer</button>
+        <button class="btn btn-primary" type="reset">Annuler les modifications</button>
+        {{ form_end(form) }}
+    </div>
+    <div style="margin-top: 20px;">
+        {{ include('offres_emplois/_delete_form.html.twig', { 'offres_emploi': offres_emploi }) }}
+    </div>
+
+    <a href="{{ path('app_offres_emplois_index') }}">Retour vers la liste</a>
+
+
+{% endblock %}
+

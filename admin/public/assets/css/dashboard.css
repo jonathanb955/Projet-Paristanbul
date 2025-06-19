@@ -1,0 +1,336 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: #f9fafc;
+    color: #333;
+}
+a {
+    color: #4078c0;
+    text-decoration: none;
+    cursor: pointer;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 25px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+header img {
+    height: 40px;
+}
+nav {
+    display: flex;
+    gap: 30px;
+    font-size: 14px;
+}
+nav a {
+    color: #333;
+    font-weight: 500;
+}
+nav a:hover {
+    color: #d3543f;
+}
+.btn-inscription {
+    border: 1px solid #d3543f;
+    color: #d3543f;
+    background: transparent;
+    padding: 7px 16px;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 10px;
+}
+.btn-connexion {
+    border: none;
+    background: #d3543f;
+    color: #fff;
+    padding: 7px 16px;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    min-height: calc(100vh - 62px);
+}
+
+/* Sidebar */
+aside {
+    width: 230px;
+    background: #2c3e50;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding-top: 25px;
+}
+aside a, aside button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ccc;
+    padding: 13px 25px;
+    font-weight: 500;
+    font-size: 15px;
+    border-left: 4px solid transparent;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+}
+aside a svg, aside button svg {
+    min-width: 20px;
+    opacity: 0.7;
+}
+aside a.active, aside a:hover {
+    background: #34495e;
+    color: #fff;
+    border-left-color: #e74c3c;
+}
+aside button.logout {
+    margin-top: auto;
+    color: #e74c3c;
+    font-weight: 600;
+    border-left-color: #e74c3c;
+}
+aside button.logout:hover {
+    background: #c0392b;
+    color: #fff;
+}
+
+/* Main content */
+main {
+    flex-grow: 1;
+    padding: 30px 40px;
+}
+main h1 {
+    font-weight: 700;
+    font-size: 26px;
+    margin-bottom: 25px;
+}
+
+/* Cards */
+.cards {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+.card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.05);
+    padding: 25px 30px;
+    flex: 1;
+    position: relative;
+}
+.card .label {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+.card .value {
+    font-weight: 700;
+    font-size: 28px;
+}
+.card .change {
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.card .change.positive {
+    color: #4caf50;
+}
+.card .change.negative {
+    color: #e74c3c;
+}
+
+/* Icon circle backgrounds in cards */
+.icon-circle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.icon-users {
+    background: #f8d7da;
+    color: #e74c3c;
+}
+.icon-stores {
+    background: #d0d9ff;
+    color: #3a56f0;
+}
+.icon-jobs {
+    background: #fff4cc;
+    color: #f1c40f;
+}
+.icon-visits {
+    background: #dff3e0;
+    color: #27ae60;
+}
+
+/* Table section */
+.activity {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    color: #222;
+}
+.activity a {
+    font-weight: 500;
+    font-size: 14px;
+    color: #e74c3c;
+}
+.activity a:hover {
+    text-decoration: underline;
+}
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.05);
+    border-radius: 8px;
+}
+thead tr {
+    background: #f7f9fc;
+    font-weight: 700;
+    font-size: 14px;
+    color: #555;
+    border-radius: 8px;
+}
+th, td {
+    padding: 15px 20px;
+    text-align: left;
+}
+tbody tr {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: inset 0 -1px 0 #eee;
+}
+tbody tr:last-child {
+    box-shadow: none;
+}
+
+/* Icon SVG styles */
+svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.styled-table th, .styled-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+    max-width: 200px;
+    word-break: break-word;
+}
+
+.styled-table thead th {
+    background-color: #f3f3f3;
+    font-weight: bold;
+}
+
+.magasin-img {
+    max-width: 120px;
+    max-height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.styled-table th {
+    white-space: nowrap;
+}
+.form-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.form-container h1 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.form-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"],
+.form-container textarea,
+.form-container select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.form-container button,
+.form-container input[type="submit"] {
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.form-container button:hover,
+.form-container input[type="submit"]:hover {
+    background-color: #1c5980;
+}
+
+.form-container .form-footer a {
+    display: inline-block;
+    margin-top: 15px;
+    color: #2980b9;
+    text-decoration: none;
+}
+

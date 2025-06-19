@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block stylesheets %}
+    {# Si tu veux ajouter un CSS spécifique, ajoute ici #}
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Liste des utilisateurs</h1>
+
+    <div class="table-container">
+        <table class="styled-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Mot de passe</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for utilisateur in utilisateurs %}
+                <tr>
+                    <td>#{{ utilisateur.idUtilisateur }}</td>
+                    <td>{{ utilisateur.nom }}</td>
+                    <td>{{ utilisateur.prenom }}</td>
+                    <td><span class="badge email">{{ utilisateur.mail }}</span></td>
+                    <td><code class="mdp">{{ utilisateur.password|slice(0, 30) ~ '...' }}</code></td>
+                    <td>
+                        <a class="btn btn-show" href="{{ path('app_utilisateur_show', {'id': utilisateur.idUtilisateur}) }}">👁 Afficher</a>
+                        <a class="btn btn-edit" href="{{ path('app_utilisateur_edit', {'id': utilisateur.idUtilisateur}) }}">✏️ Modifier</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">Aucun utilisateur trouvé</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="action-links">
+        <a class="btn btn-primary" href="{{ path('app_utilisateur_new') }}">➕ Ajouter un utilisateur</a>
+        <a class="btn btn-secondary" href="{{ path('dashboard') }}">↩ Retour</a>
+    </div>
+{% endblock %}

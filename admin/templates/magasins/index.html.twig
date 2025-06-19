@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <h1>Listes des magasins</h1>
+
+    <div class="table-container">
+        <table class="styled-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ville</th>
+                <th>Rue</th>
+                <th>Image</th>
+                <th>Code postal</th>
+                <th>Téléphone</th>
+                <th>Ouverture</th>
+                <th>Fermeture</th>
+                <th>Jours</th>
+                <th>Vidéo</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for magasin in magasins %}
+                <tr>
+                    <td>{{ magasin.id }}</td>
+                    <td>{{ magasin.villeMagasin }}</td>
+                    <td>{{ magasin.rue }}</td>
+                    <td>
+                        {% if magasin.image %}
+                            <img src="{{ magasin.image }}" alt="Image magasin" class="magasin-img">
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ magasin.cp }}</td>
+                    <td>{{ magasin.numTel }}</td>
+                    <td>{{ magasin.horaireOuverture ? magasin.horaireOuverture|date('H:i') : '-' }}</td>
+                    <td>{{ magasin.horaireFermeture ? magasin.horaireFermeture|date('H:i') : '-' }}</td>
+                    <td>{{ magasin.joursOuverture }}</td>
+                    <td>
+                        {% if magasin.videoMagasin %}
+                            <a href="{{ magasin.videoMagasin }}" target="_blank">Voir</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ path('app_magasins_show', {'id': magasin.id}) }}">Afficher</a>
+                        <a href="{{ path('app_magasins_edit', {'id': magasin.id}) }}">Modifier</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="11">Aucun magasin trouvé</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a href="{{ path('app_magasins_new') }}" class="btn btn-primary">Ajouter un magasin</a>
+    <a href="{{ path('dashboard') }}" class="btn btn-secondary">Retour</a>
+{% endblock %}
