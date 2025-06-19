@@ -12,19 +12,45 @@
     <link href="../assets/css/postuler.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/quiSommesNous.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Custom Style -->
 
 </head>
+<body>
+<header>
+    <nav class="navbar">
+        <div class="logo"><a href="index.php"><img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" style="width: 300px"></a></div>
+        <ul class="nav-links">
+            <li><a href="index.php" class="active">Accueil</a></li>
+            <li><a href="quiSommesNous.html">Notre histoire</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="postuler.php">Postuler</a></li>
+        </ul>
+        <div class="nav-buttons">
+            <a href="pageInscription.php" class="btn-light">Inscription</a>
+            <a href="pageConnexion.php" class="btn-dark">Connexion</a>
+        </div>
+    </nav>
+</header>
+
 <!-- Header recrutement -->
-<section class="bg-dark text-white py-5 position-relative overflow-hidden" style="background-color: #541b19;">
+<section class="bg text-white py-5 position-relative overflow-hidden"style="background: linear-gradient(to bottom right,#003366, white,red); overflow: hidden ">
     <div class="container text-center">
-        <h2 class="fw-bold">Rejoignez l’aventure SuperMarché</h2>
-        <p class="mb-2">Ensemble, construisons le commerce de demain</p>
-        <p class="mb-4">
+        <h2 class="fw-bold" style=" text-shadow: 1px 1px 15px rgba(0, 0, 0, 0.4);">Rejoignez l’aventure SuperMarché</h2>
+        <p class="mb-2" style=" text-shadow: 1px 1px 15px rgba(0, 0, 0, 0.4);">Ensemble, construisons le commerce de demain</p>
+        <p class="mb-4"  style=" text-shadow: 1px 1px 15px rgba(0, 0, 0, 0.4);">
             Chez SuperMarché, nous croyons que nos collaborateurs sont notre plus grande richesse.
             Rejoignez une entreprise engagée où votre talent et votre personnalité font la différence.
         </p>
         <div class="d-flex justify-content-center gap-3">
-            <a href="#" class="btn btn-light text-danger fw-semibold">Voir nos offres</a>
+            <a href="#5" class="btn btn-light text-danger fw-semibold">Voir nos offres</a>
             <a href="#" class="btn btn-outline-light fw-semibold">Candidature spontanée</a>
         </div>
     </div>
@@ -165,7 +191,7 @@
 
         <!-- Offres d'emploi -->
 <br>
-            <section class="py-5">
+            <section class="py-5" id="5">
             <h3 class="text-center fw-bold">Nos offres d'emploi</h3>
             <p class="text-center mb-4">Découvrez nos opportunités actuelles et rejoignez une équipe dynamique et engagée. Nous recherchons des talents dans différents domaines pour accompagner notre développement.</p>
 

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
+
 </head>
 
 <header>
@@ -16,17 +17,18 @@
         <div class="logo"><img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" style="width: 300px"></div>
         <ul class="nav-links">
             <li><a href="#" class="active">Accueil</a></li>
-            <li><a href="catalogue.php">Nos produits</a></li>
-            <li><a href="#" >Promotions</a></li>
-            <li><a href="#">Nouveautés</a></li>
             <li><a href="nosMagasins.php">Nos magasins</a></li>
             <li><a href="quiSommesNous.html">Notre histoire</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="postuler.php">Postuler</a></li>
         </ul>
         <div class="nav-buttons">
-            <a href="pageInscription.php" class="btn-light">Inscription</a>
-            <a href="pageConnexion.php" class="btn-dark">Connexion</a>
+            <a href="pageConnexion.php" style="text-decoration: none; color: black; display: flex; flex-direction: column; align-items: center; font-weight: 500;">
+                <i class="bi bi-person" style="font-size: 30px;"></i>
+                <span>Me connecter / M'inscrire</span>
+            </a>
+
+
         </div>
     </nav>
 </header>
@@ -37,8 +39,8 @@
                 <h1 style=" text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);">Des produits frais et de qualité près de chez vous</h1>
                 <p style=" text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);">Découvrez notre large sélection de produits frais, locaux et à prix compétitifs.</p>
                 <div class="hero-buttons">
-                    <a href="#" class="btn-outline">Nos promotions</a>
-                    <a href="#" class="btn-outline dark" style="color: red">Trouver un magasin</a>
+                    <a href="#2" class="btn-outline">Nos produits populaires</a>
+                    <a href="nosMagasins.php" class="btn-outline dark" style="color: red">Trouver un magasin</a>
                 </div>
             </div>
             <div class="hero-image">
@@ -133,7 +135,7 @@
 
 
     ?>
-    <section class="produits-populaires">
+    <section class="produits-populaires" id="2">
         <div class="container">
             <h2 class="section-title">Nos produits populaires</h2>
 
@@ -207,85 +209,9 @@
         </div>
     </section>
 
-    <section class="nouveautes">
-        <div class="container">
-            <h2 class="section-title">Nouveautés</h2>
-            <p class="section-subtitle">Découvrez nos derniers produits arrivés en magasin.</p>
-
-            <div class="produits-grid"> <!-- DOIT être en dehors de la boucle -->
-                <?php
-                $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
-                $query = "SELECT nom_produit, photo FROM produits ORDER BY id_produit DESC LIMIT 5";
-                $stmt = $pdo->prepare($query);
-                $stmt->execute();
-                $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                foreach ($produits as $produit): ?>
-                    <div class="produit-card">
-                        <div class="badge">NOUVEAU</div>
-                        <div class="produit-image">
-                            <img src="<?= htmlspecialchars($produit['photo']) ?>" alt="<?= htmlspecialchars($produit['nom_produit']) ?>">
-                        </div>
-                        <div class="produit-info">
-                            <h3><?= htmlspecialchars($produit['nom_produit']) ?></h3>
-                            <p>Description générique du produit.</p>
-                            <div class="produit-footer">
-                                <span class="panier"><img src="icon-cart.png" alt="Ajouter au panier" /></span>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </section>
 
 
-    <section class="promotions">
-        <div class="container">
-            <h2 class="section-title">Nos promotions de la semaine</h2>
-            <p class="section-subtitle">Profitez de nos offres spéciales et économisez sur vos achats.</p>
 
-
-            <div class="promos-grid">
-                <div class="promo-card">
-                    <div class="promo-header" style="background-color: #003366">30%</div>
-                    <h3>Fruits de saison</h3>
-                    <p>Profitez de 30% de réduction sur tous les fruits de saison ce week-end.</p>
-                    <p><span class="barre" >4,99 €</span> <span class="promo-prix" style="color: #003366">3,49 €</span> / kg</p>
-                    <div class="promo-footer">
-                        <span class="date" style="color: #003366">Jusqu'à dimanche</span>
-                        <a href="#" class="voir-plus" style="background-color: #003366">Voir plus</a>
-                    </div>
-                </div>
-
-                <div class="promo-card">
-                    <div class="promo-header" style="background-color: #003366">2 + 1 GRATUIT</div>
-                    <h3>Yaourts Bio</h3>
-                    <p>Pour 2 packs de yaourts bio achetés, le 3ème est offert (le moins cher).</p>
-                    <p><span class="barre">3,75 €</span> <span class="promo-prix" style="color: #003366">3,75 €</span> / 6x125g</p>
-                    <div class="promo-footer">
-                        <span class="date" style="color: #003366">Cette semaine</span>
-                        <a href="#" class="voir-plus" style="background-color: #003366">Voir plus</a>
-                    </div>
-                </div>
-
-                <div class="promo-card">
-                    <div class="promo-header" style="background-color: #003366">-50% sur le 2ème</div>
-                    <h3>Filet de saumon</h3>
-                    <p>50% de réduction sur le deuxième filet de saumon acheté.</p>
-                    <p><span class="barre">12,90 €</span> <span class="promo-prix" style="color: #003366">9,68 €</span> / 250g</p>
-                    <div class="promo-footer">
-                        <span class="date" style="color: #003366">Jusqu'à mercredi</span>
-                        <a href="#" class="voir-plus" style="background-color: #003366">Voir plus</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="btn-all-promos">
-                <a href="#" class="btn-green" style="background-color: #003366">Voir toutes les promotions</a>
-            </div>
-        </div>
-    </section>
 
     <section class="magasins">
         <div class="container">
@@ -299,26 +225,26 @@
             <div class="magasins-grid">
                 <div class="magasin-card">
                     <h3>Paristanbul Villiers le bel</h3>
-                    <p><i class="bi bi-geo-alt-fill"></i>117 Avenue Pierre Semard, 95400 Villiers‑le‑Bel</p>
-                    <p><i class="bi bi-clock-fill"></i> Lun-Dim: 8h30–20h</p>
-                    <p><i class="bi bi-telephone-fill"></i> +33 7 49 82 61 33</p>
-                    <a href="#" class="itineraire-btn">Itinéraire</a>
+                    <p><i class="bi bi-geo-alt-fill" style="color : #003366"></i>117 Avenue Pierre Semard, 95400 Villiers‑le‑Bel</p>
+                    <p><i class="bi bi-clock-fill" style="color : #003366"></i> Lun-Dim: 8h30–20h</p>
+                    <p><i class="bi bi-telephone-fill" style="color : #003366"></i> +33 7 49 82 61 33</p>
+                    <a href="#" class="itineraire-btn" style="background-color : #003366">Itinéraire</a>
                 </div>
 
                 <div class="magasin-card">
                     <h3>Paristanbul Bondy</h3>
-                    <p><i class="bi bi-geo-alt-fill"></i> 116 Avenue Gallieni, 93140 Bondy</p>
-                    <p><i class="bi bi-clock-fill"></i> Lun-Dim: 8h30–20h</p>
-                    <p><i class="bi bi-telephone-fill"></i>+33 7 49 82 61 33</p>
-                    <a href="#" class="itineraire-btn">Itinéraire</a>
+                    <p><i class="bi bi-geo-alt-fill" style="color : #003366"></i> 116 Avenue Gallieni, 93140 Bondy</p>
+                    <p><i class="bi bi-clock-fill" style="color : #003366"></i> Lun-Dim: 8h30–20h</p>
+                    <p><i class="bi bi-telephone-fill" style="color : #003366"></i>+33 7 49 82 61 33</p>
+                    <a href="#" class="itineraire-btn" style="background-color: #003366">Itinéraire</a>
                 </div>
 
                 <div class="magasin-card">
                     <h3>Paristanbul Drancy</h3>
-                    <p><i class="bi bi-geo-alt-fill"></i> 83 Avenue Marceau, 93700 Drancy</p>
-                    <p><i class="bi bi-clock-fill"></i>Lun-Dim: 8h30–20h30</p>
-                    <p><i class="bi bi-telephone-fill"></i>+33 7 49 82 61 33</p>
-                    <a href="#" class="itineraire-btn">Itinéraire</a>
+                    <p><i class="bi bi-geo-alt-fill" style="color : #003366"></i> 83 Avenue Marceau, 93700 Drancy</p>
+                    <p><i class="bi bi-clock-fill" style="color : #003366"></i>Lun-Dim: 8h30–20h30</p>
+                    <p><i class="bi bi-telephone-fill" style="color : #003366"></i>+33 7 49 82 61 33</p>
+                    <a href="#" class="itineraire-btn" style="background-color : #003366">Itinéraire</a>
                 </div>
             </div>
         </div>

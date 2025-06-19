@@ -22,61 +22,34 @@ img {
     display: block;
 }
 
-/* === HEADER === */
-header {
-    background-color: #ecd8b1;
-    padding: 0.5rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.magasins-banner {
+    background-color: #6c2320;
     position: relative;
-    border-bottom: 2px solid #e0c097;
+    overflow: hidden;
 }
 
-.logo img {
-    max-height: 70px;
-}
-
-/* === FIXED NAVIGATION === */
-nav {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background-color: #fff8f0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border-radius: 10px;
-    margin-right: 100px;
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    padding: 1rem;
-    margin: 0;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: #a0522d;
-    font-weight: bold;
-    transition: color 0.3s;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-}
-
-nav ul li a:hover {
-    color: #d35400;
-}
-
-/* === CONNECTION BUTTON === */
-.btn-group.position-absolute.end-0 {
+.magasins-banner::before,
+.magasins-banner::after {
+    content: "";
     position: absolute;
-    right: 1rem;
-    top: 1rem;
-    z-index: 1001;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.05);
 }
+
+.magasins-banner::before {
+    width: 300px;
+    height: 300px;
+    top: 20%;
+    left: 10%;
+}
+
+.magasins-banner::after {
+    width: 400px;
+    height: 400px;
+    bottom: 0;
+    right: 10%;
+}
+
 
 /* === CAROUSEL === */
 #carouselExampleInterval {
@@ -236,18 +209,7 @@ section {
     transform: scale(1.2);
 }
 
-/* === FOOTER === */
-footer {
-    background-color: #ecd8b1;
-    color:#a0522d;
-    text-align: center;
-    padding: 1rem;
-    margin-top: 2rem;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    font-family: 'Libre Baskerville', serif;
-}
+
 
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
@@ -383,18 +345,7 @@ margin-top: 10px;
     margin: 0 1rem;
     transition: transform 0.3s ease;
 }
-/* === FOOTER === */
-footer {
-    background-color: #ecd8b1;
-    color:#a0522d;
-    text-align: center;
-    padding: 1rem;
-    margin-top: 2rem;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    font-family: 'Libre Baskerville', serif;
-}
+
 
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
@@ -560,3 +511,75 @@ body {
 .iconStat{
     color: white;
 }
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1rem 1rem 0.5rem; /* top right bottom left */
+
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2d9b47;
+
+}
+.video-container {
+    margin-left: 50px; /* Ajuste la valeur selon ton besoin */
+    border-radius: 20px;
+    overflow: hidden; /* Nécessaire pour que le border-radius s’applique à l’intérieur */
+    max-width: 700px; /* Pour limiter la taille de la vidéo si besoin */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Optionnel pour plus de style */
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links a.active,
+.nav-links a:hover {
+    color: #0b4c8c;
+}
+
+.nav-buttons a {
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-right: 1rem;
+
+}
+
+.btn-light {
+    background-color: lightblue;
+    color: #003366;
+}
+
+.btn-dark {
+    background-color: #003366;
+    color: #fff;
+}
+::-webkit-scrollbar {
+    display: none;
+}
+
+.swiper-cards {
+    scroll-behavior: smooth;
+}
+
