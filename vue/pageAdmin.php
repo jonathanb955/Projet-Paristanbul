@@ -17,17 +17,12 @@
     <nav class="menu">
         <div class="menu-title">Navigation site</div>
         <a class="menu-item active" href="#"><i class="bi bi-speedometer2"></i><span>Tableau de bord</span></a>
-        <a class="menu-item" href="#"><i class="bi bi-house-door"></i><span>Accueil</span></a>
         <a class="menu-item" href="#"><i class="bi bi-shop"></i><span>Nos magasins</span></a>
-        <a class="menu-item" href="#"><i class="bi bi-journal-text"></i><span>Notre histoire</span></a>
         <a class="menu-item" href="#"><i class="bi bi-envelope"></i><span>Contact</span></a>
         <a class="menu-item" href="#"><i class="bi bi-briefcase"></i><span>Postuler</span></a>
 
         <div class="menu-title">Contenus</div>
-        <a class="menu-item" href="#"><i class="bi bi-grid-1x2"></i><span>Rayons</span></a>
-        <a class="menu-item" href="#"><i class="bi bi-stars"></i><span>Produits populaires</span></a>
         <a class="menu-item" href="#"><i class="bi bi-megaphone"></i><span>Promotions</span></a>
-        <a class="menu-item" href="#"><i class="bi bi-images"></i><span>Médias</span></a>
 
         <div class="menu-title">Administration</div>
         <a class="menu-item" href="#"><i class="bi bi-people"></i><span>Utilisateurs & rôles</span></a>

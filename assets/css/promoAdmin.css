@@ -1,0 +1,7 @@
+.layout{display:grid; grid-template-columns:2fr 1.1fr; gap:16px; padding:18px 20px}
+@media (max-width:1200px){ .layout{grid-template-columns:1fr} }
+
+.promo-art{display:flex; align-items:center; gap:10px; padding:10px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,0.02); margin-top:4px}
+.art-thumb{width:72px;height:72px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg, rgba(0,51,102,0.25), rgba(26,115,232,0.18));border:1px solid var(--line)}
+.art-thumb i{font-size:28px}
+.row-actions{display:flex; gap:6px; align-items:center}
