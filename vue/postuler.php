@@ -43,10 +43,10 @@
 <!-- Header recrutement -->
 <section class="bg text-white py-5 position-relative overflow-hidden"style="background: linear-gradient(to bottom right,#003366, white,red); overflow: hidden ">
     <div class="container text-center">
-        <h2 class="fw-bold" style=" text-shadow: 1px 1px 15px rgba(0, 0, 0, 0.4);">Rejoignez l’aventure SuperMarché</h2>
+        <h2 class="fw-bold" style=" text-shadow: 1px 1px 15px rgba(0, 0, 0, 0.4);">Rejoignez l’aventure Paristanbul</h2>
         <p class="mb-2" style=" text-shadow: 1px 1px 15px rgba(0, 0, 0, 0.4);">Ensemble, construisons le commerce de demain</p>
         <p class="mb-4"  style=" text-shadow: 1px 1px 15px rgba(0, 0, 0, 0.4);">
-            Chez SuperMarché, nous croyons que nos collaborateurs sont notre plus grande richesse.
+            Chez Paristanbul, nous croyons que nos collaborateurs sont notre plus grande richesse.
             Rejoignez une entreprise engagée où votre talent et votre personnalité font la différence.
         </p>
         <div class="d-flex justify-content-center gap-3">

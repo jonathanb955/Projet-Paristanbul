@@ -209,6 +209,52 @@
         </div>
     </section>
 
+    <section class="promotions">
+        <div class="container">
+            <h2 class="section-title">Nos promotions de la semaine</h2>
+            <p class="section-subtitle">Profitez de nos offres spéciales et économisez sur vos achats.</p>
+
+
+            <div class="promos-grid">
+                <div class="promo-card">
+                    <div class="promo-header" style="background-color: #003366">30%</div>
+                    <h3>Fruits de saison</h3>
+                    <p>Profitez de 30% de réduction sur tous les fruits de saison ce week-end.</p>
+                    <p><span class="barre" >4,99 €</span> <span class="promo-prix" style="color: #003366">3,49 €</span> / kg</p>
+                    <div class="promo-footer">
+                        <span class="date" style="color: #003366">Jusqu'à dimanche</span>
+                        <a href="#" class="voir-plus" style="background-color: #003366">Voir plus</a>
+                    </div>
+                </div>
+
+                <div class="promo-card">
+                    <div class="promo-header" style="background-color: #003366">2 + 1 GRATUIT</div>
+                    <h3>Yaourts Bio</h3>
+                    <p>Pour 2 packs de yaourts bio achetés, le 3ème est offert (le moins cher).</p>
+                    <p><span class="barre">3,75 €</span> <span class="promo-prix" style="color: #003366">3,75 €</span> / 6x125g</p>
+                    <div class="promo-footer">
+                        <span class="date" style="color: #003366">Cette semaine</span>
+                        <a href="#" class="voir-plus" style="background-color: #003366">Voir plus</a>
+                    </div>
+                </div>
+
+                <div class="promo-card">
+                    <div class="promo-header" style="background-color: #003366">-50% sur le 2ème</div>
+                    <h3>Filet de saumon</h3>
+                    <p>50% de réduction sur le deuxième filet de saumon acheté.</p>
+                    <p><span class="barre">12,90 €</span> <span class="promo-prix" style="color: #003366">9,68 €</span> / 250g</p>
+                    <div class="promo-footer">
+                        <span class="date" style="color: #003366">Jusqu'à mercredi</span>
+                        <a href="#" class="voir-plus" style="background-color: #003366">Voir plus</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-all-promos">
+                <a href="#" class="btn-green" style="background-color: #003366">Voir toutes les promotions</a>
+            </div>
+        </div>
+    </section>
 
 
 
@@ -330,10 +376,10 @@
                 offres et nouveautés en exclusivité.
             </p>
             <div class="social-icons">
-                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="tiktok"><i class="bi bi-tiktok"></i></a>
-                <a href="#" class="youtube"><i class="bi bi-youtube"></i></a>
+                <a href="https://www.facebook.com/supermarcheparistanbul/" class="facebook"><i class="bi bi-facebook"></i></a>
+                <a href="https://www.instagram.com/paristanbul_supermarche/?hl=fr" class="instagram"><i class="bi bi-instagram"></i></a>
+                <a href="https://www.tiktok.com/@supermarche_paristanbul" class="tiktok"><i class="bi bi-tiktok"></i></a>
+                <a href="https://www.youtube.com/channel/UCsjy3bdpFzBwM7MF923gKvA" class="youtube"><i class="bi bi-youtube"></i></a>
                 <a href="#" class="paristanbul"><img src="../assets/img/logo.app.pi.webp" alt="Paristanbul"></a>
             </div>
         </div>
