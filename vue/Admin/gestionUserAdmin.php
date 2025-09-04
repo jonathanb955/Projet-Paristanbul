@@ -10,19 +10,22 @@
 </head>
 <body>
 <aside class="sidebar">
-    <div class="brand"><img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul"></div>
-    <nav class="menu">
+    <div class="brand">
+        <a href="../../vue/index.php"><img src="../../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" /></a>
+    </div>    <nav class="menu">
         <div class="menu-title">Navigation site</div>
-        <a class="menu-item" href="admin-dashboard.html"><i class="bi bi-speedometer2"></i><span>Tableau de bord</span></a>
-        <a class="menu-item" href="admin-nos-magasins.html"><i class="bi bi-shop"></i><span>Nos magasins</span></a>
-        <a class="menu-item" href="admin-promos.html"><i class="bi bi-megaphone"></i><span>Promotions</span></a>
-        <a class="menu-item" href="admin-candidatures.html"><i class="bi bi-briefcase"></i><span>Candidatures</span></a>
+        <a class="menu-item" href="../../vue/pageAdmin.php"><i class="bi bi-speedometer2"></i><span>Tableau de bord</span></a>
+        <a class="menu-item" href="../../vue/Admin/nosMagasinsAdmin.php"><i class="bi bi-shop"></i><span>Nos magasins</span></a>
+        <div class="menu-title">Contenus</div>
+
+        <a class="menu-item" href="../../vue/Admin/promoAdmin.php"><i class="bi bi-megaphone"></i><span>Promotions</span></a>
         <div class="menu-title">Administration</div>
-        <a class="menu-item active" href="#"><i class="bi bi-people"></i><span>Utilisateurs</span></a>
-        <a class="menu-item" href="admin-settings.html"><i class="bi bi-gear"></i><span>Paramètres</span></a>
+        <a class="menu-item" href="../../vue/Admin/candidatureAdmin.php"><i class="bi bi-briefcase"></i><span>Candidatures</span></a>
+
+        <a class="menu-item active" href="../../vue/Admin/gestionUserAdmin.php"><i class="bi bi-people"></i><span>Utilisateurs</span></a>
+
     </nav>
     <div class="sidebar-footer">
-        <div class="mini-user"><div class="avatar">PI</div><div class="meta"><strong>Admin Paristanbul</strong><small>Connecté</small></div></div>
         <a class="btn-outline" href="#"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
     </div>
 </aside>

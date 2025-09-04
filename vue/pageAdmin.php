@@ -11,32 +11,26 @@
 <!-- Sidebar -->
 <aside class="sidebar">
     <div class="brand">
-        <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" />
+         <a href="../vue/index.php"><img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" /></a>
     </div>
 
     <nav class="menu">
         <div class="menu-title">Navigation site</div>
-        <a class="menu-item active" href="#"><i class="bi bi-speedometer2"></i><span>Tableau de bord</span></a>
-        <a class="menu-item" href="#"><i class="bi bi-shop"></i><span>Nos magasins</span></a>
-        <a class="menu-item" href="#"><i class="bi bi-envelope"></i><span>Contact</span></a>
-        <a class="menu-item" href="#"><i class="bi bi-briefcase"></i><span>Postuler</span></a>
+        <a class="menu-item active" href="../vue/pageAdmin.php"><i class="bi bi-speedometer2"></i><span>Tableau de bord</span></a>
+        <a class="menu-item" href="../vue/Admin/nosMagasinsAdmin.php"><i class="bi bi-shop"></i><span>Nos magasins</span></a>
+
 
         <div class="menu-title">Contenus</div>
-        <a class="menu-item" href="#"><i class="bi bi-megaphone"></i><span>Promotions</span></a>
+        <a class="menu-item" href="../vue/Admin/promoAdmin.php"><i class="bi bi-megaphone"></i><span>Promotions</span></a>
 
         <div class="menu-title">Administration</div>
-        <a class="menu-item" href="#"><i class="bi bi-people"></i><span>Utilisateurs & rôles</span></a>
-        <a class="menu-item" href="#"><i class="bi bi-gear"></i><span>Paramètres</span></a>
+        <a class="menu-item" href="../vue/Admin/candidatureAdmin.php"><i class="bi bi-briefcase"></i><span>Candidature</span></a>
+
+        <a class="menu-item" href="../vue/Admin/gestionUserAdmin.php"><i class="bi bi-people"></i><span>Utilisateurs</span></a>
     </nav>
 
     <div class="sidebar-footer">
-        <div class="mini-user">
-            <div class="avatar">PI</div>
-            <div class="meta">
-                <strong>Admin Paristanbul</strong>
-                <small>Connecté</small>
-            </div>
-        </div>
+
         <a class="btn-outline" href="#"><i class="bi bi-box-arrow-right"></i> Se déconnecter</a>
     </div>
 </aside>
