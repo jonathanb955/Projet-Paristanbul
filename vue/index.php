@@ -307,23 +307,23 @@
                 <!-- Formulaire de contact -->
                 <div class="contact-form">
                     <h3>Envoyez-nous un message</h3>
-                    <form>
-                        <label for="nom">Nom complet</label>
-                        <input type="text" id="nom" placeholder="Votre nom" required />
+                    <form action="index.php" method="post"  enctype="multipart/form-data">
+                        <label for name="nom">Nom complet</label>
+                        <input type="text" name="nom" placeholder="Votre nom" required />
 
-                        <label for="email">Email</label>
-                        <input type="email" id="email" placeholder="votre@email.com" required />
+                        <label for name="email">Email</label>
+                        <input type="email" name="email" placeholder="votre@email.com" required />
 
-                        <label for="sujet">Sujet</label>
-                        <select id="sujet" required>
+                        <label for name="sujet">Sujet</label>
+                        <select name="sujet" required>
                             <option value="">Sélectionnez un sujet</option>
                             <option>Informations générales</option>
                             <option>Commande</option>
                             <option>Problème technique</option>
                         </select>
 
-                        <label for="message">Message</label>
-                        <textarea id="message" rows="5" placeholder="Votre message..." required></textarea>
+                        <label for name="message">Message</label>
+                        <textarea name="message" rows="5" placeholder="Votre message..." required></textarea>
 
                         <button type="submit" class="btn-green" style="background-color: #003366">Envoyer le message</button>
                     </form>
@@ -351,7 +351,26 @@
         </div>
     </section>
 </main>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $bdd = new PDO('mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8', 'root', '');
 
+    $nom_complet= $_POST['nom'] ;
+    $email = $_POST['email'] ;
+    $sujet = $_POST['sujet'] ;
+    $message = $_POST['message'];
+
+
+
+// Insertion en base de données
+    $sql = "INSERT INTO contacts (nom_complet ,sujet, email,message)
+VALUES (?, ?, ?, ?)";
+    $req = $bdd->prepare($sql);
+    $req->execute([$nom_complet, $sujet, $email, $message]);
+
+    echo "<div class='alert alert-success'>Candidature envoyée avec succès !</div>";
+}
+?>
 
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
