@@ -30,7 +30,7 @@
         <ul class="nav-links">
             <li><a href="index.php" class="active">Accueil</a></li>
             <li><a href="quiSommesNous.html">Notre histoire</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="">Contact</a></li>
             <li><a href="postuler.php">Postuler</a></li>
         </ul>
         <div class="nav-buttons">
@@ -287,27 +287,27 @@ if ($req->rowCount() > 0) {
                     <!-- Colonne droite (formulaire) -->
                     <div class="col-md-8 p-4">
                         <h6 class="fw-bold mb-3">Parlez-nous de vous</h6>
-                        <form>
+                        <form action="postuler.php" method="post" enctype="multipart/form-data" >
 
                             <div class="row g-2 mb-3">
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="Prénom *" required>
+                                    <input type="text" class="form-control" placeholder="Prénom *" name="prenom" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="Nom *" required>
+                                    <input type="text" class="form-control" placeholder="Nom *" name = "nom" required>
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <input type="email" class="form-control" placeholder="Email *" required>
+                                <input type="email" class="form-control" placeholder="Email *" name="email" required>
                             </div>
 
                             <div class="mb-3">
-                                <input type="text" class="form-control" placeholder="Téléphone">
+                                <input type="text" class="form-control" placeholder="Téléphone" name="telephone">
                             </div>
 
                             <div class="mb-3">
-                                <select class="form-select" required>
+                                <select class="form-select" name="poste" required>
                                     <option value="">Poste recherché *</option>
                                     <option>Responsable de rayon</option>
                                     <option>Développeur web</option>
@@ -316,16 +316,16 @@ if ($req->rowCount() > 0) {
                             </div>
 
                             <div class="mb-3">
-                                <input type="text" class="form-control" placeholder="Lieu souhaité *" required>
+                                <input type="text" class="form-control" placeholder="Lieu souhaité *"  name="lieu" required>
                             </div>
 
                             <div class="mb-3">
-                                <textarea class="form-control" rows="4" placeholder="Présentez-vous et expliquez votre motivation…"></textarea>
+                                <textarea class="form-control" rows="4" placeholder="Présentez-vous et expliquez votre motivation…" name="texte_motivation"></textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label small">CV (PDF, DOC, DOCX) *</label>
-                                <input type="file" class="form-control" required>
+                                <input type="file" class="form-control" name="cv" >
                             </div>
 
                             <div class="form-check mb-3">
@@ -345,7 +345,37 @@ if ($req->rowCount() > 0) {
         </div>
     </div>
 </section>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$bdd = new PDO('mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8', 'root', '');
 
+$prenom = $_POST['prenom'] ?? '';
+$nom = $_POST['nom'] ?? '';
+$email = $_POST['email'] ?? '';
+$telephone = $_POST['telephone'] ?? '';
+$poste = $_POST['poste'] ?? '';
+$ville = $_POST['lieu'] ?? '';
+$texte_motivation = $_POST['texte_motivation'] ?? '';
+
+// Valeurs par défaut automatiques
+$ref_offre = "";
+$date = "";
+$statut = "en attente";
+
+// Gestion de l'upload du CV
+$cv_nom = '';
+
+
+
+// Insertion en base de données
+$sql = "INSERT INTO candidatures (nom, prenom, email, telephone, ville, cv, lettre_motivation, ref_offre, date_candidature, statut)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+$req = $bdd->prepare($sql);
+$req->execute([$nom, $prenom, $email, $telephone, $ville, $cv_nom, $texte_motivation, $ref_offre, $date, $statut]);
+
+echo "<div class='alert alert-success'>Candidature envoyée avec succès !</div>";
+}
+?>
 <!-- SECTION FAQ -->
 <div class="faq-section">
     <h2>Questions fréquentes</h2>
