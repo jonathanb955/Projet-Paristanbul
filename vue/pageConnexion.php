@@ -1,3 +1,6 @@
+<?php
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -86,7 +89,39 @@
                         <svg id="spinner" class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" opacity="0.25"/><path d="M22 12a10 10 0 0 1-10 10"/></svg>
                         <span>Se connecter</span>
                     </button>
+                    <?php
+                    $bdd = new PDO('mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+                    $login = "";
+                    $mdp = "";
+                    if(isset($_POST['email']) && isset($_POST['mdp'])) {
+                        $login = $_POST['email'];
+                        $mdp = $_POST['mdp'];
 
+                        $var = [$login, $mdp];
+
+                        $sqlAdmin = $bdd->prepare("SELECT * FROM utilisateurs WHERE email = ? and mdp = ? and role= 'admin' ");
+                        $sqlAdmin->execute($var);
+                        $lignesAdmin = $sqlAdmin->fetch();
+
+
+                        $sqlUser = $bdd->prepare("SELECT * from utilisateurs where  email = ? and mdp = ? and role ='utilisateur'");
+                        $sqlUser->execute($var);
+                        $ligneUser = $sqlUser->fetch();
+
+                        if ($ligneUser) {
+                            session_start();
+                            $_SESSION['email'] = $ligneUser['email'];
+                            header('Location: index.php');
+                        } else if ($lignesAdmin) {
+                            session_start();
+                            $_SESSION['login'] = $lignesAdmin['login'];
+                            header('Location: pageAdmin.php');
+                        }
+
+                    }
+
+
+                    ?>
                     <div class="relative py-2 text-center">
                         <span class="bg-transparent px-3 text-xs text-slate-300">ou</span>
                         <div class="absolute inset-x-0 top-1/2 -z-10 h-px -translate-y-1/2 bg-white/10"></div>
