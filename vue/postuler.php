@@ -204,12 +204,10 @@
             <?php
 $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
 
-
-
     // Produits par catégorie via sous-catégorie
     $req = $pdo->prepare("
         SELECT  secteur_activite, titre_poste, ville, departement, type_contrat, detail_poste
-        FROM offres_emplois 
+        FROM offres_emplois ;
        
     ");
             $req->execute();

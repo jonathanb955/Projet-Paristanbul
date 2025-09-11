@@ -39,6 +39,30 @@
         </div>
     </header>
 
+    <?php
+    $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+
+    // Toutes les candidatures
+   $reqCandidatures = $pdo->prepare("
+    SELECT *
+    FROM candidatures c
+    INNER JOIN offres_emplois o ON c.ref_offre = o.id_offre
+");
+$reqCandidatures->execute();
+
+if ($reqCandidatures->rowCount() > 0) {
+    while ($candidatures = $reqCandidatures->fetch(PDO::FETCH_ASSOC)) {
+        $nom = $candidatures['nom'];
+        $prenom = $candidatures['prenom'];
+        $email = $candidatures['email'];
+        $telephone = $candidatures['telephone'];
+        $magasin = $candidatures['ville'];
+        $poste = $candidatures['nom_poste'];  // Nom du poste
+        $ref_offre = $candidatures['ref_offre']; // Référence de l’offre
+    }
+}
+?>
+
     <section class="filters">
         <form class="filters-bar" action="#" method="get">
             <div class="field"><i class="bi bi-search"></i><input type="search" placeholder="Rechercher (nom, email, poste)…"></div>
@@ -115,39 +139,90 @@
                 <div class="pager"><button class="btn ghost">‹</button><button class="btn ghost">›</button></div>
             </div>
         </div>
+        <?php
+        $dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
+        $bdd = new PDO($dsn, 'root', '');
 
-        <!-- Panneau détail -->
+        // Vérification que le formulaire a été soumis
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $secteur_activite = $_POST['secteur_activite'];
+            $titre_poste      = $_POST['titre_poste'];
+            $ville            = $_POST['ville'];
+            $departement      = $_POST['departement'];
+            $type_contrat     = $_POST['type_contrat'];
+            $detail_poste     = $_POST['detail_poste'];
+
+            $sql = $bdd->prepare("
+        INSERT INTO offres_emplois 
+        (secteur_activite, titre_poste, ville, departement, type_contrat, detail_poste)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ");
+            $sql->execute([$secteur_activite, $titre_poste, $ville, $departement, $type_contrat, $detail_poste]);
+
+            echo "<p style='color:green;'>Offre d'emploi enregistrée avec succès !</p>";
+        }
+
+        ?>
+        <!-- Panneau Offre -->
         <aside class="sidepanel card">
-            <div class="card-head"><h2>Détail candidature</h2></div>
-            <form class="form">
-                <div class="grid two">
-                    <label><span>Nom</span><input type="text" placeholder="Nom Prénom"></label>
-                    <label><span>Email</span><input type="email" placeholder="email@exemple.com"></label>
-                </div>
-                <div class="grid two">
-                    <label><span>Téléphone</span><input type="tel" placeholder="06 .. .. .. .."></label>
-                    <label><span>Poste</span>
-                        <select><option>Caissier(ère)</option><option>Préparateur(trice)</option><option>Manager</option></select>
-                    </label>
-                </div>
-                <label><span>Magasin souhaité</span>
-                    <select><option>Villiers-le-Bel</option><option>Bondy</option><option>Drancy</option></select>
+            <div class="card-head"><h2>Créer une offre d'emploi</h2></div>
+            <form class="form" action="candidatureAdmin.php" method="post">
+                <!-- Secteur d'activité -->
+                <label>
+                    <span>Secteur d'activité</span>
+                    <input type="text" name="secteur_activite" placeholder="Ex : Commerce, Restauration" required>
                 </label>
-                <label><span>Message</span><textarea rows="4" placeholder="Lettre de motivation…"></textarea></label>
-                <div class="grid two">
-                    <label><span>Statut</span>
-                        <select><option>Nouveau</option><option>Retenu</option><option>Refusé</option><option>Archivé</option></select>
-                    </label>
-                    <label><span>Note interne</span><input type="text" placeholder="Ex : bon contact tél."></label>
-                </div>
-                <div class="cv-box">
-                    <div class="cv-thumb"><i class="bi bi-file-earmark-text"></i></div>
-                    <div class="cv-meta"><strong>CV du candidat</strong><p><a class="link" href="#">Télécharger</a></p></div>
-                </div>
+
+                <!-- Titre du poste -->
+                <label>
+                    <span>Titre du poste</span>
+                    <input type="text" name="titre_poste" placeholder="Ex : Caissier(ère)" required>
+                </label>
+
+                <?php
+                $dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
+                $bdd = new PDO($dsn, 'root', '');
+                $sqlMagasin = $bdd->prepare("SELECT * FROM magasins ");
+                $sqlMagasin->execute();
+                $lignesMagasins = $sqlMagasin->fetchAll();
+                ?>
+                <!-- Ville -->
+                <label>
+                    <span>Villes</span>
+                    <select name="ville" required>
+                        <?php foreach($lignesMagasins as $magasin): ?>
+                            <option value="<?= $magasin['ville_magasin'] ?>"><?= $magasin['ville_magasin'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+
+                </label>
+
+                <!-- Département -->
+                <label>
+                    <span>Département</span>
+                    <input type="text" name="departement" placeholder="Ex : 95" required>
+                </label>
+
+                <!-- Type de contrat -->
+                <label>
+                    <span>Type de contrat</span>
+                    <select name="type_contrat" required>
+                        <option value="CDD">CDD</option>
+                        <option value="CDI">CDI</option>
+                        <option value="Stage">Stage</option>
+                        <option value="Alternance">Alternance</option>
+                    </select>
+                </label>
+
+                <!-- Détails du poste -->
+                <label>
+                    <span>Détails du poste</span>
+                    <textarea name="detail_poste" rows="4" placeholder="Description du poste..." required></textarea>
+                </label>
+
                 <div class="form-actions">
                     <button type="reset" class="btn ghost">Annuler</button>
-                    <button type="button" class="btn ghost"><i class="bi bi-save"></i> Enregistrer</button>
-                    <button type="submit" class="btn"><i class="bi bi-send"></i> Contacter</button>
+                    <button type="submit" class="btn"><i class="bi bi-send"></i> Enregistrer</button>
                 </div>
             </form>
         </aside>
