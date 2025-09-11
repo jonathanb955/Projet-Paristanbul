@@ -35,6 +35,17 @@ class UtilisateursRepository {
             $bdd=new Bdd();
             $database=$bdd->getBdd();
             $hashedMdp = password_hash($utilisateur->getMdp(), PASSWORD_BCRYPT);
+            $req = $database->prepare("
+  INSERT INTO utilisateurs (nom, prenom, email, mdp, role)
+  VALUES (:nom, :prenom, :email, :mdp, :role)
+");
+            $req->execute([
+                'nom'    => $utilisateur->getNom(),
+                'prenom' => $utilisateur->getPrenom(),
+                'email'  => $utilisateur->getEmail(),
+                'mdp'    => $hashedMdp,           // ✅ on stocke le hash
+                'role'   => $utilisateur->getRole(),
+            ]);
             $req = $database->prepare ("INSERT INTO utilisateurs (nom, prenom,email, mdp, role) VALUES (:nom, :prenom,  :email, :mdp, :role)");
             var_dump([
                 $req->execute(array(

@@ -10,7 +10,7 @@ if (isset($_POST['modifier'])) {
         'nom' => $_POST['nom'],
         'prenom' => $_POST['prenom'],
         'email' => $_POST['email'],
-        'role' => $_POST['role'],
+        'role' => null,
         'mdp' => '',
     ]);
 

@@ -12,9 +12,6 @@ class Utilisateurs
     private $nom;
     private $prenom;
 
-    private $dateNaissance;
-
-    private $villeResidence;
     private $email;
     private $mdp;
     private $role;
@@ -90,37 +87,6 @@ class Utilisateurs
         $this->prenom = $prenom;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDateNaissance()
-    {
-        return $this->dateNaissance;
-    }
-
-    /**
-     * @param mixed $dateNaissance
-     */
-    public function setdateNaissance($dateNaissance)
-    {
-        $this->dateNaissance = $dateNaissance;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVilleResidence()
-    {
-        return $this->villeResidence;
-    }
-
-    /**
-     * @param mixed $villeResidence
-     */
-    public function setvilleResidence($villeResidence)
-    {
-        $this-> villeResidence= $villeResidence;
-    }
 
     /**
      * @return mixed

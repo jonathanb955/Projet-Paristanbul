@@ -1,47 +1,42 @@
+
 <?php
-require_once '../modele/Utilisateurs.php';
-require_once "../repository/UtilisateursRepository.php";
-require_once "../bdd/Bdd.php";
-session_start();
+var_dump($_POST);
+$dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
+$bdd = new pdo($dsn, 'root', '');
+$login = "";
+$mdp = "";
 
-if (empty($_POST['emailCo']) || empty($_POST['mdpCo'])) {
-    header("Location: ../../vue/pageConnexion.php?parametre=infoManquante");
-    exit();
-} else {
-    $utilisateur = new \modele\Utilisateurs([
-        'email' => $_POST["emailCo"]
-    ]);
-    $utilisateurRepository = new UtilisateursRepository();
-    $utilisateur = $utilisateurRepository->connexion($utilisateur);
+$login = $_POST['email'];
+$mdp = $_POST['mdp'];
+$mdpUser="";
+$mdpAdmin="";
 
-    if ($utilisateur !== null) {
-        if (password_verify($_POST['mdpCo'], $utilisateur->getMdp())) {
-            $_SESSION['id_utilisateur'] = $utilisateur->getIdUtilisateur();
-            $_SESSION['email'] = $utilisateur->getEmail();
-            $_SESSION['nom'] = $utilisateur->getNom();
-            $_SESSION['prenom'] = $utilisateur->getPrenom();
-            $_SESSION['role'] = $utilisateur->getRole();
-            $_SESSION['connexion'] = true;
+$var = [$login];
 
-            if ($utilisateur->getRole() == "admin") {
-                $_SESSION["connexionAdmin"] = true;
-            }
+$sqlAdmin = $bdd->prepare("SELECT * FROM utilisateurs WHERE email = ?  and role = 'admin' ");
+$sqlAdmin->execute($var);
+$lignesAdmin = $sqlAdmin->fetch();
 
 
-            if (isset($_SESSION['redirect_after_login'])) {
-                $url = $_SESSION['redirect_after_login'];
-                unset($_SESSION['redirect_after_login']);
-                header("Location: $url");
-            } else {
-                header("Location: ../../vue/index.php");
-            }
-            exit();
-        } else {
-            header("Location: ../../vue/pageConnexion.php?parametre=emailmdpInvalide");
-            exit();
-        }
-    } else {
-        header("Location: ../../vue/pageConnexion.php?parametre=emailmdpInvalide");
-        exit();
+$sqlUser = $bdd->prepare("SELECT * from utilisateurs where  email = ?  and role ='utilisateur'");
+$sqlUser->execute($var);
+$ligneUser = $sqlUser->fetch();
+
+if($ligneUser){
+    if (password_verify($mdp,$ligneUser['mdp'])) {
+        echo '<p>Connecté en tant que user</p>';
+        echo'<p>Id : '.$ligneUser['nom'].'_'.$ligneUser['prenom'].'</p>';
     }
 }
+else if ($lignesAdmin) {
+    if (password_verify($mdp, $lignesAdmin['mdp'])) {
+        echo 'Connecté en tant que Admin </p>';
+        echo'<p>Id : '.$lignesAdmin['nom'].'_'.$lignesAdmin['prenom'].'</p>';
+    }
+}else {
+    echo 'MDP invalide';
+}
+
+
+
+?>

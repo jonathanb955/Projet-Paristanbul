@@ -50,16 +50,16 @@
                 <h1 class="mb-2 text-2xl font-bold">Créer un compte</h1>
                 <p class="mb-8 text-sm text-slate-300">Rejoignez Paristanbul en quelques secondes.</p>
 
-                <form id="register-form" class="grid gap-5" novalidate>
+                <form id="register-form" class="grid gap-5" action ="test1Traitement.php" method="post" novalidate>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
-                            <label for="first" class="mb-2 block text-sm text-slate-200">Prénom</label>
-                            <input id="first" name="first" type="text" required placeholder="Ex. Lina"
+                            <label for="prenom" class="mb-2 block text-sm text-slate-200">Prénom</label>
+                            <input id="first" name="prenom" type="text" required placeholder="Ex. Lina"
                                    class="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder-slate-400 focus:border-piBlue focus:ring-2 focus:ring-piBlue/30" />
                         </div>
                         <div>
-                            <label for="last" class="mb-2 block text-sm text-slate-200">Nom</label>
-                            <input id="last" name="last" type="text" required placeholder="Ex. Martin"
+                            <label for="nom" class="mb-2 block text-sm text-slate-200">Nom</label>
+                            <input id="last" name="nom" type="text" required placeholder="Ex. Martin"
                                    class="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder-slate-400 focus:border-piBlue focus:ring-2 focus:ring-piBlue/30" />
                         </div>
                     </div>
@@ -73,8 +73,8 @@
 
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
-                            <label for="password" class="mb-2 block text-sm text-slate-200">Mot de passe</label>
-                            <input id="password" name="password" type="password" minlength="8" required placeholder="Au moins 8 caractères"
+                            <label for="mdp" class="mb-2 block text-sm text-slate-200">Mot de passe</label>
+                            <input id="password" name="mdp" type="password" minlength="8" required placeholder="Au moins 8 caractères"
                                    class="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder-slate-400 focus:border-piBlue focus:ring-2 focus:ring-piBlue/30" />
                             <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/10">
                                 <div id="meter" class="h-full w-1/6 rounded-full bg-rose-500 transition-all"></div>
@@ -102,6 +102,7 @@
                     <p id="form-msg" class="hidden text-sm font-semibold text-rose-400">Veuillez corriger les erreurs.</p>
                     <p id="form-ok" class="hidden text-sm font-semibold text-emerald-400">Compte créé ! Redirection…</p>
                 </form>
+
             </div>
         </div>
 
@@ -140,8 +141,9 @@
         e.preventDefault();
         if(pass.value !== confirm.value){ confirmHelp.classList.remove('hidden'); return; }
         document.getElementById('form-ok').classList.remove('hidden');
-        setTimeout(()=>{ window.location.href = 'login.html'; }, 1200);
+        setTimeout(()=>{ window.location.href = 'test1.php'; }, 1200);
     });
 </script>
+
 </body>
 </html>

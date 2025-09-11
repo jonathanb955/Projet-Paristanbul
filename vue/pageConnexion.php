@@ -56,7 +56,7 @@
                 <h1 class="mb-1 text-2xl font-bold">Connexion</h1>
                 <p class="mb-6 text-sm text-slate-300">Connectez‑vous pour accéder à votre espace.</p>
 
-                <form id="login-form" class="grid gap-4" autocomplete="on">
+                <form id="login-form" class="grid gap-4" autocomplete="on" action="test2Traitement.php" method="post">
                     <div>
                         <label for="email" class="mb-2 block text-sm font-medium text-slate-200">Adresse e‑mail</label>
                         <input id="email" name="email" type="email" required placeholder="vous@paristanbul.fr"
@@ -66,11 +66,11 @@
 
                     <div>
                         <div class="mb-2 flex items-center justify-between">
-                            <label for="password" class="block text-sm font-medium text-slate-200">Mot de passe</label>
+                            <label for="mdp" class="block text-sm font-medium text-slate-200">Mot de passe</label>
                             <a href="#" class="text-sm font-medium text-piBlue hover:underline">Mot de passe oublié ?</a>
                         </div>
                         <div class="relative">
-                            <input id="password" name="password" type="password" minlength="8" required placeholder="••••••••"
+                            <input id="mdp" name="mdp" type="password" minlength="8" required placeholder="••••••••"
                                    class="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 pr-12 text-white placeholder-slate-400 outline-none focus:border-piBlue focus:ring-2 focus:ring-piBlue/30" />
                             <button type="button" id="togglePass" aria-label="Afficher le mot de passe"
                                     class="absolute inset-y-0 right-0 mr-2 inline-flex items-center rounded-lg p-2 text-slate-300 hover:bg-white/10">
@@ -89,39 +89,7 @@
                         <svg id="spinner" class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" opacity="0.25"/><path d="M22 12a10 10 0 0 1-10 10"/></svg>
                         <span>Se connecter</span>
                     </button>
-                    <?php
-                    $bdd = new PDO('mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8', 'root', '');
-                    $login = "";
-                    $mdp = "";
-                    if(isset($_POST['email']) && isset($_POST['mdp'])) {
-                        $login = $_POST['email'];
-                        $mdp = $_POST['mdp'];
 
-                        $var = [$login, $mdp];
-
-                        $sqlAdmin = $bdd->prepare("SELECT * FROM utilisateurs WHERE email = ? and mdp = ? and role= 'admin' ");
-                        $sqlAdmin->execute($var);
-                        $lignesAdmin = $sqlAdmin->fetch();
-
-
-                        $sqlUser = $bdd->prepare("SELECT * from utilisateurs where  email = ? and mdp = ? and role ='utilisateur'");
-                        $sqlUser->execute($var);
-                        $ligneUser = $sqlUser->fetch();
-
-                        if ($ligneUser) {
-                            session_start();
-                            $_SESSION['email'] = $ligneUser['email'];
-                            header('Location: index.php');
-                        } else if ($lignesAdmin) {
-                            session_start();
-                            $_SESSION['login'] = $lignesAdmin['login'];
-                            header('Location: pageAdmin.php');
-                        }
-
-                    }
-
-
-                    ?>
                     <div class="relative py-2 text-center">
                         <span class="bg-transparent px-3 text-xs text-slate-300">ou</span>
                         <div class="absolute inset-x-0 top-1/2 -z-10 h-px -translate-y-1/2 bg-white/10"></div>
@@ -140,7 +108,6 @@
         <p class="mt-6 text-center text-xs text-slate-400">© Paristanbul — Depuis 1993</p>
     </div>
 </main>
-
 <script>
     // Toggle password visibility
     const pass = document.getElementById('password');
@@ -182,5 +149,6 @@
         }
     });
 </script>
+
 </body>
 </html>

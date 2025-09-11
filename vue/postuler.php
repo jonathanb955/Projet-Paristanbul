@@ -29,6 +29,7 @@
         <div class="logo"><a href="index.php"><img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" style="width: 300px"></a></div>
         <ul class="nav-links">
             <li><a href="index.php" class="active">Accueil</a></li>
+            <li><a href="index.php" class="active">Nos magasins</a></li>
             <li><a href="quiSommesNous.html">Notre histoire</a></li>
             <li><a href="">Contact</a></li>
             <li><a href="postuler.php">Postuler</a></li>

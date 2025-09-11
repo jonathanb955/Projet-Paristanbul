@@ -44,12 +44,20 @@
             <div class="field select"><i class="bi bi-person-badge"></i>
                 <select><option value="">Rôle</option><option>Super Admin</option><option>Admin</option><option>Manager</option><option>Éditeur</option></select>
             </div>
-            <div class="field select"><i class="bi bi-lightbulb"></i>
-                <select><option value="">Statut</option><option>Actif</option><option>Inactif</option><option>Invité</option></select>
-            </div>
+
             <button class="btn"><i class="bi bi-funnel"></i> Filtrer</button>
         </form>
     </section>
+
+    <?php
+    require_once '../../src/bdd/Bdd.php';
+    $bdd = new \bdd\Bdd();
+    $pdo = $bdd->getBdd();
+    $query = "SELECT * FROM utilisateurs";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute();
+    $utilisateurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    ?>
 
     <section class="layout">
         <div class="card">
@@ -57,35 +65,17 @@
             <div class="table-wrap">
                 <table class="table">
                     <thead>
-                    <tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Magasin</th><th>Dernière connexion</th><th>Statut</th><th style="width:240px"></th></tr>
+                    <tr><th>Nom</th><th>Prénom</th><th>Email</th><th>Rôle</th><th style="width:240px"></th></tr>
                     </thead>
                     <tbody>
+                    <?php foreach ($utilisateurs as $utilisateur): ?>
                     <tr>
-                        <td><strong>Naël Lakhledj</strong></td><td>admin@paristanbul.fr</td><td>Super Admin</td><td>—</td><td>03/09/2025 09:42</td>
-                        <td><span class="pill success"><i class="bi bi-check-circle"></i> Actif</span></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-pencil"></i> Éditer</button>
-                            <button class="btn xs ghost"><i class="bi bi-shield-lock"></i> Réinitialiser MDP</button>
-                            <button class="btn xs"><i class="bi bi-toggle-off"></i> Désactiver</button>
-                        </td>
+                        <td><strong><?= htmlspecialchars($utilisateur['nom']) ?></strong></td>
+                        <td><?= htmlspecialchars($utilisateur['prenom']) ?></td>
+                        <td><?= htmlspecialchars($utilisateur['email']) ?></td>
+                        <td><?= htmlspecialchars($utilisateur['role']) ?></td><td>
                     </tr>
-                    <tr>
-                        <td><strong>Sarah B.</strong></td><td>sarah@paristanbul.fr</td><td>Manager</td><td>Villiers-le-Bel</td><td>02/09/2025 18:12</td>
-                        <td><span class="pill success"><i class="bi bi-check-circle"></i> Actif</span></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-pencil"></i> Éditer</button>
-                            <button class="btn xs ghost"><i class="bi bi-shield-lock"></i> Réinitialiser MDP</button>
-                            <button class="btn xs"><i class="bi bi-toggle-off"></i> Désactiver</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Amine K.</strong></td><td>amine@paristanbul.fr</td><td>Éditeur</td><td>Bondy</td><td>—</td>
-                        <td><span class="pill warning"><i class="bi bi-hourglass"></i> Invité</span></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-send-check"></i> Renvoyer invitation</button>
-                            <button class="btn xs"><i class="bi bi-x-circle"></i> Révoquer</button>
-                        </td>
-                    </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
