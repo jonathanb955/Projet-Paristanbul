@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/src/bdd/bdd_paristanbul (1) (1).sql" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/src/repository/UtilisateursRepository.php" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/vue/Admin/gestionUserAdmin.php" dialect="GenericSQL" />
-  </component>
-</project>
