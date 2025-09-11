@@ -206,7 +206,7 @@ $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root
 
     // Produits par catégorie via sous-catégorie
     $req = $pdo->prepare("
-        SELECT  secteur_activite, titre_poste, ville, departement, type_contrat, detail_poste
+        SELECT *
         FROM offres_emplois ;
        
     ");
@@ -221,6 +221,7 @@ if ($req->rowCount() > 0) {
         $departement = $offres['departement'];
         $type_contrat = $offres['type_contrat'];
         $detail_poste = $offres['detail_poste'];
+        $id_offre = $offres['id_offre'];
 
         echo'        <div class="col-md-4">';
         echo'        <div class="card h-100 shadow-sm border-0">';
@@ -236,7 +237,7 @@ if ($req->rowCount() > 0) {
         echo'                        <span class="badge bg-light text-dark"></span>';
         echo'                        <span class="badge bg-light text-dark"></span>';
         echo'                    </div>';
-        echo'                    <a href="#" class="btn btn-danger btn-sm w-100">Voir l’offre</a>';
+        echo'                    <a href="offre.php?id='.$id_offre.'" class="btn btn-danger btn-sm w-100">Postuler</a>';
         echo'                </div>';
         echo'           </div>';
 
