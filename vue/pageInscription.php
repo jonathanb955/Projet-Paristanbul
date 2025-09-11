@@ -50,7 +50,7 @@
                 <h1 class="mb-2 text-2xl font-bold">Créer un compte</h1>
                 <p class="mb-8 text-sm text-slate-300">Rejoignez Paristanbul en quelques secondes.</p>
 
-                <form id="register-form" class="grid gap-5" action ="test1Traitement.php" method="post" novalidate>
+                <form id="register-form" class="grid gap-5" action ="pageInscription.php" method="post" novalidate>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
                             <label for="prenom" class="mb-2 block text-sm text-slate-200">Prénom</label>
@@ -109,6 +109,42 @@
         <p class="mt-6 text-center text-xs text-slate-400">© Paristanbul — Depuis 1993</p>
     </div>
 </main>
+<?php
+
+var_dump($_POST);
+$dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
+$bdd = new pdo($dsn, 'root', '');
+$nom = "";
+$prenom = "";
+$email = "";
+$role = "";
+$mdp = "";
+$confirmerMdp="";
+
+
+$nom = $_POST['nom'];
+$prenom = $_POST['prenom'];
+$email = $_POST['email'];
+$mdp = $_POST['mdp'];
+$hashMdp = password_hash($mdp, PASSWORD_BCRYPT);
+$confirmerMdp = $_POST['confirm'];
+
+
+
+$sql = "INSERT  into utilisateurs ( nom , prenom , email ,mdp,role) 
+values(:nom,:prenom,:email,:mdp,:role)";
+$req = $bdd->prepare($sql);
+$req->execute(array(
+        'nom' => $nom,
+        'prenom' => $prenom,
+        'email' => $email,
+        'mdp' => $hashMdp,
+        'role' => $role,
+));
+a
+
+
+?>
 
 <script>
     const pass = document.getElementById('password');
