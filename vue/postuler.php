@@ -248,8 +248,6 @@ if ($req->rowCount() > 0) {
     echo '<div class="col-12"><p>Aucun offre actuellement.</p></div>';
 }
 ?>
-
-
             </div>
             <div class="text-center mt-4">
                 <button class="btn btn-light border rounded-pill px-4 shadow-sm fw-medium">

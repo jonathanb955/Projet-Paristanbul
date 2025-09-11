@@ -582,4 +582,170 @@ body {
 .swiper-cards {
     scroll-behavior: smooth;
 }
+/* Couleurs personnalisées */
+.social-icons a.facebook { background-color: #1877F2; }
+.social-icons a.instagram {
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 50%, #d6249f 75%, #285AEB 100%);
+}
+.social-icons a.tiktok { background-color: #000000; }
+.social-icons a.youtube { background-color: #FF0000; }
+.social-icons a.paristanbul { background-color: white; }
+
+/* Hover */
+.social-icons a:hover {
+    filter: brightness(1.1);
+}
+
+
+/* Champ newsletter */
+.newsletter-form {
+    display: flex;
+    width: 100%;
+    max-width: 300px;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.newsletter-field {
+    flex: 1;
+    border: none;
+    padding: 14px 16px;
+    font-size: 1rem;
+    outline: none;
+    background-color: transparent;
+    color: #333;
+}
+
+.newsletter-submit {
+    background-color: #7366ff;
+    border: none;
+    padding: 0 20px;
+    font-size: 1.2rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 0;
+}
+
+.newsletter-submit:hover {
+    background-color: #5c53d7;
+}
+
+.newsletter-submit i {
+    font-family: "bootstrap-icons";
+    font-style: normal;
+}
+
+/* Décalages personnalisés */
+.paristanbul-col {
+    margin-left: -20px;
+}
+
+.newsletter-col {
+    margin-right: -20px;
+}/* === Paristanbul — OVERRIDE COULEURS (append-only, no layout) === */
+:root{
+    --pi-blue:#2E4C97;   /* bleu logo */
+    --pi-red:#D6452E;    /* rouge logo */
+    --ink:#E6E9F2;       /* texte clair */
+    --muted:#cbd5e1;     /* texte secondaire */
+    --bg-1:#0B1326;      /* fond sombre */
+    --bg-2:#0A0F1F;      /* fond sombre */
+    --card:#141B2B;      /* fond cartes */
+    --chip:#1B2436;      /* icônes/pastilles */
+}
+
+/* Fond global (mêmes couleurs que Login/Register) */
+html,body{height:100%}
+body{
+    color:var(--ink) !important;
+    background:
+            radial-gradient(1000px 500px at 10% 10%, rgba(46,76,151,.25), transparent 60%),
+            radial-gradient(900px 600px at 90% 10%, rgba(214,69,46,.18), transparent 55%),
+            linear-gradient(180deg, var(--bg-1), var(--bg-2) 70%) !important;
+}
+
+/* Navbar & liens */
+.navbar, nav{ background-color:var(--bg-1) !important; }
+.logo{ color:var(--pi-blue) !important; }
+.nav-links a{ color:var(--ink) !important; }
+.nav-links a.active, .nav-links a:hover{ color:var(--pi-blue) !important; }
+.nav-buttons a{ color:var(--ink) !important; }
+
+/* Hero : on retire le vieux dégradé clair (couleurs uniquement) */
+.hero-section{ background:transparent !important; color:var(--ink) !important; }
+.hero-text p{ color:var(--muted) !important; }
+.btn-outline{ border-color:rgba(255,255,255,.75) !important; color:var(--ink) !important; }
+.btn-outline.dark{ background-color:var(--pi-red) !important; border-color:var(--pi-red) !important; color:#fff !important; }
+
+/* Sections : on enlève juste le blanc, pas le layout */
+.rayons-section,
+.produits-populaires,
+.nouveautes,
+.promotions,
+.magasins,
+.contact{ background:transparent !important; }
+
+/* Cartes / blocs (couleurs uniquement) */
+.rayon-card,
+.produit-card,
+.promo-card,
+.magasin-card,
+.contact-form,
+.contact-box{ background-color:var(--card) !important; color:var(--ink) !important; }
+.icon{ background-color:var(--chip) !important; }
+
+.section-title{ color:var(--ink) !important; }
+.section-subtitle{ color:var(--muted) !important; }
+.rayon-card h3,
+.produit-info h3,
+.promo-card h3,
+.magasin-card h3,
+.contact-form h3,
+.contact-box h3{ color:var(--ink) !important; }
+.rayon-card p,
+.produit-info p,
+.promo-card p,
+.magasin-card p,
+.contact-box p{ color:var(--muted) !important; }
+
+/* Boutons (couleurs marque) */
+.btn-green{ background-color:var(--pi-blue) !important; color:#fff !important; }
+.btn-green:hover{ background-color:#25427f !important; }
+.itineraire-btn{ background-color:var(--pi-red) !important; color:#fff !important; }
+.itineraire-btn:hover{ background-color:#b53a27 !important; }
+.discover{ color:var(--pi-blue) !important; }
+
+/* Prix & promos */
+.prix{ color:var(--pi-red) !important; }
+.promo-header{ background-color:var(--pi-blue) !important; color:#fff !important; }
+.promo-prix, .date{ color:var(--pi-blue) !important; }
+
+/* Formulaire contact (couleurs uniquement) */
+.contact-form input,
+.contact-form select,
+.contact-form textarea{
+    background-color:#0F1524 !important;
+    color:var(--ink) !important;
+    border-color:#2a3654 !important; /* juste la couleur de bordure */
+}
+.contact-form input::placeholder,
+.contact-form textarea::placeholder{ color:#95a3bf !important; }
+.contact-form button{ background-color:var(--pi-red) !important; color:#fff !important; }
+
+/* Footer */
+.footer{ background-color:#0A0F1F !important; color:var(--ink) !important; }
+.footer-column p{ color:var(--muted) !important; }
+.footer-column ul li a{ color:var(--muted) !important; }
+.footer-column ul li a:hover{ color:#fff !important; }
+.newsletter-form{ background-color:#151e31 !important; }
+.newsletter-field{ color:var(--ink) !important; }
+.newsletter-submit{ background-color:var(--pi-blue) !important; color:#fff !important; }
+.newsletter-submit:hover{ background-color:#25427f !important; }
+
+
 
