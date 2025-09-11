@@ -84,6 +84,13 @@
                 </div>
             </div>
 
+            <?php
+            $dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
+            $bdd = new PDO($dsn, 'root', '');
+            $sqlMagasin = $bdd->prepare("SELECT * FROM magasins ");
+            $sqlMagasin->execute();
+            $lignesMagasins = $sqlMagasin->fetchAll();
+            ?>
             <div class="table-wrap">
                 <table class="table">
                     <thead>
@@ -98,45 +105,16 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><strong>Paristanbul Villiers-le-Bel</strong></td>
-                        <td>117 Av. Pierre Sémard, 95400</td>
-                        <td>Villiers-le-Bel</td>
-                        <td>8h30–20h</td>
-                        <td>07 49 82 61 33</td>
-                        <td><span class="pill success"><i class="bi bi-check-circle"></i> Publié</span></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-pencil"></i> Éditer</button>
-                            <button class="btn xs ghost"><i class="bi bi-signpost-2"></i> Itinéraire</button>
-                            <button class="btn xs ghost"><i class="bi bi-toggle-off"></i> Dépublier</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Paristanbul Bondy</strong></td>
-                        <td>116 Av. Galliéni, 93140</td>
-                        <td>Bondy</td>
-                        <td>8h30–20h</td>
-                        <td>07 49 82 61 33</td>
-                        <td><span class="pill warning"><i class="bi bi-hourglass"></i> Brouillon</span></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-pencil"></i> Éditer</button>
-                            <button class="btn xs ghost"><i class="bi bi-geo"></i> Carte</button>
-                            <button class="btn xs"><i class="bi bi-toggle-on"></i> Publier</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Paristanbul Drancy</strong></td>
-                        <td>83 Av. Marceau, 93700</td>
-                        <td>Drancy</td>
-                        <td>8h30–20h30</td>
-                        <td>07 49 82 61 33</td>
-                        <td><span class="pill danger"><i class="bi bi-slash-circle"></i> Fermé temp.</span></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-pencil"></i> Éditer</button>
-                            <button class="btn xs ghost"><i class="bi bi-geo-alt"></i> Adresse</button>
-                            <button class="btn xs"><i class="bi bi-check2-circle"></i> Réouvrir</button>
-                        </td>
-                    </tr>
+                    <?php foreach($lignesMagasins as $magasin): ?>
+                        <tr>
+                            <td>Paristanbul <?= $magasin['ville_magasin'] ?></td>
+                            <td><?= $magasin['rue'] ?>, <?= $magasin['cp'] ?></td>
+                            <td>Paristanbul <?= $magasin['ville_magasin'] ?></td>
+                            <td>8h30–20h</td>
+                            <td>07 49 82 61 33</td>
+                            <td><a class="link" href="#"><i class="bi bi-pencil"></i> Éditer</a></td>
+                        </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>

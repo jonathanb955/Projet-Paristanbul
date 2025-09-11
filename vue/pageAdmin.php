@@ -1,3 +1,6 @@
+<?php
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -222,6 +225,14 @@
         </div>
     </section>
 
+    <?php
+    $dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
+    $bdd = new PDO($dsn, 'root', '');
+    $sqlMagasin = $bdd->prepare("SELECT * FROM magasins ");
+    $sqlMagasin->execute();
+    $lignesMagasins = $sqlMagasin->fetchAll();
+    ?>
+    ?>
     <!-- Gestion magasins / messages -->
     <section class="grid two">
         <!-- Magasins -->
@@ -237,35 +248,25 @@
                 <table class="table">
                     <thead>
                     <tr>
+
                         <th>Nom</th>
                         <th>Adresse</th>
                         <th>Horaires</th>
                         <th>Tél.</th>
                         <th></th>
+
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>Paristanbul Villiers-le-Bel</td>
-                        <td>117 Av. Pierre Sémard, 95400</td>
-                        <td>8h30–20h</td>
-                        <td>07 49 82 61 33</td>
-                        <td><a class="link" href="#"><i class="bi bi-pencil"></i> Éditer</a></td>
-                    </tr>
-                    <tr>
-                        <td>Paristanbul Bondy</td>
-                        <td>116 Av. Galliéni, 93140</td>
-                        <td>8h30–20h</td>
-                        <td>07 49 82 61 33</td>
-                        <td><a class="link" href="#"><i class="bi bi-pencil"></i> Éditer</a></td>
-                    </tr>
-                    <tr>
-                        <td>Paristanbul Drancy</td>
-                        <td>83 Av. Marceau, 93700</td>
-                        <td>8h30–20h30</td>
-                        <td>07 49 82 61 33</td>
-                        <td><a class="link" href="#"><i class="bi bi-pencil"></i> Éditer</a></td>
-                    </tr>
+                    <?php foreach($lignesMagasins as $magasin): ?>
+                        <tr>
+                            <td>Paristanbul <?= $magasin['ville_magasin'] ?></td>
+                            <td><?= $magasin['rue'] ?>, <?= $magasin['cp'] ?></td>
+                            <td>8h30–20h</td>
+                            <td>07 49 82 61 33</td>
+                            <td><a class="link" href="#"><i class="bi bi-pencil"></i> Éditer</a></td>
+                        </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
