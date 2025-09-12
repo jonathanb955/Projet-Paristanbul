@@ -249,7 +249,7 @@
         <div class="error">Erreur : <?php echo htmlspecialchars($_GET['err']); ?></div>
     <?php endif; ?>
 </form>
-<button class="btn" onclick="window.location.href='index.php';">
+<button class="btn" onclick="window.location.href='postuler.php';">
     Retour
 </button>
 </body>
