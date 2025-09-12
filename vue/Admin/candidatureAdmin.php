@@ -63,7 +63,7 @@ foreach ($lignesCandidatures as $candidature) {
 ?>
 
     <section class="filters">
-        <form class="filters-bar" action="#" method="get">
+        <form class="filters-bar" action="" method="get">
             <div class="field"><i class="bi bi-search"></i><input type="search" placeholder="Rechercher (nom, email, poste)…"></div>
             <div class="field select"><i class="bi bi-briefcase"></i>
                 <select><option value="">Poste (tous)</option><option>Caissier(ère)</option><option>Préparateur(trice)</option><option>Manager</option></select>

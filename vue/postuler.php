@@ -285,45 +285,37 @@ if ($req->rowCount() > 0) {
                     <!-- Colonne droite (formulaire) -->
                     <div class="col-md-8 p-4">
                         <h6 class="fw-bold mb-3">Parlez-nous de vous</h6>
-                        <form action="postuler.php" method="post" enctype="multipart/form-data" >
+                        <form action="postuler.php" method="post" enctype="multipart/form-data">
 
                             <div class="row g-2 mb-3">
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="Prénom *" name="prenom" required>
+                                    <label for="prenom" class="form-label">Prénom *</label>
+                                    <input type="text" id="prenom" class="form-control" placeholder="Prénom *" name="prenom" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="Nom *" name = "nom" required>
+                                    <label for="nom" class="form-label">Nom *</label>
+                                    <input type="text" id="nom" class="form-control" placeholder="Nom *" name="nom" required>
                                 </div>
                             </div>
 
                             <div class="mb-3">
-                                <input type="email" class="form-control" placeholder="Email *" name="email" required>
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" id="email" class="form-control" placeholder="Email *" name="email" required>
                             </div>
 
                             <div class="mb-3">
-                                <input type="text" class="form-control" placeholder="Téléphone" name="telephone">
+                                <label for="telephone" class="form-label">Téléphone</label>
+                                <input type="tel" id="telephone" class="form-control" placeholder="Téléphone" name="telephone" pattern="[0-9\s+]{8,15}">
                             </div>
 
                             <div class="mb-3">
-                                <select class="form-select" name="poste" required>
-                                    <option value="">Poste recherché *</option>
-                                    <option>Responsable de rayon</option>
-                                    <option>Développeur web</option>
-                                    <option>Préparateur de commandes</option>
-                                </select>
+                                <label for="lettre_motivation" class="form-label">Lettre de motivation</label>
+                                <textarea id="lettre" class="form-control" rows="4" placeholder="Présentez-vous et expliquez votre motivation…" name="lettre_motivation"></textarea>
                             </div>
 
                             <div class="mb-3">
-                                <input type="text" class="form-control" placeholder="Lieu souhaité *"  name="lieu" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <textarea class="form-control" rows="4" placeholder="Présentez-vous et expliquez votre motivation…" name="texte_motivation"></textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label small">CV (PDF, DOC, DOCX) *</label>
-                                <input type="file" class="form-control" name="cv" >
+                                <label for="cv" class="form-label small">CV (PDF, DOC, DOCX) *</label>
+                                <input type="file" id="cv" class="form-control" name="cv" accept=".pdf,.doc,.docx" required>
                             </div>
 
                             <div class="form-check mb-3">
@@ -335,7 +327,6 @@ if ($req->rowCount() > 0) {
 
                             <button type="submit" class="btn btn-danger w-100 fw-semibold">Envoyer ma candidature</button>
                             <p class="small text-muted text-end mt-1 mb-0">* Champs obligatoires</p>
-
                         </form>
                     </div>
                 </div>
@@ -345,35 +336,72 @@ if ($req->rowCount() > 0) {
 </section>
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-$bdd = new PDO('mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+    $bdd = new PDO('mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8', 'root', '');
 
-$prenom = $_POST['prenom'] ?? '';
-$nom = $_POST['nom'] ?? '';
-$email = $_POST['email'] ?? '';
-$telephone = $_POST['telephone'] ?? '';
-$poste = $_POST['poste'] ?? '';
-$ville = $_POST['lieu'] ?? '';
-$texte_motivation = $_POST['texte_motivation'] ?? '';
+    // Récupérer les champs
+    $nom              = $_POST['nom'] ?? '';
+    $prenom           = $_POST['prenom'] ?? '';
+    $telephone        = $_POST['telephone'] ?? '';
+    $email            = $_POST['email'] ?? '';
+    $date_naissance   = $_POST['date_naissance'] ?? null;
+    $langues          = $_POST['langues'] ?? '';
+    $adresse          = $_POST['adresse'] ?? '';
+    $permis           = $_POST['permis'] ?? '';
+    $experiences      = $_POST['experiences'] ?? '';
+    $lettre_motivation= $_POST['lettre_motivation'] ?? '';
+    $ref_offre        = !empty($_POST['ref_offre']) ? (int)$_POST['ref_offre'] : (!empty($_GET['id']) ? (int)$_GET['id'] : null);
 
-// Valeurs par défaut automatiques
-$ref_offre = "";
-$date = "";
-$statut = "en attente";
+    $date_candidature = date("Y-m-d H:i:s"); // date actuelle
+    $lien_cv = null;
 
-// Gestion de l'upload du CV
-$cv_nom = '';
+    // Dossiers de stockage
+    $chemin_telechargement = __DIR__ . "/telechargement/candidatures/";
+    if (!is_dir($chemin_telechargement)) {
+        mkdir($chemin_telechargement, 0777, true);
+    }
 
+    // Nettoyer nom/prénom
+    $nettoyer_nom    = preg_replace("/[^a-zA-Z0-9]/", "_", strtolower($nom));
+    $nettoyer_prenom = preg_replace("/[^a-zA-Z0-9]/", "_", strtolower($prenom));
 
+    // Gestion du CV
+    if (!empty($_FILES['cv']['name'])) {
+        $cvTmp = $_FILES['cv']['tmp_name'];
+        $extension = strtolower(pathinfo($_FILES['cv']['name'], PATHINFO_EXTENSION));
 
-// Insertion en base de données
-$sql = "INSERT INTO candidatures (nom, prenom, email, telephone, ville, cv, lettre_motivation, ref_offre, date_candidature, statut)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-$req = $bdd->prepare($sql);
-$req->execute([$nom, $prenom, $email, $telephone, $ville, $cv_nom, $texte_motivation, $ref_offre, $date, $statut]);
+        // Vérifier extension autorisée
+        $extensions_ok = ['pdf', 'doc', 'docx'];
+        if (in_array($extension, $extensions_ok)) {
+            $nom_cv = "cv_{$nettoyer_nom}_{$nettoyer_prenom}." . $extension;
+            $cvDest = $chemin_telechargement . $nom_cv;
 
-echo "<div class='alert alert-success'>Candidature envoyée avec succès !</div>";
+            if (move_uploaded_file($cvTmp, $cvDest)) {
+                $lien_cv = "telechargement/candidatures/" . $nom_cv;
+            }
+        }
+    }
+
+    // Insertion BDD
+    $sql = $bdd->prepare("
+        INSERT INTO candidatures
+        (nom, prenom, email, date_naissance, langues, adresse,telephone, permis, 
+         experiences, lettre_motivation, ref_offre, date_candidature, statut,lien_cv)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
+    $ok = $sql->execute([
+            $nom, $prenom, $email, $date_naissance, $langues, $adresse,$telephone, $permis,
+            $experiences, $lettre_motivation, $ref_offre, $date_candidature,"Nouveau",$lien_cv
+    ]);
+
+    if ($ok) {
+        echo "<div class='alert alert-success'>Candidature envoyée avec succès !</div>";
+    } else {
+        echo "<div class='alert alert-danger'>Erreur lors de l'envoi de la candidature.</div>";
+    }
 }
 ?>
+
 <!-- SECTION FAQ -->
 <div class="faq-section">
     <h2>Questions fréquentes</h2>
