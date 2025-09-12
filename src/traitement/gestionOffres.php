@@ -27,20 +27,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die('Erreur : identifiant de l\'offre manquant.');
     }
 
+// Dossiers de stockage
+    $chemin_telechargement = __DIR__ . "/telechargement/candidatures/";
+    if (!is_dir($chemin_telechargement)) {
+        mkdir($chemin_telechargement, 0777, true);
+    }
 
+    // Initialiser les chemins
+    $lien_cv = null;
+
+    // Gestion du CV
+    // Nettoyer nom et prénom pour éviter les caractères spéciaux dans le nom de fichier
+    $nettoyer_nom   = preg_replace("/[^a-zA-Z0-9]/", "_", strtolower($nom));
+    $nettoyer_prenom = preg_replace("/[^a-zA-Z0-9]/", "_", strtolower($prenom));
+
+// Gestion du CV
+    if (!empty($_FILES['cv']['name'])) {
+        $cvTmp = $_FILES['cv']['tmp_name'];
+        $extension = pathinfo($_FILES['cv']['name'], PATHINFO_EXTENSION);
+
+        // Nom du fichier : cv_nom_prenom.ext
+        $nom_cv = "cv_{$nettoyer_nom}_{$nettoyer_prenom}." . $extension;
+        $cvDest = $chemin_telechargement . $nom_cv;
+
+        if (move_uploaded_file($cvTmp, $cvDest)) {
+            $lien_cv = "téléchargements/candidatures/" . $nom_cv;
+        }
+    }
 
 
     // Insertion BDD
     $sql = $pdo->prepare("
         INSERT INTO candidatures
         (nom, prenom, email, date_naissance, langues, adresse, telephone, permis,
-         experiences, lettre_motivation, ref_offre)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         experiences, lettre_motivation, ref_offre,lien_cv)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
     ");
 
     $ok = $sql->execute([
         $nom, $prenom, $email, $date_naissance, $langues, $adresse, $telephone,
-        $permis, $experiences, $lettre, $ref_offre
+        $permis, $experiences, $lettre, $ref_offre,$lien_cv
     ]);
 
     if ($ok) {

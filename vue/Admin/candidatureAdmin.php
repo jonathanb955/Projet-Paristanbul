@@ -58,6 +58,8 @@ foreach ($lignesCandidatures as $candidature) {
     $poste = $candidature['titre_poste'];
     $ville = $candidature['ville'];
     }
+
+
 ?>
 
     <section class="filters">
@@ -93,21 +95,22 @@ foreach ($lignesCandidatures as $candidature) {
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <?php foreach ($lignesCandidatures as $candidature) :?>
-                        <td><strong><?= htmlspecialchars($candidature['prenom'].' '.$candidature['nom']) ?></strong></td>
-                        <td><?= htmlspecialchars($candidature['email']) ?></td><td><?= htmlspecialchars($candidature['telephone']) ?></td>
-                        <td><?= htmlspecialchars($candidature['poste']) ?></td>
-                        <td><?= htmlspecialchars($candidature['ville']) ?></td>
-                        <td><span class="pill warning"><i class="bi bi-star"></i> Nouveau</span></td>
-                        <td><a class="link" href="#"><i class="bi bi-file-earmark-text"></i> CV.pdf</a></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-eye"></i> Voir</button>
-                            <button class="btn xs"><i class="bi bi-check2-circle"></i> Retenir</button>
-                            <button class="btn xs ghost"><i class="bi bi-x-circle"></i> Refuser</button>
-                            <button class="btn xs ghost"><i class="bi bi-archive"></i> Archiver</button>
-                        </td>
-                    </tr>
+                    <?php foreach ($lignesCandidatures as $candidature) : ?>
+                        <tr>
+                            <td><strong><?= htmlspecialchars($candidature['prenom'].' '.$candidature['nom']) ?></strong></td>
+                            <td><?= htmlspecialchars($candidature['email']) ?></td>
+                            <td><?= htmlspecialchars($candidature['telephone']) ?></td>
+                            <td><?= htmlspecialchars($candidature['titre_poste']) ?></td>
+                            <td><?= htmlspecialchars($candidature['ville']) ?></td>
+                            <td><span class="pill warning"><i class="bi bi-star"></i> Nouveau</span></td>
+                            <td><a class="link" href="#"><i class="bi bi-file-earmark-text"></i> CV.pdf</a></td>
+                            <td class="row-actions">
+                                <button class="btn xs ghost"><i class="bi bi-eye"></i> Voir</button>
+                                <button class="btn xs"><i class="bi bi-check2-circle"></i> Retenir</button>
+                                <button class="btn xs ghost"><i class="bi bi-x-circle"></i> Refuser</button>
+                                <button class="btn xs ghost"><i class="bi bi-archive"></i> Archiver</button>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>

@@ -241,9 +241,6 @@
     <div class="actions">
         <div class="footer-note">Les champs marqués * sont obligatoires.</div>
         <button class="btn" type="submit">Envoyer ma candidature</button>
-        <button class="btn" onclick="window.location.href='index.php';">
-            Retour à l'accueil
-        </button>
     </div>
 
     <div id="form-error" class="error" role="alert" aria-live="polite" style="display:none;"></div>
@@ -252,5 +249,8 @@
         <div class="error">Erreur : <?php echo htmlspecialchars($_GET['err']); ?></div>
     <?php endif; ?>
 </form>
+<button class="btn" onclick="window.location.href='index.php';">
+    Retour
+</button>
 </body>
 </html>
