@@ -49,18 +49,15 @@
     INNER JOIN offres_emplois o ON c.ref_offre = o.id_offre
 ");
 $reqCandidatures->execute();
-
-if ($reqCandidatures->rowCount() > 0) {
-    while ($candidatures = $reqCandidatures->fetch(PDO::FETCH_ASSOC)) {
-        $nom = $candidatures['nom'];
-        $prenom = $candidatures['prenom'];
-        $email = $candidatures['email'];
-        $telephone = $candidatures['telephone'];
-        $magasin = $candidatures['ville'];
-        $poste = $candidatures['nom_poste'];  // Nom du poste
-        $ref_offre = $candidatures['ref_offre']; // Référence de l’offre
+$lignesCandidatures = $reqCandidatures->fetchAll();
+foreach ($lignesCandidatures as $candidature) {
+    $nom = $candidature['nom'];
+    $prenom = $candidature['prenom'];
+    $email = $candidature['email'];
+    $telephone = $candidature['telephone'];
+    $poste = $candidature['titre_poste'];
+    $ville = $candidature['ville'];
     }
-}
 ?>
 
     <section class="filters">
@@ -97,8 +94,11 @@ if ($reqCandidatures->rowCount() > 0) {
                     </thead>
                     <tbody>
                     <tr>
-                        <td><strong>Sarah Benali</strong></td><td>sarah.b@example.com</td><td>06 12 34 56 78</td>
-                        <td>Caissière</td><td>Villiers-le-Bel</td>
+                        <?php foreach ($lignesCandidatures as $candidature) :?>
+                        <td><strong><?= htmlspecialchars($candidature['prenom'].' '.$candidature['nom']) ?></strong></td>
+                        <td><?= htmlspecialchars($candidature['email']) ?></td><td><?= htmlspecialchars($candidature['telephone']) ?></td>
+                        <td><?= htmlspecialchars($candidature['poste']) ?></td>
+                        <td><?= htmlspecialchars($candidature['ville']) ?></td>
                         <td><span class="pill warning"><i class="bi bi-star"></i> Nouveau</span></td>
                         <td><a class="link" href="#"><i class="bi bi-file-earmark-text"></i> CV.pdf</a></td>
                         <td class="row-actions">
@@ -108,28 +108,7 @@ if ($reqCandidatures->rowCount() > 0) {
                             <button class="btn xs ghost"><i class="bi bi-archive"></i> Archiver</button>
                         </td>
                     </tr>
-                    <tr>
-                        <td><strong>Kamel Idrissi</strong></td><td>k.idrissi@example.com</td><td>07 88 77 66 55</td>
-                        <td>Préparateur</td><td>Bondy</td>
-                        <td><span class="pill success"><i class="bi bi-check-circle"></i> Retenu</span></td>
-                        <td><a class="link" href="#"><i class="bi bi-file-earmark-text"></i> CV.docx</a></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-eye"></i> Voir</button>
-                            <button class="btn xs ghost"><i class="bi bi-arrow-counterclockwise"></i> Revenir en “Nouveau”</button>
-                            <button class="btn xs ghost"><i class="bi bi-archive"></i> Archiver</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Léa P.</strong></td><td>lea.p@example.com</td><td>06 55 44 33 22</td>
-                        <td>Manager</td><td>Drancy</td>
-                        <td><span class="pill danger"><i class="bi bi-x-circle"></i> Refusé</span></td>
-                        <td><a class="link" href="#"><i class="bi bi-file-earmark-text"></i> CV.pdf</a></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-eye"></i> Voir</button>
-                            <button class="btn xs"><i class="bi bi-check2-circle"></i> Retenir</button>
-                            <button class="btn xs ghost"><i class="bi bi-archive"></i> Archiver</button>
-                        </td>
-                    </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
@@ -139,11 +118,13 @@ if ($reqCandidatures->rowCount() > 0) {
                 <div class="pager"><button class="btn ghost">‹</button><button class="btn ghost">›</button></div>
             </div>
         </div>
+        <br>
+        <br>
         <?php
         $dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
         $bdd = new PDO($dsn, 'root', '');
 
-        // Vérification que le formulaire a été soumis
+        // formulaire a été soumis
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $secteur_activite = $_POST['secteur_activite'];
             $titre_poste      = $_POST['titre_poste'];
