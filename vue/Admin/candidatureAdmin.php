@@ -42,39 +42,125 @@
     <?php
     $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
 
-    // Toutes les candidatures
-   $reqCandidatures = $pdo->prepare("
-    SELECT *
-    FROM candidatures c
-    LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
-");
-$reqCandidatures->execute();
-$lignesCandidatures = $reqCandidatures->fetchAll();
-foreach ($lignesCandidatures as $candidature) {
-    $nom = $candidature['nom'];
-    $prenom = $candidature['prenom'];
-    $email = $candidature['email'];
-    $telephone = $candidature['telephone'];
-    $poste = $candidature['titre_poste'];
-    $ville = $candidature['ville'];
+    // filtres (comme avant)
+    $search   = $_GET['search'] ?? '';
+    $poste    = $_GET['tri-par-poste'] ?? '';
+    $ville    = $_GET['tri-par-magasin'] ?? '';
+    $statut   = $_GET['statut'] ?? '';
 
+    // pagination
+    $limit = 3; // 5 candidatures par page
+    $page = max(1, intval($_GET['page'] ?? 1));
+    $offset = ($page - 1) * $limit;
+
+    // requête pour compter le nombre total de candidatures filtrées
+    $sqlCount = "SELECT COUNT(*) FROM candidatures c
+             LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
+             WHERE 1=1";
+
+    $paramsCount = [];
+
+    // Appliquer filtres
+    if (!empty($search)) {
+        $sqlCount .= " AND (c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search OR o.titre_poste LIKE :search)";
+        $paramsCount[':search'] = "%$search%";
+    }
+    if (!empty($poste)) {
+        $sqlCount .= " AND o.titre_poste = :poste";
+        $paramsCount[':poste'] = $poste;
+    }
+    if (!empty($ville)) {
+        $sqlCount .= " AND o.ville = :ville";
+        $paramsCount[':ville'] = $ville;
+    }
+    if (!empty($statut)) {
+        $sqlCount .= " AND c.statut = :statut";
+        $paramsCount[':statut'] = $statut;
     }
 
-?>
+    // nombre total
+    $stmt = $pdo->prepare($sqlCount);
+    $stmt->execute($paramsCount);
+    $total = $stmt->fetchColumn();
+    $totalPages = ceil($total / $limit);
+
+    // requête pour récupérer les candidatures de la page courante
+    $sql = "SELECT c.*, o.titre_poste, o.ville
+        FROM candidatures c
+        LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
+        WHERE 1=1";
+
+    // mêmes filtres
+    $params = $paramsCount;
+
+    $sql .= " LIMIT :limit OFFSET :offset";
+    $params[':limit'] = $limit;
+    $params[':offset'] = $offset;
+
+    $req = $pdo->prepare($sql);
+    foreach ($params as $k => $v) {
+        if ($k === ':limit' || $k === ':offset') {
+            $req->bindValue($k, $v, PDO::PARAM_INT);
+        } else {
+            $req->bindValue($k, $v);
+        }
+    }
+    $req->execute();
+    $lignesCandidatures = $req->fetchAll();
+    ?>
+
+
 
 
     <section class="filters">
         <form class="filters-bar" action="" method="get">
-            <div class="field"><i class="bi bi-search"></i><input type="search" placeholder="Rechercher (nom, email, poste)…"></div>
+            <!-- Recherche -->
+            <div class="field">
+                <i class="bi bi-search"></i>
+                <input type="search" name="search" placeholder="Rechercher (nom, email, poste)…" value="<?= htmlspecialchars($search) ?>">
+            </div>
+
+            <!-- Poste -->
             <div class="field select"><i class="bi bi-briefcase"></i>
-                <select name ="tri-par-poste"><option value="">Poste (tous)</option><option>Caissier(ère)</option><option>Préparateur(trice)</option><option>Manager</option></select>
+                <select name="tri-par-poste">
+                    <option value="">Poste (tous)</option>
+                    <option <?= $poste === "Caissier(ère)" ? 'selected' : '' ?>>Caissier(ère)</option>
+                    <option <?= $poste === "Préparateur(trice)" ? 'selected' : '' ?>>Préparateur(trice)</option>
+                    <option <?= $poste === "Manager" ? 'selected' : '' ?>>Manager</option>
+                </select>
             </div>
+
+            <?php
+            // Connexion PDO
+            $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+
+            // Récupérer les villes distinctes depuis la table offres_emplois
+            $stmtVilles = $pdo->query("SELECT DISTINCT ville_magasin FROM magasins ORDER BY ville_magasin ASC");
+            $villes = $stmtVilles->fetchAll(PDO::FETCH_COLUMN);
+            ?>
+            <!-- Ville -->
             <div class="field select"><i class="bi bi-geo-alt"></i>
-                <select name="trie-par-magasin"><option value="">Magasin (tous)</option><option>Villiers-le-Bel</option><option>Bondy</option><option>Drancy</option></select>
+                <select name="trie-par-magasin">
+                    <option value="">Magasin (tous)</option>
+                    <?php foreach ($villes as $v) : ?>
+                        <option value="<?= htmlspecialchars($v) ?>" <?= ($ville === $v ? 'selected' : '') ?>>
+                            <?= htmlspecialchars($v) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
+
+            <!-- Statut -->
             <div class="field select"><i class="bi bi-lightbulb"></i>
-                <select><option value="">Statut</option><option>Nouveau</option><option>Retenu</option><option>Refusé</option><option>Archivé</option></select>
+                <select name="statut">
+                    <option value="">Statut (tous)</option>
+                    <option <?= $statut === "Nouveau" ? 'selected' : '' ?>>Nouveau</option>
+                    <option <?= $statut === "Retenu" ? 'selected' : '' ?>>Retenu</option>
+                    <option <?= $statut === "Refusé" ? 'selected' : '' ?>>Refusé</option>
+                    <option <?= $statut === "Archivé" ? 'selected' : '' ?>>Archivé</option>
+                </select>
             </div>
+
             <button class="btn"><i class="bi bi-funnel"></i> Filtrer</button>
         </form>
     </section>
