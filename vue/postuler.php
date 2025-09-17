@@ -299,11 +299,6 @@ if ($req->rowCount() > 0) {
                             </div>
 
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email *</label>
-                                <input type="email" id="email" class="form-control" placeholder="Email *" name="email" required>
-                            </div>
-
-                            <div class="mb-3">
                                 <label for="telephone" class="form-label">Téléphone</label>
                                 <input type="tel" id="telephone" class="form-control" placeholder="Téléphone" name="telephone" pattern="[0-9\s+]{8,15}">
                             </div>

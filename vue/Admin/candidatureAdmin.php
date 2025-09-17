@@ -46,7 +46,7 @@
    $reqCandidatures = $pdo->prepare("
     SELECT *
     FROM candidatures c
-    INNER JOIN offres_emplois o ON c.ref_offre = o.id_offre
+    LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
 ");
 $reqCandidatures->execute();
 $lignesCandidatures = $reqCandidatures->fetchAll();
@@ -102,16 +102,37 @@ foreach ($lignesCandidatures as $candidature) {
                             <td><strong><?= htmlspecialchars($candidature['prenom'].' '.$candidature['nom']) ?></strong></td>
                             <td><?= htmlspecialchars($candidature['email']) ?></td>
                             <td><?= htmlspecialchars($candidature['telephone']) ?></td>
-                            <td><?= htmlspecialchars($candidature['titre_poste']) ?></td>
-                            <td><?= htmlspecialchars($candidature['ville']) ?></td>
+                            <td><?= !empty($candidature['titre_poste']) ? htmlspecialchars($candidature['titre_poste']) : '<em>Candidature spontanée</em>' ?></td>
+                            <td><?= !empty($candidature['ville']) ? htmlspecialchars($candidature['ville']) : '<em>Non précisée</em>' ?></td>
                             <td><span class="pill warning"><i class="bi bi-star"></i> Nouveau</span></td>
                             <td><a class="link" href="<?= "vue/telechargement/".$candidature['lien_cv'] ?>" download><i class="bi bi-file-earmark-text"></i> Télécharger CV</a></td>';
-
                             <td class="row-actions">
-                                <button class="btn xs ghost"><i class="bi bi-eye"></i> Voir</button>
-                                <button class="btn xs"><i class="bi bi-check2-circle"></i> Retenir</button>
-                                <button class="btn xs ghost"><i class="bi bi-x-circle"></i> Refuser</button>
-                                <button class="btn xs ghost"><i class="bi bi-archive"></i> Archiver</button>
+                                <!-- Retenir -->
+                                <form action="../../src/traitement/update_candidatures.php" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="<?= $candidature['id'] ?>">
+                                    <input type="hidden" name="action" value="retenir">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bi bi-check2-circle"></i> Retenir
+                                    </button>
+                                </form>
+
+                                <!-- Refuser -->
+                                <form action="../../src/traitement/update_candidatures.php" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="<?= $candidature['id'] ?>">
+                                    <input type="hidden" name="action" value="refuser">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-x-circle"></i> Refuser
+                                    </button>
+                                </form>
+
+                                <!-- Archiver -->
+                                <form action="../../src/traitement/update_candidatures.php" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="<?= $candidature['id'] ?>">
+                                    <input type="hidden" name="action" value="archiver">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-archive"></i> Archiver
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
