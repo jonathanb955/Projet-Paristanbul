@@ -57,19 +57,20 @@ foreach ($lignesCandidatures as $candidature) {
     $telephone = $candidature['telephone'];
     $poste = $candidature['titre_poste'];
     $ville = $candidature['ville'];
+
     }
 
-
 ?>
+
 
     <section class="filters">
         <form class="filters-bar" action="" method="get">
             <div class="field"><i class="bi bi-search"></i><input type="search" placeholder="Rechercher (nom, email, poste)…"></div>
             <div class="field select"><i class="bi bi-briefcase"></i>
-                <select><option value="">Poste (tous)</option><option>Caissier(ère)</option><option>Préparateur(trice)</option><option>Manager</option></select>
+                <select name ="tri-par-poste"><option value="">Poste (tous)</option><option>Caissier(ère)</option><option>Préparateur(trice)</option><option>Manager</option></select>
             </div>
             <div class="field select"><i class="bi bi-geo-alt"></i>
-                <select><option value="">Magasin (tous)</option><option>Villiers-le-Bel</option><option>Bondy</option><option>Drancy</option></select>
+                <select name="trie-par-magasin"><option value="">Magasin (tous)</option><option>Villiers-le-Bel</option><option>Bondy</option><option>Drancy</option></select>
             </div>
             <div class="field select"><i class="bi bi-lightbulb"></i>
                 <select><option value="">Statut</option><option>Nouveau</option><option>Retenu</option><option>Refusé</option><option>Archivé</option></select>
@@ -95,6 +96,7 @@ foreach ($lignesCandidatures as $candidature) {
                     </tr>
                     </thead>
                     <tbody>
+
                     <?php foreach ($lignesCandidatures as $candidature) : ?>
                         <tr>
                             <td><strong><?= htmlspecialchars($candidature['prenom'].' '.$candidature['nom']) ?></strong></td>
@@ -103,7 +105,8 @@ foreach ($lignesCandidatures as $candidature) {
                             <td><?= htmlspecialchars($candidature['titre_poste']) ?></td>
                             <td><?= htmlspecialchars($candidature['ville']) ?></td>
                             <td><span class="pill warning"><i class="bi bi-star"></i> Nouveau</span></td>
-                            <td><a class="link" href="#"><i class="bi bi-file-earmark-text"></i> CV.pdf</a></td>
+                            <td><a class="link" href="<?= "vue/telechargement/".$candidature['lien_cv'] ?>" download><i class="bi bi-file-earmark-text"></i> Télécharger CV</a></td>';
+
                             <td class="row-actions">
                                 <button class="btn xs ghost"><i class="bi bi-eye"></i> Voir</button>
                                 <button class="btn xs"><i class="bi bi-check2-circle"></i> Retenir</button>

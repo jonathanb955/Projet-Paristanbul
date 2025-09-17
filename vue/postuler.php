@@ -354,17 +354,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date_candidature = date("Y-m-d H:i:s"); // date actuelle
     $lien_cv = null;
 
-    // Dossiers de stockage
+// Dossiers de stockage (dans le dossier public 'vue')
     $chemin_telechargement = __DIR__ . "/telechargement/candidatures/";
     if (!is_dir($chemin_telechargement)) {
         mkdir($chemin_telechargement, 0777, true);
     }
 
-    // Nettoyer nom/prénom
+// Nettoyer nom/prénom
     $nettoyer_nom    = preg_replace("/[^a-zA-Z0-9]/", "_", strtolower($nom));
     $nettoyer_prenom = preg_replace("/[^a-zA-Z0-9]/", "_", strtolower($prenom));
 
-    // Gestion du CV
+// Gestion du CV
     if (!empty($_FILES['cv']['name'])) {
         $cvTmp = $_FILES['cv']['tmp_name'];
         $extension = strtolower(pathinfo($_FILES['cv']['name'], PATHINFO_EXTENSION));
@@ -372,10 +372,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Vérifier extension autorisée
         $extensions_ok = ['pdf', 'doc', 'docx'];
         if (in_array($extension, $extensions_ok)) {
-            $nom_cv = "cv_{$nettoyer_nom}_{$nettoyer_prenom}." . $extension;
+            // 🔐 Nom de fichier unique avec hash
+            $hash = substr(md5(uniqid()), 0, 8);
+            $nom_cv = "cv_{$nettoyer_nom}_{$nettoyer_prenom}_{$hash}." . $extension;
             $cvDest = $chemin_telechargement . $nom_cv;
 
             if (move_uploaded_file($cvTmp, $cvDest)) {
+                // 💾 Chemin accessible via navigateur
                 $lien_cv = "telechargement/candidatures/" . $nom_cv;
             }
         }

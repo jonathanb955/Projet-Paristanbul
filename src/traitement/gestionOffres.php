@@ -28,8 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 // Dossiers de stockage
-    $chemin_telechargement = __DIR__ . "/telechargement/candidatures/";
-    if (!is_dir($chemin_telechargement)) {
+    $chemin_telechargement = __DIR__ . '/../../vue/telechargement/candidatures/';    if (!is_dir($chemin_telechargement)) {
         mkdir($chemin_telechargement, 0777, true);
     }
 
@@ -51,8 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cvDest = $chemin_telechargement . $nom_cv;
 
         if (move_uploaded_file($cvTmp, $cvDest)) {
-            $lien_cv = "téléchargements/candidatures/" . $nom_cv;
-        }
+            $lien_cv = "vue/telechargement/candidatures/" . $nom_cv;        }
     }
 
 
