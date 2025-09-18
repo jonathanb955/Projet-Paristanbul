@@ -200,3 +200,145 @@
     border-radius: 6px;
 }
 
+/* === Paristanbul — Overrides "Nos magasins" (après index.css) ========== */
+
+/* 1) Variables (fallback si jamais index.css n'est pas chargé) */
+:root{
+    --pi-blue:#2E4C97;
+    --pi-red:#D6452E;
+    --ink:#E6E9F2;
+    --muted: #ffffff;
+    --bg-1:#0B1326;
+    --bg-2:#0A0F1F;
+    --card:#141B2B;
+    --chip:#1B2436;
+}
+
+/* 2) Fond & texte (même ambiance que l’index) */
+body{
+    color:var(--ink) !important;
+    background:
+            radial-gradient(1000px 500px at 10% 10%, rgba(46,76,151,.25), transparent 60%),
+            radial-gradient(900px 600px at 90% 10%, rgba(214,69,46,.18), transparent 55%),
+            linear-gradient(180deg, var(--bg-1), var(--bg-2) 70%) !important;
+}
+
+/* 3) Navbar */
+.navbar, nav{ background-color:var(--bg-1) !important; }
+.nav-links a{ color:var(--ink) !important; }
+.nav-links a.active, .nav-links a:hover{ color:var(--pi-blue) !important; }
+.nav-buttons a{ color:var(--ink) !important; }
+
+/* 4) Hero */
+.hero-section{ background:transparent !important; color:var(--ink) !important; }
+.hero-text p{ color:var(--muted) !important; }
+.btn-outline{ border-color:rgba(255,255,255,.75) !important; color:var(--ink) !important; }
+.btn-outline.dark{ background-color:var(--pi-red) !important; border-color:var(--pi-red) !important; color:#fff !important; }
+
+/* 5) Cartes & textes */
+.magasin-card{ background-color:var(--card) !important; color:var(--ink) !important; border:1px solid rgba(255,255,255,.06); border-radius:16px; }
+.magasin-card h5{ color:var(--ink) !important; }
+.magasin-card p{ color:var(--muted) !important; }
+.image-wrapper{ background:#0F1524 !important; }
+
+/* 6) Boutons marque (inclut Bootstrap pour cohérence) */
+.btn-green{ background-color:var(--pi-blue) !important; color:#fff !important; border-color:transparent !important; }
+.btn-green:hover{ background-color:#25427f !important; }
+
+.itineraire-btn,
+.btn-danger{ background-color:var(--pi-red) !important; border-color:var(--pi-red) !important; color:#fff !important; }
+.itineraire-btn:hover,
+.btn-danger:hover{ background-color:#b53a27 !important; border-color:#b53a27 !important; }
+
+.btn-outline, .btn-outline-dark{
+    background:transparent !important;
+    color:var(--ink) !important;
+    border:1px solid rgba(255,255,255,.30) !important;
+}
+.btn-outline:hover, .btn-outline-dark:hover{ background:rgba(255,255,255,.06) !important; }
+
+/* 7) Icônes & badges */
+.bi-geo-alt-fill, .bi-clock, .bi-telephone, .bi-person-walking{ color:var(--pi-blue) !important; }
+.badge{ background:var(--chip) !important; color:var(--ink) !important; }
+
+/* 8) Leaflet (popup en mode dark) */
+.leaflet-popup-content-wrapper{ background:var(--card) !important; color:var(--ink) !important; border-radius:12px; }
+.leaflet-popup-tip{ background:var(--card) !important; }
+.leaflet-container a{ color:var(--pi-blue) !important; }
+
+/* 9) Ombre navbar au scroll (comme index) */
+.navbar{ transition: background-color .35s ease, box-shadow .35s ease !important; }
+.navbar.nav--scrolled{
+    background-color: rgba(10,15,31,.92) !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,.25);
+    backdrop-filter: saturate(120%) blur(6px);
+}
+
+/* 10) Tilt + Reveal (au cas où la page serait chargée seule) */
+@media (prefers-reduced-motion:no-preference){
+    .reveal{
+        opacity:0; transform: translateY(18px) scale(.98); filter: blur(2px);
+        transition: opacity .6s ease, transform .6s ease, filter .6s ease;
+        transition-delay: var(--reveal-delay,0ms);
+    }
+    .reveal.reveal--in{ opacity:1; transform:none; filter:none; }
+    .magasin-card.tilt{
+        transition: transform .12s ease, box-shadow .2s ease;
+        transform-style: preserve-3d;
+        box-shadow: 0 12px 28px rgba(0,0,0,.3);
+    }
+}
+
+/* 11) Bouton haut de page (même style) */
+#toTop{
+    position: fixed; right: 18px; bottom: 18px; z-index: 999;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--pi-blue); color: #fff;
+    display: grid; place-items: center;
+    box-shadow: 0 10px 24px rgba(0,0,0,.25);
+    opacity:0; pointer-events:none; transform: translateY(10px);
+    transition: opacity .3s, transform .3s;
+}
+#toTop.show{ opacity:1; pointer-events:auto; transform:none; }
+/* === Fix & thème Leaflet (scopé) === */
+.pi-theme #map{
+    height: 460px !important;
+    min-height: 460px;
+    border-radius: 14px;
+    border: 1px solid #2a3654;
+    box-shadow: 0 10px 24px rgba(0,0,0,.25);
+    overflow: hidden;
+}
+.pi-theme .leaflet-container{ background:#0F1524; }
+.pi-theme .leaflet-control-zoom a{
+    background:#151e31; color:#fff; border:none;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+}
+.pi-theme .leaflet-bar a:hover{ background:#1b2436; }
+.pi-theme .leaflet-popup-content-wrapper,
+.pi-theme .leaflet-popup-tip{ background:#141b2b; color:#E6E9F2; border:none; }
+.pi-theme .leaflet-marker-icon,
+.pi-theme .leaflet-pane img{ image-rendering:auto; }
+
+/* Cartes magasins (même look que l’index) */
+.pi-theme .magasin-card{
+    background-color:var(--card) !important; color:var(--ink) !important;
+    border:1px solid #1e2a44; border-radius:16px;
+}
+.pi-theme .magasin-card .text-muted{ color:var(--muted) !important; }
+.pi-theme .magasin-card .btn-danger{
+    background-color:var(--pi-red) !important; border:none;
+}
+.pi-theme .magasin-card .btn-outline-dark{
+    color:var(--ink); border-color:#2a3654; background:transparent;
+}
+.pi-theme .badge.bg-success{ background:#2E8B57 !important; }
+
+/* Badges services */
+.pi-theme .badge.bg-purple{ background:#7b5cff !important; }
+.pi-theme .badge.bg-warning{ color:#1b2436 !important; }
+.pi-theme .badge.bg-primary{ background:#2E4C97 !important; }
+
+/* Garde les mêmes anims que l’index */
+.pi-theme .magasin-card,
+.pi-theme .service-card{ will-change:transform; }

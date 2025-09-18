@@ -10,7 +10,7 @@
     --ok:#2ecc71;
     --warn:#f4b400;
     --bad:#ff6b6b;
-    --line:rgba(255,255,255,0.08);
+    --line: rgb(255, 255, 255);
     --shadow:0 10px 22px rgba(0,0,0,0.35);
     --radius:16px;
 }

@@ -1,4 +1,4 @@
-:root{ --brand:#003366; --brand-2:#1a73e8; --bg:#0b1016; --panel:#0f1621; --panel-2:#0d141e; --text:#e9f0f8; --muted:#9bb2c8; --line:rgba(255,255,255,.08); --radius:16px; --shadow:0 10px 22px rgba(0,0,0,.35) }
+:root{ --brand:#003366; --brand-2:#1a73e8; --bg:#0b1016; --panel:#0f1621; --panel-2:#0d141e; --text:#e9f0f8; --muted:#9bb2c8; --line: rgb(255, 255, 255); --radius:16px; --shadow:0 10px 22px rgba(0,0,0,.35) }
 *{box-sizing:border-box} body{margin:0; color:var(--text); background:linear-gradient(120deg,#0b1016,#0c121a); font:500 15px/1.55 system-ui,-apple-system,Segoe UI,Roboto}
 .container{max-width:980px;margin:0 auto;padding:0 16px}
 

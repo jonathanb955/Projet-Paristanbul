@@ -652,7 +652,7 @@ body {
     --pi-blue:#2E4C97;   /* bleu logo */
     --pi-red:#D6452E;    /* rouge logo */
     --ink:#E6E9F2;       /* texte clair */
-    --muted:#cbd5e1;     /* texte secondaire */
+    --muted: #ffffff;     /* texte secondaire */
     --bg-1:#0B1326;      /* fond sombre */
     --bg-2:#0A0F1F;      /* fond sombre */
     --card:#141B2B;      /* fond cartes */

@@ -724,7 +724,7 @@ nav {
     --pi-blue:#2E4C97;
     --pi-red:#D6452E;
     --ink:#E6E9F2;
-    --muted:#cbd5e1;
+    --muted: #ffffff;
     --bg-1:#0B1326;
     --bg-2:#0A0F1F;
     --card:#141B2B;
@@ -998,4 +998,12 @@ body{
 .loader__logo{ width:120px; filter: drop-shadow(0 8px 20px rgba(0,0,0,.35)); }
 
 /* ⛑️ NAV TOUJOURS VISIBLE — garde-fou si une classe nav--hide traîne */
-nav.navbar.nav--hide{ transform:none !important; opacity:1 !important; visibility:visible !important; }
+nav.navbar.nav--hide{ transform:none !important;
+
+
+
+
+
+
+
+    opacity:1 !important; visibility:visible !important; }
