@@ -106,7 +106,10 @@
         }
     }
     $req->execute();
-    $lignesCandidatures = $req->fetchAll();
+
+
+    $lignesCandidatures = $req->fetchAll(PDO::FETCH_ASSOC);
+    echo "Total lignes trouvées : " . count($lignesCandidatures);
     ?>
 
 
@@ -175,7 +178,7 @@
             </div>
 
             <div class="table-wrap">
-                <table class="table">
+                <table class="table" id="candidaturesTable">
                     <thead>
                     <tr>
                         <th>Nom</th><th>Email</th><th>Tél.</th><th>Poste</th><th>Magasin</th><th>Statut</th><th>CV</th><th style="width:240px"></th>
@@ -184,6 +187,7 @@
                     <tbody>
 
                     <?php foreach ($lignesCandidatures as $candidature) : ?>
+                        
                         <tr>
                             <td><strong><?= htmlspecialchars($candidature['prenom'].' '.$candidature['nom']) ?></strong></td>
                             <td><?= htmlspecialchars($candidature['email']) ?></td>
@@ -191,8 +195,11 @@
                             <td><?= !empty($candidature['titre_poste']) ? htmlspecialchars($candidature['titre_poste']) : '<em>Candidature spontanée</em>' ?></td>
                             <td><?= !empty($candidature['ville']) ? htmlspecialchars($candidature['ville']) : '<em>Non précisée</em>' ?></td>
                             <td><span class="pill warning"><i class="bi bi-star"></i> Nouveau</span></td>
-                            <td><a class="link" href="<?= "vue/telechargement/".$candidature['lien_cv'] ?>" download><i class="bi bi-file-earmark-text"></i> Télécharger CV</a></td>';
-                            <td class="row-actions">
+                            <td>
+                                <a class="link" href="<?= "vue/telechargement/".$candidature['lien_cv'] ?>" download>
+                                    <i class="bi bi-file-earmark-text"></i> Télécharger CV
+                                </a>
+                            </td>                            <td class="row-actions">
                                 <!-- Retenir -->
                                 <form action="../../src/traitement/update_candidatures.php" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="<?= $candidature['id'] ?>">
@@ -225,12 +232,56 @@
                     </tbody>
                 </table>
             </div>
-
             <div class="table-foot">
-                <span>3 / 3</span>
-                <div class="pager"><button class="btn ghost">‹</button><button class="btn ghost">›</button></div>
+                <span><?= $page ?> / <?= $totalPages ?></span>
+                <div class="pager">
+                    <?php if ($page > 1): ?>
+                        <a class="btn ghost" href="?page=<?= $page - 1 ?>">‹</a>
+                    <?php endif; ?>
+                    <?php if ($page < $totalPages): ?>
+                        <a class="btn ghost" href="?page=<?= $page + 1 ?>">›</a>
+                    <?php endif; ?>
+                </div>
             </div>
-        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const rows = document.querySelectorAll("#candidaturesTable tbody tr");
+                console.log("Total lignes trouvées :", rows.length);
+                const rowsPerPage = 3;
+                let currentPage = 1;
+                const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+                const pageInfo = document.getElementById("pageInfo");
+                const prevBtn = document.getElementById("prevPage");
+                const nextBtn = document.getElementById("nextPage");
+
+                function showPage(page) {
+                    rows.forEach((row, i) => {
+                        row.style.display = (i >= (page - 1) * rowsPerPage && i < page * rowsPerPage) ? "" : "none";
+                    });
+                    pageInfo.textContent = `${page} / ${totalPages}`;
+                    prevBtn.disabled = page === 1;
+                    nextBtn.disabled = page === totalPages;
+                }
+
+                prevBtn.addEventListener("click", () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        showPage(currentPage);
+                    }
+                });
+
+                nextBtn.addEventListener("click", () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        showPage(currentPage);
+                    }
+                });
+
+                // Initialiser
+                showPage(currentPage);
+            });
+        </script>
         <br>
         <br>
         <?php
