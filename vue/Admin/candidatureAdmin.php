@@ -48,27 +48,47 @@ $sql = "SELECT c.*, o.titre_poste, o.ville
         LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
         WHERE 1=1";
 
-$params = $paramsCount;
+$params = [];
 
+// Recherche
 if (!empty($search)) {
     $sql .= " AND (c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search OR o.titre_poste LIKE :search)";
-}
-if (!empty($poste)) {
-    $sql .= " AND o.titre_poste = :poste";
-}
-if (!empty($ville)) {
-    $sql .= " AND o.ville = :ville";
-}
-if (!empty($statut)) {
-    $sql .= " AND LOWER(c.statut) = LOWER(:statut)";
+    $params[':search'] = "%$search%";
 }
 
+// Poste
+if ($poste !== '') {
+    if ($poste === 'Candidature spontanée') {
+        $sql .= " AND c.ref_offre IS NULL";
+    } else {
+        $sql .= " AND o.titre_poste = :poste";
+        $params[':poste'] = $poste;
+    }
+}
+
+// Ville
+if (!empty($ville)) {
+    $sql .= " AND o.ville = :ville";
+    $params[':ville'] = $ville;
+}
+
+// Statut
+if (!empty($statut)) {
+    $sql .= " AND LOWER(c.statut) = LOWER(:statut)";
+    $params[':statut'] = $statut;
+}
+
+// Pagination
 $sql .= " ORDER BY c.date_candidature DESC LIMIT :limit OFFSET :offset";
 
 $stmt = $pdo->prepare($sql);
+
+// Lier les paramètres dynamiques
 foreach ($params as $key => $val) {
     $stmt->bindValue($key, $val);
 }
+
+// Lier LIMIT et OFFSET
 $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
 
@@ -145,6 +165,7 @@ $lignesCandidatures = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <option <?= $poste === "Caissier(ère)" ? 'selected' : '' ?>>Caissier(ère)</option>
                     <option <?= $poste === "Préparateur(trice)" ? 'selected' : '' ?>>Préparateur(trice)</option>
                     <option <?= $poste === "Manager" ? 'selected' : '' ?>>Manager</option>
+                    <option <?= $poste === "" ? 'selected' : '' ?>>Candidature spontanée</option>
                 </select>
             </div>
 
