@@ -1,3 +1,81 @@
+<?php
+
+$pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+
+// ============================
+// FILTRES & PAGINATION
+// ============================
+$search = $_GET['search'] ?? '';
+$poste  = $_GET['tri-par-poste'] ?? '';
+$ville  = $_GET['tri-par-magasin'] ?? '';
+$statut = $_GET['tri-par-statut'] ?? '';
+
+$limit  = 3;
+$page   = max(1, intval($_GET['page'] ?? 1));
+$offset = ($page - 1) * $limit;
+
+// Compter le total
+$sqlCount = "SELECT COUNT(*) FROM candidatures c
+             LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
+             WHERE 1=1";
+$paramsCount = [];
+
+if (!empty($search)) {
+    $sqlCount .= " AND (c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search OR o.titre_poste LIKE :search)";
+    $paramsCount[':search'] = "%$search%";
+}
+if (!empty($poste)) {
+    $sqlCount .= " AND o.titre_poste = :poste";
+    $paramsCount[':poste'] = $poste;
+}
+if (!empty($ville)) {
+    $sqlCount .= " AND o.ville = :ville";
+    $paramsCount[':ville'] = $ville;
+}
+if (!empty($statut)) {
+    $sqlCount .= " AND LOWER(c.statut) = LOWER(:statut)";
+    $paramsCount[':statut'] = $statut;
+}
+
+$stmt = $pdo->prepare($sqlCount);
+$stmt->execute($paramsCount);
+$total = $stmt->fetchColumn();
+$totalPages = ceil($total / $limit);
+
+// Récupérer les candidatures filtrées avec pagination
+$sql = "SELECT c.*, o.titre_poste, o.ville
+        FROM candidatures c
+        LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
+        WHERE 1=1";
+
+$params = $paramsCount;
+
+if (!empty($search)) {
+    $sql .= " AND (c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search OR o.titre_poste LIKE :search)";
+}
+if (!empty($poste)) {
+    $sql .= " AND o.titre_poste = :poste";
+}
+if (!empty($ville)) {
+    $sql .= " AND o.ville = :ville";
+}
+if (!empty($statut)) {
+    $sql .= " AND LOWER(c.statut) = LOWER(:statut)";
+}
+
+$sql .= " ORDER BY c.date_candidature DESC LIMIT :limit OFFSET :offset";
+
+$stmt = $pdo->prepare($sql);
+foreach ($params as $key => $val) {
+    $stmt->bindValue($key, $val);
+}
+$stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+
+$stmt->execute();
+$lignesCandidatures = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -34,82 +112,19 @@
     <header class="topbar">
         <h1>Candidatures — Administration</h1>
         <div class="top-actions">
-            <button class="btn ghost"><i class="bi bi-archive"></i> Archiver lues</button>
-            <button class="btn"><i class="bi bi-download"></i> Export CSV</button>
+            <form method="post" style="display:inline;">
+                <button type="submit" name="archiver_lues" class="btn ghost">
+                    <i class="bi bi-archive"></i> Archiver lues
+                </button>
+            </form>
+
+            <form method="post" action="../../src/traitement/export_candidatures.php" style="display:inline;">
+                <button type="submit" name="export_csv" class="btn">
+                    <i class="bi bi-download"></i> Export CSV
+                </button>
+            </form>
         </div>
     </header>
-
-    <?php
-    $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
-
-    // filtres
-    $search = $_GET['search'] ?? '';
-    $poste = $_GET['tri-par-poste'] ?? '';
-    $ville = $_GET['tri-par-magasin'] ?? '';
-    $statut = $_GET['tri-par-statut'] ?? '';
-
-    // pagination
-    $limit = 3;
-    $page = max(1, intval($_GET['page'] ?? 1));
-    $offset = ($page - 1) * $limit;
-
-    // 1️⃣ compter le nombre total
-    $sqlCount = "SELECT COUNT(*) FROM candidatures c
-             LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
-             WHERE 1=1";
-    $paramsCount = [];
-
-    if (!empty($search)) {
-        $sqlCount .= " AND (c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search OR o.titre_poste LIKE :search)";
-        $paramsCount[':search'] = "%$search%";
-    }
-    if (!empty($poste)) {
-        $sqlCount .= " AND o.titre_poste = :poste";
-        $paramsCount[':poste'] = $poste;
-    }
-    if (!empty($ville)) {
-        $sqlCount .= " AND o.ville = :ville";
-        $paramsCount[':ville'] = $ville;
-    }
-    if (!empty($statut)) {
-        $sqlCount .= " AND LOWER(c.statut) = LOWER(:statut)";
-        $paramsCount[':statut'] = $statut;
-    }
-
-    $stmt = $pdo->prepare($sqlCount);
-    $stmt->execute($paramsCount);
-    $total = $stmt->fetchColumn();
-    $totalPages = ceil($total / $limit);
-
-    // 2️⃣ récupérer les candidatures
-    $sql = "SELECT c.*, o.titre_poste, o.ville
-        FROM candidatures c
-        LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
-        WHERE 1=1";
-    $params = $paramsCount;
-
-    if (!empty($search)) {
-        $sql .= " AND (c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search OR o.titre_poste LIKE :search)";
-    }
-    if (!empty($poste)) {
-        $sql .= " AND o.titre_poste = :poste";
-    }
-    if (!empty($ville)) {
-        $sql .= " AND o.ville = :ville";
-    }
-    if (!empty($statut)) {
-        $sql .= " AND LOWER(c.statut) = LOWER(:statut)";
-    }
-
-    // 3️⃣ injecter LIMIT et OFFSET directement dans la requête
-    $sql .= " ORDER BY c.date_candidature DESC LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
-
-    $reqCandidatures = $pdo->prepare($sql);
-    $reqCandidatures->execute($params);
-
-    $lignesCandidatures = $reqCandidatures->fetchAll(PDO::FETCH_ASSOC);
-
-    ?>
 
 
 
