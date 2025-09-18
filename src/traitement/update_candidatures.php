@@ -13,9 +13,9 @@ $action = $_POST['action'] ?? null;
 
 // Associer action -> statut
 $validActions = [
-    'retenir' => 'retenu',
-    'refuser' => 'refuse',
-    'archiver' => 'archive'
+    'retenir' => 'Retenu',
+    'refuser' => 'Refuse',
+    'archiver' => 'Archive'
 ];
 
 if ($id && isset($validActions[$action])) {

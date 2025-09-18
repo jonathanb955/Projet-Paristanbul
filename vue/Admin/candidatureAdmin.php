@@ -42,25 +42,23 @@
     <?php
     $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
 
-    // filtres (comme avant)
-    $search   = $_GET['search'] ?? '';
-    $poste    = $_GET['tri-par-poste'] ?? '';
-    $ville    = $_GET['tri-par-magasin'] ?? '';
-    $statut   = $_GET['statut'] ?? '';
+    // filtres
+    $search = $_GET['search'] ?? '';
+    $poste = $_GET['tri-par-poste'] ?? '';
+    $ville = $_GET['tri-par-magasin'] ?? '';
+    $statut = $_GET['tri-par-statut'] ?? '';
 
     // pagination
-    $limit = 3; // 5 candidatures par page
+    $limit = 3;
     $page = max(1, intval($_GET['page'] ?? 1));
     $offset = ($page - 1) * $limit;
 
-    // requête pour compter le nombre total de candidatures filtrées
+    // 1️⃣ compter le nombre total
     $sqlCount = "SELECT COUNT(*) FROM candidatures c
              LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
              WHERE 1=1";
-
     $paramsCount = [];
 
-    // Appliquer filtres
     if (!empty($search)) {
         $sqlCount .= " AND (c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search OR o.titre_poste LIKE :search)";
         $paramsCount[':search'] = "%$search%";
@@ -74,43 +72,45 @@
         $paramsCount[':ville'] = $ville;
     }
     if (!empty($statut)) {
-        $sqlCount .= " AND c.statut = :statut";
+        $sqlCount .= " AND LOWER(c.statut) = LOWER(:statut)";
         $paramsCount[':statut'] = $statut;
     }
 
-    // nombre total
     $stmt = $pdo->prepare($sqlCount);
     $stmt->execute($paramsCount);
     $total = $stmt->fetchColumn();
     $totalPages = ceil($total / $limit);
 
-    // requête pour récupérer les candidatures de la page courante
+    // 2️⃣ récupérer les candidatures
     $sql = "SELECT c.*, o.titre_poste, o.ville
         FROM candidatures c
         LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
         WHERE 1=1";
-
-    // mêmes filtres
     $params = $paramsCount;
 
-    $sql .= " LIMIT :limit OFFSET :offset";
-    $params[':limit'] = $limit;
-    $params[':offset'] = $offset;
-
-    $req = $pdo->prepare($sql);
-    foreach ($params as $k => $v) {
-        if ($k === ':limit' || $k === ':offset') {
-            $req->bindValue($k, $v, PDO::PARAM_INT);
-        } else {
-            $req->bindValue($k, $v);
-        }
+    if (!empty($search)) {
+        $sql .= " AND (c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search OR o.titre_poste LIKE :search)";
     }
-    $req->execute();
+    if (!empty($poste)) {
+        $sql .= " AND o.titre_poste = :poste";
+    }
+    if (!empty($ville)) {
+        $sql .= " AND o.ville = :ville";
+    }
+    if (!empty($statut)) {
+        $sql .= " AND LOWER(c.statut) = LOWER(:statut)";
+    }
 
+    // 3️⃣ injecter LIMIT et OFFSET directement dans la requête
+    $sql .= " ORDER BY c.date_candidature DESC LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
 
-    $lignesCandidatures = $req->fetchAll(PDO::FETCH_ASSOC);
-    echo "Total lignes trouvées : " . count($lignesCandidatures);
+    $reqCandidatures = $pdo->prepare($sql);
+    $reqCandidatures->execute($params);
+
+    $lignesCandidatures = $reqCandidatures->fetchAll(PDO::FETCH_ASSOC);
+
     ?>
+
 
 
 
@@ -143,7 +143,7 @@
             ?>
             <!-- Ville -->
             <div class="field select"><i class="bi bi-geo-alt"></i>
-                <select name="trie-par-magasin">
+                <select name="tri-par-magasin">
                     <option value="">Magasin (tous)</option>
                     <?php foreach ($villes as $v) : ?>
                         <option value="<?= htmlspecialchars($v) ?>" <?= ($ville === $v ? 'selected' : '') ?>>
@@ -155,12 +155,13 @@
 
             <!-- Statut -->
             <div class="field select"><i class="bi bi-lightbulb"></i>
-                <select name="statut">
+                <select name="tri-par-statut">
                     <option value="">Statut (tous)</option>
-                    <option <?= $statut === "Nouveau" ? 'selected' : '' ?>>Nouveau</option>
-                    <option <?= $statut === "Retenu" ? 'selected' : '' ?>>Retenu</option>
-                    <option <?= $statut === "Refusé" ? 'selected' : '' ?>>Refusé</option>
-                    <option <?= $statut === "Archivé" ? 'selected' : '' ?>>Archivé</option>
+                    <option value="Nouveau" <?= $statut === "Nouveau" ? 'selected' : '' ?>>Nouveau</option>
+                    <option value="En attente" <?= $statut === "En attente" ? 'selected' : '' ?>>En attente</option>
+                    <option value="Retenu" <?= $statut === "Retenu" ? 'selected' : '' ?>>Retenu</option>
+                    <option value="Refuse" <?= $statut === "Refuse" ? 'selected' : '' ?>>Refusé</option>
+                    <option value="Archive" <?= $statut === "Archive" ? 'selected' : '' ?>>Archivé</option>
                 </select>
             </div>
 
@@ -187,14 +188,41 @@
                     <tbody>
 
                     <?php foreach ($lignesCandidatures as $candidature) : ?>
-                        
+
                         <tr>
                             <td><strong><?= htmlspecialchars($candidature['prenom'].' '.$candidature['nom']) ?></strong></td>
                             <td><?= htmlspecialchars($candidature['email']) ?></td>
                             <td><?= htmlspecialchars($candidature['telephone']) ?></td>
                             <td><?= !empty($candidature['titre_poste']) ? htmlspecialchars($candidature['titre_poste']) : '<em>Candidature spontanée</em>' ?></td>
                             <td><?= !empty($candidature['ville']) ? htmlspecialchars($candidature['ville']) : '<em>Non précisée</em>' ?></td>
-                            <td><span class="pill warning"><i class="bi bi-star"></i> Nouveau</span></td>
+                             <?php
+                            $statutCandidat = $candidature['statut'];
+                            $classePill = 'warning'; // défaut
+
+                            switch(strtolower($statutCandidat)) {
+                                case 'nouveau':
+                                case 'en attente':
+                                    $classePill = 'warning';
+                                    break;
+                                case 'retenu':
+                                    $classePill = 'success';
+                                    break;
+                                case 'refuse':
+                                case 'refusé':
+                                    $classePill = 'danger';
+                                    break;
+                                case 'archive':
+                                case 'archivé':
+                                    $classePill = 'secondary';
+                                    break;
+                            }
+                            ?>
+                            <td>
+                            <span class="pill <?= $classePill ?>">
+                                <i class="bi bi-star"></i> <?= htmlspecialchars($statutCandidat) ?>
+                            </span>
+                            </td>
+
                             <td>
                                 <a class="link" href="<?= "vue/telechargement/".$candidature['lien_cv'] ?>" download>
                                     <i class="bi bi-file-earmark-text"></i> Télécharger CV
