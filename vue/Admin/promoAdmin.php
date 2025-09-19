@@ -2,37 +2,111 @@
 
 
 <?php
-
 $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
-$limit  = 3;
-$page   = max(1, intval($_GET['page'] ?? 1));
-$offset = ($page - 1) * $limit;
 
-// Récupérer les candidatures filtrées avec pagination
-$sql = "SELECT libelle , rayon , type , valeur , periode , statut
-        FROM promotions
-        LIMIT :limit OFFSET :offset";
-$stmt = $pdo->prepare($sql);
-$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-$stmt->execute();
-$lignesPromotion = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// ============================
+// FILTRES & PAGINATION
+// ============================
+$search = $_GET['search'] ?? '';
+$rayon  = $_GET['tri-par-rayon'] ?? '';
+$type   = $_GET['tri-par-type'] ?? '';
+$statut = $_GET['tri-par-statut'] ?? '';
 
 $limit  = 3;
 $page   = max(1, intval($_GET['page'] ?? 1));
 $offset = ($page - 1) * $limit;
 
-// Compter le total
-$sqlCount = "SELECT COUNT(*) FROM promotions
-             WHERE 1=1";
+// ============================
+// Compter le total (pour pagination)
+// ============================
+$sqlCount = "SELECT COUNT(*) FROM promotions WHERE 1=1";
 $paramsCount = [];
 
+// Recherche
+if (!empty($search)) {
+    $sqlCount .= " AND (libelle LIKE :search OR rayon LIKE :search OR type LIKE :search OR valeur LIKE :search OR periode LIKE :search)";
+    $paramsCount[':search'] = "%$search%";
+}
 
+// Rayon
+if (!empty($rayon)) {
+    $sqlCount .= " AND rayon = :rayon";
+    $paramsCount[':rayon'] = $rayon;
+}
+
+// Type
+if (!empty($type)) {
+    $sqlCount .= " AND type = :type";
+    $paramsCount[':type'] = $type;
+}
+
+// Statut
+if (!empty($statut)) {
+    $sqlCount .= " AND LOWER(statut) = LOWER(:statut)";
+    $paramsCount[':statut'] = $statut;
+}
 
 $stmt = $pdo->prepare($sqlCount);
 $stmt->execute($paramsCount);
 $total = $stmt->fetchColumn();
 $totalPages = ceil($total / $limit);
+
+// ============================
+// Récupérer les promotions filtrées
+// ============================
+$sql = "SELECT libelle, rayon, type, valeur, periode, statut
+        FROM promotions
+        WHERE 1=1";
+$params = [];
+
+// Recherche
+if (!empty($search)) {
+    $sql .= " AND (libelle LIKE :search OR rayon LIKE :search OR type LIKE :search OR valeur LIKE :search OR periode LIKE :search)";
+    $params[':search'] = "%$search%";
+}
+
+// Rayon
+if (!empty($rayon)) {
+    $sql .= " AND rayon = :rayon";
+    $params[':rayon'] = $rayon;
+}
+
+// Type
+if (!empty($type)) {
+    $sql .= " AND type = :type";
+    $params[':type'] = $type;
+}
+
+// Statut
+if (!empty($statut)) {
+    $sql .= " AND LOWER(statut) = LOWER(:statut)";
+    $params[':statut'] = $statut;
+}
+
+// Pagination
+$sql .= " ORDER BY id_promotion DESC LIMIT :limit OFFSET :offset";
+
+$stmt = $pdo->prepare($sql);
+
+// Bind filtres
+foreach ($params as $key => $val) {
+    $stmt->bindValue($key, $val);
+}
+
+// Bind pagination
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+
+$stmt->execute();
+$lignesPromotion = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// ============================
+// Construire l’URL de pagination avec filtres
+// ============================
+$queryParams = $_GET;
+unset($queryParams['page']);
+$baseUrl = 'promoAdmin.php?' . http_build_query($queryParams);
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -81,45 +155,45 @@ $totalPages = ceil($total / $limit);
 
     <!-- Filtres -->
     <section class="filters">
-        <form class="filters-bar" action="#" method="get">
+        <form class="filters-bar" action="promoAdmin.php" method="get">
             <div class="field">
                 <i class="bi bi-search"></i>
-                <input type="search" placeholder="Rechercher (libellé, rayon, type)…">
+                <input type="search" name="search" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" placeholder="Rechercher (libellé, rayon, type)…">
             </div>
             <div class="field select">
                 <i class="bi bi-grid-1x2"></i>
-                <select>
+                <select name="tri-par-rayon">
                     <option value="">Rayon (tous)</option>
-                    <option>Fruits & Légumes</option>
-                    <option>Produits frais</option>
-                    <option>Produits secs</option>
-                    <option>Boissons</option>
-                    <option>Hygiène</option>
-                    <option>Surgelés</option>
-                    <option>Emballages</option>
+                    <option <?= ($_GET['tri-par-rayon'] ?? '') === 'Fruits & Légumes' ? 'selected' : '' ?>>Fruits & Légumes</option>
+                    <option <?= ($_GET['tri-par-rayon'] ?? '') === 'Produits frais' ? 'selected' : '' ?>>Produits frais</option>
+                    <option <?= ($_GET['tri-par-rayon'] ?? '') === 'Produits secs' ? 'selected' : '' ?>>Produits secs</option>
+                    <option <?= ($_GET['tri-par-rayon'] ?? '') === 'Boissons' ? 'selected' : '' ?>>Boissons</option>
+                    <option <?= ($_GET['tri-par-rayon'] ?? '') === 'Hygiène' ? 'selected' : '' ?>>Hygiène</option>
+                    <option <?= ($_GET['tri-par-rayon'] ?? '') === 'Surgelés' ? 'selected' : '' ?>>Surgelés</option>
+                    <option <?= ($_GET['tri-par-rayon'] ?? '') === 'Emballages' ? 'selected' : '' ?>>Emballages</option>
                 </select>
             </div>
             <div class="field select">
                 <i class="bi bi-tags"></i>
-                <select>
+                <select name="tri-par-type">
                     <option value="">Type (tous)</option>
-                    <option>-%</option>
-                    <option>2+1</option>
-                    <option>-50% sur 2e</option>
-                    <option>Prix choc</option>
+                    <option <?= ($_GET['tri-par-type'] ?? '') === '-%' ? 'selected' : '' ?>>-%</option>
+                    <option <?= ($_GET['tri-par-type'] ?? '') === '2+1' ? 'selected' : '' ?>>2+1</option>
+                    <option <?= ($_GET['tri-par-type'] ?? '') === '-50% sur 2e' ? 'selected' : '' ?>>-50% sur 2e</option>
+                    <option <?= ($_GET['tri-par-type'] ?? '') === 'Prix choc' ? 'selected' : '' ?>>Prix choc</option>
                 </select>
             </div>
             <div class="field select">
                 <i class="bi bi-lightbulb"></i>
-                <select>
+                <select name="tri-par-statut">
                     <option value="">Statut</option>
-                    <option>Publiée</option>
-                    <option>Brouillon</option>
-                    <option>Planifiée</option>
-                    <option>Expirée</option>
+                    <option <?= ($_GET['tri-par-statut'] ?? '') === 'Publiée' ? 'selected' : '' ?>>Publiée</option>
+                    <option <?= ($_GET['tri-par-statut'] ?? '') === 'Brouillon' ? 'selected' : '' ?>>Brouillon</option>
+                    <option <?= ($_GET['tri-par-statut'] ?? '') === 'Planifiée' ? 'selected' : '' ?>>Planifiée</option>
+                    <option <?= ($_GET['tri-par-statut'] ?? '') === 'Expirée' ? 'selected' : '' ?>>Expirée</option>
                 </select>
             </div>
-            <button class="btn"><i class="bi bi-funnel"></i> Filtrer</button>
+            <button class="btn" type="submit"><i class="bi bi-funnel"></i> Filtrer</button>
         </form>
         <small class="filters-note">Astuce : duplique une promo existante pour gagner du temps.</small>
     </section>
