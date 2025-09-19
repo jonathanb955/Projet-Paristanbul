@@ -1,3 +1,39 @@
+
+
+
+<?php
+
+$pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+$limit  = 3;
+$page   = max(1, intval($_GET['page'] ?? 1));
+$offset = ($page - 1) * $limit;
+
+// Récupérer les candidatures filtrées avec pagination
+$sql = "SELECT libelle , rayon , type , valeur , periode , statut
+        FROM promotions
+        LIMIT :limit OFFSET :offset";
+$stmt = $pdo->prepare($sql);
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
+$lignesPromotion = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$limit  = 3;
+$page   = max(1, intval($_GET['page'] ?? 1));
+$offset = ($page - 1) * $limit;
+
+// Compter le total
+$sqlCount = "SELECT COUNT(*) FROM promotions
+             WHERE 1=1";
+$paramsCount = [];
+
+
+
+$stmt = $pdo->prepare($sqlCount);
+$stmt->execute($paramsCount);
+$total = $stmt->fetchColumn();
+$totalPages = ceil($total / $limit);
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -35,6 +71,7 @@
 
 <main class="main">
     <header class="topbar">
+        <?php var_dump($_POST) ?>
         <h1>Promotions — Administration</h1>
         <div class="top-actions">
             <button class="btn ghost"><i class="bi bi-upload"></i> Import CSV</button>
@@ -106,95 +143,100 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><strong>-30% Fruits de saison</strong></td>
-                        <td>Fruits & Légumes</td>
-                        <td><span class="pill blue"><i class="bi bi-percent"></i> -%</span></td>
-                        <td>30%</td>
-                        <td>03/09/2025 → 10/09/2025</td>
-                        <td><span class="pill success"><i class="bi bi-check-circle"></i> Publiée</span></td>
+                <?php foreach ($lignesPromotion as $promotion) : ?>
+
+                     <tr>
+                        <td><strong><?= htmlspecialchars($promotion['libelle']) ?></strong></td>
+                        <td><?= htmlspecialchars($promotion['rayon']) ?></td>
+                        <td><span class="pill blue"><i class="bi bi-percent"></i><?= htmlspecialchars($promotion['type']) ?></span></td>
+                        <td><?= htmlspecialchars($promotion['valeur']) ?></td>
+                        <td><?= htmlspecialchars($promotion['periode']) ?></td>
+                        <td><span class="pill success"><i class="bi bi-check-circle"></i><?= htmlspecialchars($promotion['statut']) ?></span></td>
                         <td class="row-actions">
                             <button class="btn xs ghost"><i class="bi bi-pencil"></i> Éditer</button>
                             <button class="btn xs ghost"><i class="bi bi-files"></i> Dupliquer</button>
                             <button class="btn xs"><i class="bi bi-toggle-off"></i> Dépublier</button>
                         </td>
                     </tr>
-                    <tr>
-                        <td><strong>2+1 Yaourts bio</strong></td>
-                        <td>Produits frais</td>
-                        <td><span class="pill green"><i class="bi bi-plus-circle"></i> 2+1</span></td>
-                        <td>Gratuit sur 3e</td>
-                        <td>07/09/2025 → 14/09/2025</td>
-                        <td><span class="pill warning"><i class="bi bi-clock"></i> Planifiée</span></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-pencil"></i> Éditer</button>
-                            <button class="btn xs ghost"><i class="bi bi-files"></i> Dupliquer</button>
-                            <button class="btn xs"><i class="bi bi-check2-circle"></i> Publier</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>-50% sur 2e saumon</strong></td>
-                        <td>Produits frais</td>
-                        <td><span class="pill"><i class="bi bi-123"></i> -50% 2e</span></td>
-                        <td>-50% 2e</td>
-                        <td>01/09/2025 → 05/09/2025</td>
-                        <td><span class="pill danger"><i class="bi bi-slash-circle"></i> Expirée</span></td>
-                        <td class="row-actions">
-                            <button class="btn xs ghost"><i class="bi bi-pencil"></i> Éditer</button>
-                            <button class="btn xs"><i class="bi bi-arrow-repeat"></i> Reprogrammer</button>
-                        </td>
-                    </tr>
+                <?php endforeach; ?>
+
                     </tbody>
                 </table>
             </div>
 
             <div class="table-foot">
-                <span>3 / 3</span>
-                <div class="pager"><button class="btn ghost">‹</button><button class="btn ghost">›</button></div>
+                <span><?= $page ?> / <?= $totalPages ?></span>
+                <div class="pager">
+                    <?php if ($page > 1): ?>
+                        <a class="btn ghost" href="?page=<?= $page - 1 ?>">‹</a>
+                    <?php endif; ?>
+                    <?php if ($page < $totalPages): ?>
+                        <a class="btn ghost" href="?page=<?= $page + 1 ?>">›</a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
 
+
+        <?php
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+
+            // Récupération des valeurs du formulaire
+            $libelle = $_POST['libelle'];
+            $rayon = $_POST['rayon'];
+            $type = $_POST['type'];
+            $valeur = $_POST['valeur'];
+            $periode = $_POST['periode'];
+            $statut = $_POST['statut'];
+
+            // Préparation de la requête
+            $sql = "INSERT INTO promotions (libelle, rayon, type, valeur, periode, statut) 
+            VALUES (?, ?, ?, ?, ?, ?)";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([ $libelle, $rayon, $type, $valeur, $periode, $statut]);
+
+        }
+
+        ?>
         <!-- Panneau création/édition -->
         <aside class="sidepanel card">
             <div class="card-head"><h2>Créer / Éditer une promo</h2></div>
-            <form class="form">
-                <label><span>Libellé</span><input type="text" placeholder="Ex : -20% sur les boissons gazeuses"></label>
+            <form method="POST" action="promoAdmin.php" class="form">
+                <label ><span>Libellé</span><input type="text" name="libelle" placeholder="Ex : -20% sur les boissons gazeuses" required></label>
                 <label><span>Rayon</span>
-                    <select>
-                        <option>Fruits & Légumes</option><option>Produits frais</option><option>Produits secs</option>
-                        <option>Boissons</option><option>Hygiène</option><option>Surgelés</option><option>Emballages</option>
+                    <select name="rayon" required>
+                        <option>Fruits & Légumes</option><option>Produits frais</option>
+                        <option>Produits secs</option><option>Boissons</option>
+                        <option>Hygiène</option><option>Surgelés</option>
+                        <option>Emballages</option>
                     </select>
                 </label>
                 <div class="grid two">
                     <label><span>Type</span>
-                        <select>
-                            <option>-%</option><option>2+1</option><option>-50% sur 2e</option><option>Prix choc</option>
+                        <select name="type" required>
+                            <option>-%</option><option>2+1</option>
+                            <option>-50% sur 2e</option><option>Prix choc</option>
                         </select>
                     </label>
-                    <label><span>Valeur</span><input type="text" placeholder="Ex : 20% / 2+1 / 1,99€"></label>
+                    <label><span>Valeur</span><input type="text" name="valeur" placeholder="Ex : 20% / 2+1 / 1,99€" required></label>
                 </div>
-                <label><span>Période</span><input type="text" placeholder="JJ/MM/AAAA → JJ/MM/AAAA"></label>
-                <label><span>Description (facultatif)</span><textarea rows="4" placeholder="Détails affichés sur la page promotions…"></textarea></label>
-
+                <label><span>Période</span><input type="text" name="periode" placeholder="JJ/MM/AAAA → JJ/MM/AAAA" required></label>
                 <div class="grid two">
-                    <label><span>Statut</span><select><option>Publiée</option><option>Brouillon</option><option>Planifiée</option></select></label>
-                    <label><span>Affichage public</span><select><option>Afficher</option><option>Masquer</option></select></label>
+                    <label><span>Statut</span>
+                        <select name="statut" required>
+                            <option>Publiée</option><option>Brouillon</option><option>Planifiée</option>
+                        </select>
+                    </label>
                 </div>
-
-                <div class="promo-art">
-                    <div class="art-thumb"><i class="bi bi-image"></i></div>
-                    <div class="art-meta">
-                        <strong>Visuel promotion</strong>
-                        <p>Image d’entête (optionnelle).</p>
-                    </div>
-                </div>
-
                 <div class="form-actions">
                     <button type="reset" class="btn ghost">Annuler</button>
-                    <button type="button" class="btn ghost"><i class="bi bi-box-arrow-down"></i> Enregistrer brouillon</button>
                     <button type="submit" class="btn"><i class="bi bi-check2-circle"></i> Publier</button>
                 </div>
             </form>
+
         </aside>
     </section>
 
@@ -202,4 +244,4 @@
 </main>
 </body>
 </html>
-<?php
+
