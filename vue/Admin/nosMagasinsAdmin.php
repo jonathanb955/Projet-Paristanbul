@@ -127,7 +127,32 @@
                 </div>
             </div>
         </div>
+        <?php
 
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+
+            // Récupération des valeurs du formulaire
+            $ville = $_POST['ville'];
+            $ville = strtoupper($ville);
+            $adresse = $_POST['prenom'];
+            $cp = $_POST['cp'];
+            $rue_complete = $adresse." ".$cp ;
+            $image = "";
+            $tel = $_POST['num_telephone'];
+            $role = $_POST['role'];
+
+            // Préparation de la requête
+            $sql = "INSERT INTO magasins (ville_magasin, rue, image, cp, num_tel, horaire_ouverture,
+                      horaire_fermeture, jours_ouverture, video_magasin)
+            (?,?,?,?,?,?,?,?,?)";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$ville,$rue_complete,"",$cp,$tel,"","","",""]);
+
+        }
+
+        ?>
         <!-- Panneau latéral : Ajouter / Éditer -->
         <aside class="sidepanel card">
             <div class="card-head">
@@ -142,27 +167,27 @@
 
                 <label>
                     <span>Adresse</span>
-                    <input type="text" placeholder="117 Avenue Pierre Sémard">
+                    <input type="text" name=adresse" placeholder="117 Avenue Pierre Sémard">
                 </label>
 
                 <div class="grid two">
                     <label>
                         <span>Code postal</span>
-                        <input type="text" placeholder="95400">
+                        <input type="text" name="cp" placeholder="95400">
                     </label>
                     <label>
                         <span>Ville</span>
-                        <input type="text" placeholder="Villiers-le-Bel">
+                        <input type="text" name="ville" placeholder="Villiers-le-Bel">
                     </label>
                 </div>
 
                 <label>
                     <span>Téléphone</span>
-                    <input type="tel" placeholder="07 49 82 61 33">
+                    <input type="tel" name="num_telephone" placeholder="07 49 82 61 33">
                 </label>
 
                 <label>
-                    <span>URL itinéraire Google</span>
+                    <span>URL itinéraire Google (Optionnel)</span>
                     <input type="url" placeholder="https://www.google.com/maps/dir/?api=1&destination=...">
                 </label>
 
