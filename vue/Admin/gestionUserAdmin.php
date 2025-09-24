@@ -114,6 +114,7 @@
             $email = $_POST['email'];
             $mdp = $_POST['mdp'];
             $role = $_POST['role'];
+            $mdp_hash = password_hash($mdp,PASSWORD_DEFAULT);
 
 
             // Préparation de la requête
@@ -121,7 +122,7 @@
             VALUES (?, ?, ?, ?, ?)";
 
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$nom,$prenom,$email,$mdp,$role]);
+            $stmt->execute([$nom,$prenom,$email,$mdp_hash,$role]);
 
         }
 
