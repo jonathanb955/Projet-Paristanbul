@@ -374,6 +374,7 @@
         <h2 class="section-title reveal">Nos promotions de la semaine</h2>
         <p class="section-subtitle reveal" style="--reveal-delay:60ms">Profitez de nos offres spéciales.</p>
 
+
         <div class="grid">
             <article class="card tilt reveal" style="--reveal-delay:0ms">
                 <div class="promo-header">30%</div>
@@ -415,6 +416,19 @@
     </div>
 </section>
 
+<?php
+
+$pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8','root','',[
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+]);
+
+$req = $pdo->prepare("SELECT *  FROM magasins ORDER BY id_magasin DESC LIMIT 3;");
+$req->execute();
+$lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
+
+
+?>
 <!-- ===== MAGASINS ===== -->
 <section class="section">
     <div class="container">
@@ -422,35 +436,20 @@
         <p class="section-subtitle reveal" style="--reveal-delay:60ms">Trouvez le Paristanbul le plus proche.</p>
 
         <div class="grid">
-            <article class="card tilt reveal" style="--reveal-delay:0ms">
-                <h3 class="fw-bold mb-1">Paristanbul Villiers-le-Bel</h3>
-                <p style="color:var(--muted)"><i class="bi bi-geo-alt-fill"></i> 117 Avenue Pierre Semard, 95400</p>
+            <?php foreach ($lignesMagasin as $magasin) :?>
+
+                <article class="card tilt reveal" style="--reveal-delay:0ms">
+                <h3 class="fw-bold mb-1">Paristanbul <?= htmlspecialchars($magasin['ville_magasin']) ?></h3>
+                <p style="color:var(--muted)"><i class="bi bi-geo-alt-fill"></i><?= htmlspecialchars($magasin['rue'].", ". htmlspecialchars($magasin['cp'])) ?> </p>
                 <p style="color:var(--muted)"><i class="bi bi-clock-fill"></i> Lun-Dim: 8h30–20h</p>
                 <p style="color:var(--muted)"><i class="bi bi-telephone-fill"></i> +33 7 49 82 61 33</p>
                 <a href="#" class="itineraire-btn magnet"
                    data-address="117 Avenue Pierre Semard, 95400 Villiers-le-Bel"
                    data-lat="49.0094" data-lon="2.3911">Itinéraire</a>
             </article>
+            <?php endforeach; ?>
 
-            <article class="card tilt reveal" style="--reveal-delay:60ms">
-                <h3 class="fw-bold mb-1">Paristanbul Bondy</h3>
-                <p style="color:var(--muted)"><i class="bi bi-geo-alt-fill"></i> 116 Avenue Gallieni, 93140 Bondy</p>
-                <p style="color:var(--muted)"><i class="bi bi-clock-fill"></i> Lun-Dim: 8h30–20h</p>
-                <p style="color:var(--muted)"><i class="bi bi-telephone-fill"></i> +33 7 49 82 61 33</p>
-                <a href="#" class="itineraire-btn magnet"
-                   data-address="116 Avenue Gallieni, 93140 Bondy"
-                   data-lat="48.9022" data-lon="2.48278">Itinéraire</a>
-            </article>
 
-            <article class="card tilt reveal" style="--reveal-delay:120ms">
-                <h3 class="fw-bold mb-1">Paristanbul Drancy</h3>
-                <p style="color:var(--muted)"><i class="bi bi-geo-alt-fill"></i> 83 Avenue Marceau, 93700 Drancy</p>
-                <p style="color:var(--muted)"><i class="bi bi-clock-fill"></i> Lun-Dim: 8h30–20h30</p>
-                <p style="color:var(--muted)"><i class="bi bi-telephone-fill"></i> +33 7 49 82 61 33</p>
-                <a href="#" class="itineraire-btn magnet"
-                   data-address="83 Avenue Marceau, 93700 Drancy"
-                   data-lat="48.924298" data-lon="2.445676">Itinéraire</a>
-            </article>
         </div>
     </div>
 </section>
