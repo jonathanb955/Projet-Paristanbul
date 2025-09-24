@@ -12,6 +12,23 @@
     <link rel="stylesheet" href="../assets/css/index.css"/>
 
     <style>
+        /* ===== Catalogue (flipbook) ===== */
+        .catalogue .flipbook-shell{
+            position:relative; border-radius:16px; overflow:hidden;
+            background:#0F1524; border:1px solid var(--border);
+            box-shadow:0 18px 40px rgba(0,0,0,.30);
+        }
+        .catalogue .ratio{position:relative;width:100%}
+        .catalogue .ratio-16x10::before{content:"";display:block;padding-top:62.5%} /* 16:10 */
+        .catalogue .ratio > iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+        .catalogue .loading{
+            position:absolute; inset:0; display:grid; place-items:center;
+            background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+            transition:opacity .35s ease, visibility .35s ease;
+        }
+        .catalogue .loading.hide{opacity:0;visibility:hidden}
+        .catalogue .actions{display:flex;gap:.6rem;justify-content:center;margin-top:14px;flex-wrap:wrap}
+
         /* ========== RESET & BASE ========== */
         *{margin:0;padding:0;box-sizing:border-box}
         html,body{height:100%}
@@ -287,46 +304,48 @@
 </header>
 
 <!-- ===== RAYONS ===== -->
-<section class="section">
+<!-- ===== CATALOGUE ===== -->
+<section id="catalogue" class="section catalogue">
     <div class="container">
-        <h2 class="section-title reveal" data-reveal="fade">Nos rayons</h2>
-        <p class="section-subtitle reveal" style="--reveal-delay:60ms">Découvrez la diversité de nos produits frais et de qualité.</p>
-        <div class="reveal" style="--reveal-delay:120ms; margin-bottom:16px">
-            <a href="catalogue.php" class="btn-outline magnet">Découvrir nos rayons</a>
+        <h2 class="section-title reveal">En ce moment dans votre magasin Paristanbul</h2>
+        <p class="section-subtitle reveal" style="--reveal-delay:60ms">
+            Feuilletez notre catalogue interactif.
+        </p>
+
+        <div class="flipbook-shell tilt reveal" style="--reveal-delay:120ms">
+            <div class="ratio ratio-16x10">
+                <!-- Intégration PDF locale -->
+                <iframe
+                    id="catalogueFrame"
+                    title="Catalogue Paristanbul"
+                    src="../assets/pdf/catalogue.pdf#view=FitH&pagemode=thumbs"
+                    data-fallback="../assets/pdf/catalogue.pdf#view=FitH&pagemode=thumbs"
+                    loading="lazy"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <!-- Loader -->
+            <div class="loading" id="catalogueLoader">
+        <span class="pi-spinner" aria-hidden="true"
+              style="display:inline-block;width:28px;height:28px;border-radius:50%;
+                 border:3px solid rgba(255,255,255,.35);border-top-color:#fff;
+                 animation:spin .8s linear infinite"></span>
+            </div>
         </div>
 
-        <div class="grid">
-            <!-- Exemple de carte rayon -->
-            <article class="card tilt reveal" style="--reveal-delay:0ms">
-                <div class="icon mb-2"><i class="bi bi-cup-straw"></i></div>
-                <h3 class="fw-bold" style="margin-bottom:6px">Boissons</h3>
-                <p class="text" style="color:var(--muted);margin-bottom:10px">Jus, sodas, eaux et boissons chaudes pour tous les goûts.</p>
-                <a href="#" class="btn-outline magnet" style="width:max-content">Découvrir →</a>
-            </article>
-
-            <article class="card tilt reveal" style="--reveal-delay:60ms">
-                <div class="icon mb-2"><i class="bi bi-basket"></i></div>
-                <h3 class="fw-bold" style="margin-bottom:6px">Produits frais</h3>
-                <p style="color:var(--muted);margin-bottom:10px">Fruits, légumes, crèmerie — fraîcheur garantie.</p>
-                <a href="#" class="btn-outline magnet" style="width:max-content">Découvrir →</a>
-            </article>
-
-            <article class="card tilt reveal" style="--reveal-delay:120ms">
-                <div class="icon mb-2"><i class="bi bi-box-seam"></i></div>
-                <h3 class="fw-bold" style="margin-bottom:6px">Produits secs</h3>
-                <p style="color:var(--muted);margin-bottom:10px">Pâtes, riz, conserves — l’essentiel du placard.</p>
-                <a href="#" class="btn-outline magnet" style="width:max-content">Découvrir →</a>
-            </article>
-
-            <article class="card tilt reveal" style="--reveal-delay:180ms">
-                <div class="icon mb-2"><i class="bi bi-snow"></i></div>
-                <h3 class="fw-bold" style="margin-bottom:6px">Surgelés</h3>
-                <p style="color:var(--muted);margin-bottom:10px">Rapides, savoureux, toujours disponibles.</p>
-                <a href="#" class="btn-outline magnet" style="width:max-content">Découvrir →</a>
-            </article>
+        <div class="actions reveal" style="--reveal-delay:180ms">
+            <a class="btn-outline magnet" href="../assets/pdf/catalogue.pdf" target="_blank" rel="noopener">
+                Télécharger le PDF
+            </a>
+            <a class="btn-brand magnet" href="../assets/pdf/catalogue.pdf" target="_blank" rel="noopener">
+                Ouvrir en plein écran
+            </a>
         </div>
     </div>
 </section>
+
+
 
 <!-- ===== PRODUITS POPULAIRES ===== -->
 <section id="populaires" class="section produits">
@@ -777,6 +796,28 @@
         go(document.getElementById('app-store-link'));
         go(document.getElementById('app-store-link-2'));
     });
+    <script>
+        (function(){
+        const f = document.getElementById('catalogueFrame');
+        const l = document.getElementById('catalogueLoader');
+        if(!f || !l) return;
+
+        let loaded = false;
+        const hideLoader = () => l.classList.add('hide');
+
+        // Masquer le loader dès que l'iframe est prête
+        f.addEventListener('load', () => { loaded = true; hideLoader(); }, { once:true });
+
+        // Fallback automatique si l'iframe ne charge pas (DNS, X-Frame-Options, etc.)
+        setTimeout(() => {
+        if (!loaded) {
+        const fb = f.dataset.fallback || '../assets/pdf/catalogue.pdf';
+        f.src = fb;
+    }
+    }, 2500);
+    })();
+
+
 </script>
 </body>
 </html>
