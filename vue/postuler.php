@@ -617,7 +617,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
                     <!-- Form -->
                     <div class="col-md-8 p-4 card-dark tilt" style="border-left:0">
-                        <form action="https://formsubmit.co/" method="post" enctype="multipart/form-data" novalidate class="reveal">
+                        <form action="https://formsubmit.co/paristanbul.recrutement@gmail.com" method="post" enctype="multipart/form-data" novalidate class="reveal">
                             <input type="hidden" name="ref_offre" value="<?php echo htmlspecialchars($ref_offre_from_get ?? ''); ?>">
 
                             <div class="row g-3">
