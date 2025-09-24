@@ -40,9 +40,9 @@
 
     <section class="filters">
         <form class="filters-bar" action="#" method="get">
-            <div class="field"><i class="bi bi-search"></i><input type="search" placeholder="Rechercher (nom, email)…"></div>
+            <div class="field"><i class="bi bi-search"></i><input type="search" name="search" placeholder="Rechercher (nom, email)…"></div>
             <div class="field select"><i class="bi bi-person-badge"></i>
-                <select><option value="">Rôle</option><option>Super Admin</option><option>Admin</option><option>Manager</option><option>Éditeur</option></select>
+                <select name="role"><option value="">Rôle</option><option>Super Admin</option><option>Admin</option><option>Manager</option><option>Éditeur</option></select>
             </div>
 
             <button class="btn"><i class="bi bi-funnel"></i> Filtrer</button>
@@ -53,10 +53,32 @@
     require_once '../../src/bdd/Bdd.php';
     $bdd = new \bdd\Bdd();
     $pdo = $bdd->getBdd();
-    $query = "SELECT * FROM utilisateurs";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
+
+    // Construction dynamique de la requête
+    $conditions = [];
+    $params = [];
+
+    if (!empty($_GET['search'])) {
+        $search = '%' . $_GET['search'] . '%';
+        $conditions[] = "(nom LIKE :search OR prenom LIKE :search OR email LIKE :search)";
+        $params[':search'] = $search;
+    }
+
+    if (!empty($_GET['role'])) {
+        $conditions[] = "role = :role";
+        $params[':role'] = $_GET['role'];
+    }
+
+    $sql = "SELECT * FROM utilisateurs";
+    if ($conditions) {
+        $sql .= " WHERE " . implode(' AND ', $conditions);
+    }
+    $sql .= " ORDER BY nom ASC";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     $utilisateurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     ?>
 
     <section class="layout">
@@ -81,17 +103,44 @@
             </div>
         </div>
 
+        <?php
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+
+            // Récupération des valeurs du formulaire
+            $nom = $_POST['nom'];
+            $prenom = $_POST['prenom'];
+            $email = $_POST['email'];
+            $mdp = $_POST['mdp'];
+            $role = $_POST['role'];
+
+
+            // Préparation de la requête
+            $sql = "INSERT INTO utilisateurs (nom, prenom,email,mdp,role) 
+            VALUES (?, ?, ?, ?, ?)";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$nom,$prenom,$email,$mdp,$role]);
+
+        }
+
+        ?>
         <!-- Panneau création/édition -->
         <aside class="sidepanel card">
             <div class="card-head"><h2>Créer / Éditer un utilisateur</h2></div>
-            <form class="form">
+            <form class="form" method="post" action="gestionUserAdmin.php">
                 <div class="grid two">
-                    <label><span>Nom</span><input type="text" placeholder="Nom Prénom"></label>
-                    <label><span>Email</span><input type="email" placeholder="email@paristanbul.fr"></label>
+                    <label><span>Nom</span><input type="text" name="nom" placeholder="Nom "></label>
+                    <label><span>Prenom</span><input type="text" name="prenom" placeholder="Prenom"></label>
                 </div>
                 <div class="grid two">
+                <label><span>Email</span><input type="email" name="email" placeholder="email@paristanbul.fr"></label>
+                </div>
+
+                <div class="grid two">
                     <label><span>Rôle</span>
-                        <select><option>Éditeur</option><option>Manager</option><option>Admin</option><option>Super Admin</option></select>
+                        <select name="role"><option>Éditeur</option><option>Manager</option><option>Admin</option><option>Super Admin</option></select>
                     </label>
                     <label><span>Magasin (optionnel)</span>
                         <select><option>—</option><option>Villiers-le-Bel</option><option>Bondy</option><option>Drancy</option></select>
@@ -99,7 +148,7 @@
                 </div>
                 <div class="grid two">
                     <label><span>Statut</span><select><option>Actif</option><option>Inactif</option><option>Invité</option></select></label>
-                    <label><span>Mot de passe (temp.)</span><input type="password" placeholder="Générer ou saisir"></label>
+                    <label><span>Mot de passe (temp.)</span><input type="password" name="mdp" placeholder="Générer ou saisir"></label>
                 </div>
                 <label class="check"><input type="checkbox"><span>Forcer la réinitialisation du mot de passe à la première connexion</span></label>
                 <div class="form-actions">
