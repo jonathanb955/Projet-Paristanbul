@@ -12,56 +12,40 @@
     <link rel="stylesheet" href="../assets/css/index.css"/>
 
     <style>
-        /* ===== Catalogue (flipbook) ===== */
-        .catalogue .flipbook-shell{
-            position:relative; border-radius:16px; overflow:hidden;
-            background:#0F1524; border:1px solid var(--border);
-            box-shadow:0 18px 40px rgba(0,0,0,.30);
-        }
-        .catalogue .ratio{position:relative;width:100%}
-        .catalogue .ratio-16x10::before{content:"";display:block;padding-top:62.5%} /* 16:10 */
-        .catalogue .ratio > iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-        .catalogue .loading{
-            position:absolute; inset:0; display:grid; place-items:center;
-            background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
-            transition:opacity .35s ease, visibility .35s ease;
-        }
-        .catalogue .loading.hide{opacity:0;visibility:hidden}
-        .catalogue .actions{display:flex;gap:.6rem;justify-content:center;margin-top:14px;flex-wrap:wrap}
-
         /* ========== RESET & BASE ========== */
         *{margin:0;padding:0;box-sizing:border-box}
         html,body{height:100%}
         body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.6}
 
-        /* ===== Scroll progress (même que postuler.php) ===== */
+        /* Barre de progression (aux couleurs du thème sombre) */
         #scrollProgress{
             position:fixed; inset:0 auto auto 0; height:3px; width:0;
             background:linear-gradient(90deg, var(--pi-red), var(--pi-blue));
-            z-index:99999; box-shadow:0 0 12px rgba(214,69,46,.45);
+            z-index:99999; box-shadow:0 0 12px var(--ring);
             transition:width .2s linear;
         }
 
-        /* ========== THÈME SOMBRE PARISTANBUL (identique postuler.php) ========== */
+        /* ========== THÈME SOMBRE PARISTANBUL — aligné sur postuler.php ========== */
         :root{
-            --pi-blue:#2E4C97;       /* bleu logo */
-            --pi-red:#D6452E;        /* rouge logo */
-            --ink:#E6E9F2;           /* texte clair */
-            --muted:#cfd5e6;         /* texte secondaire */
-            --bg-1:#0B1326;          /* fond sombre */
-            --bg-2:#0A0F1F;          /* fond sombre 2 */
-            --card:#141B2B;          /* cartes */
-            --chip:#1B2436;          /* pictos / accents */
+            --pi-blue:#132946;         /* navy sombre (ex --navy-2) */
+            --pi-red:#A91D2B;          /* rouge foncé (ex --red) */
+            --ink:#EAF0F7;             /* texte clair */
+            --muted:#9AA4B2;           /* texte secondaire */
+            --bg-1:#0A0A0A;            /* fond 1 */
+            --bg-2:#0B0F18;            /* fond 2 */
+            --card:#111418;            /* cartes */
             --border:rgba(255,255,255,.08);
-            --ring:rgba(46,76,151,.35);
+            --ring:rgba(169,29,43,.35);/* halo rouge */
             --ease:cubic-bezier(.22,.61,.36,1);
         }
+
         body{
             color:var(--ink) !important;
             background:
-                    radial-gradient(1200px 700px at 15% 10%, rgba(46,76,151,.22), transparent 60%),
-                    radial-gradient(1000px 700px at 85% 15%, rgba(214,69,46,.16), transparent 55%),
+                    radial-gradient(1200px 600px at 15% -10%, rgba(169,29,43,.18), transparent 60%),
+                    radial-gradient(900px 500px at 110% -20%, rgba(19,41,70,.55), transparent 60%),
                     linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%) !important;
+            color-scheme: dark; /* indice thème sombre pour les contrôles natifs */
         }
         a{color:inherit;text-decoration:none}
         img{max-width:100%;height:auto;display:block}
@@ -71,7 +55,7 @@
             position:sticky; top:0; z-index:1000;
             display:flex; align-items:center; justify-content:space-between;
             gap:24px; padding:12px 24px;
-            background:rgba(11,19,38,.98);
+            background:linear-gradient(180deg, rgba(0,0,0,.85), rgba(0,0,0,.65));
             border-bottom:1px solid var(--border);
             transition: background-color .35s ease, box-shadow .35s ease !important;
         }
@@ -86,27 +70,21 @@
         .nav-links a:hover,.nav-links a.active{color:#fff}
         .nav-links a::after{
             content:""; position:absolute; left:50%; bottom:-6px; width:0; height:2px;
-            background:linear-gradient(90deg,var(--pi-blue),var(--pi-red));
+            background:linear-gradient(90deg,var(--pi-red),var(--pi-blue));
             transition:width .25s ease,left .25s ease;
         }
         .nav-links a:hover::after,.nav-links a.active::after{width:100%; left:0}
         .nav-buttons a{color:#fff; font-weight:600}
 
-        /* ========== HERO (mêmes halos/parallaxe) ========== */
-        .hero{
-            position:relative; overflow:hidden;
-            padding:64px 20px 40px; isolation:isolate;
-        }
-        .hero .wrap{
-            max-width:1200px; margin:0 auto; display:grid; gap:28px;
-            grid-template-columns:1.1fr .9fr; align-items:center;
-        }
+        /* ========== HERO (halos → rouge/navy) ========== */
+        .hero{ position:relative; overflow:hidden; padding:64px 20px 40px; isolation:isolate; }
+        .hero .wrap{ max-width:1200px; margin:0 auto; display:grid; gap:28px; grid-template-columns:1.1fr .9fr; align-items:center; }
         @media (max-width: 980px){ .hero .wrap{grid-template-columns:1fr} }
 
         .hero h1{
             font-size: clamp(28px, 4vw, 48px);
             font-weight:800; line-height:1.08;
-            background:linear-gradient(90deg,#fff,#9cc3ff);
+            background:linear-gradient(90deg,#fff,#cfd7ff);
             -webkit-background-clip:text; -webkit-text-fill-color:transparent;
             margin-bottom:12px;
         }
@@ -119,23 +97,23 @@
         }
         .btn-outline{ border:1px solid rgba(255,255,255,.65); color:#fff; background:transparent }
         .btn-brand{ background:var(--pi-red); color:#fff; border:1px solid transparent }
-        .btn-outline:hover{ box-shadow:0 10px 24px rgba(230,233,242,.25); transform:translateY(-2px) }
-        .btn-brand:hover{ box-shadow:0 10px 24px rgba(214,69,46,.35); transform:translateY(-2px) }
+        .btn-outline:hover{ box-shadow:0 10px 24px rgba(234,240,247,.18); transform:translateY(-2px) }
+        .btn-brand:hover{ box-shadow:0 10px 24px var(--ring); transform:translateY(-2px) }
 
         /* ripple */
         .r{position:absolute;border-radius:50%;background:currentColor;opacity:.15;transform:scale(0);pointer-events:none;animation:ripple .6s ease-out forwards}
         @keyframes ripple{to{opacity:0;transform:scale(3)}}
 
-        /* hero halos (équivalents s1/s2/s3) */
-        .hero::before,.hero::after{content:"";position:absolute;pointer-events:none;filter:blur(14px);opacity:.22}
+        /* halos */
+        .hero::before,.hero::after{content:"";position:absolute;pointer-events:none;filter:blur(18px);opacity:.22}
         .hero::before{
-            width:42vw;height:42vw; border-radius:50%;
-            background:radial-gradient(closest-side, rgba(46,76,151,.35), transparent 60%);
+            width:42vw;height:42vw;border-radius:50%;
+            background:radial-gradient(closest-side, rgba(169,29,43,.35), transparent 60%);
             top:-10vw; left:-10vw; animation:float1 14s ease-in-out infinite alternate;
         }
         .hero::after{
-            width:36vw;height:36vw; border-radius:50%;
-            background:radial-gradient(closest-side, rgba(214,69,46,.28), transparent 60%);
+            width:36vw;height:36vw;border-radius:50%;
+            background:radial-gradient(closest-side, rgba(19,41,70,.35), transparent 60%);
             bottom:-8vw; right:-8vw; animation:float2 18s ease-in-out infinite alternate;
         }
         @keyframes float1{from{transform:translate(0,0)} to{transform:translate(5vw,3vw)}}
@@ -163,15 +141,23 @@
         .card:hover{border-color:rgba(255,255,255,.14); box-shadow:0 18px 50px -20px rgba(0,0,0,.6), 0 8px 24px -12px var(--ring)}
         .card::before{
             content:""; position:absolute; inset:-1px; z-index:-1; border-radius:inherit; opacity:0;
-            background:linear-gradient(135deg, rgba(46,76,151,.35), rgba(214,69,46,.35));
+            background:linear-gradient(135deg, rgba(169,29,43,.28), rgba(19,41,70,.28));
             transition:opacity .35s ease;
         }
         .card:hover::before{opacity:1}
-        .icon{width:54px;height:54px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(180deg, rgba(46,76,151,.18), rgba(46,76,151,.06));border:1px solid var(--border);}
+        .icon{
+            width:54px;height:54px;display:grid;place-items:center;border-radius:14px;
+            background:linear-gradient(180deg, rgba(169,29,43,.16), rgba(169,29,43,.06));
+            border:1px solid var(--border);
+        }
 
-        .badge{display:inline-block;padding:.25rem .6rem;border-radius:999px;background:rgba(46,76,151,.12);border:1px solid rgba(46,76,151,.28);color:#cfe0ff;font-weight:700}
+        .badge{
+            display:inline-block;padding:.25rem .6rem;border-radius:999px;
+            background:rgba(169,29,43,.12);border:1px solid rgba(169,29,43,.25);
+            color:#ffd7dc;font-weight:700
+        }
 
-        /* PRODUITS / PROMOS (compteur + shimmer) */
+        /* PRODUITS / PROMOS */
         .produits .card, .promos .card{width:280px}
         .produit-image{height:160px; display:grid; place-items:center; background:#0F1524; border-radius:12px; overflow:hidden; position:relative}
         .produit-image.shimmer::before{
@@ -183,29 +169,46 @@
         .prix{color:var(--pi-red);font-weight:800}
         .promo-header{
             position:absolute; top:0; left:0; border-top-left-radius:16px; border-bottom-right-radius:16px;
-            background:var(--pi-blue); color:#fff; padding:.45rem .75rem; font-weight:800; font-size:.85rem;
+            background:var(--pi-red); color:#fff; padding:.45rem .75rem; font-weight:800; font-size:.85rem;
         }
-        .promo-prix,.date{color:var(--pi-blue);font-weight:800}
+        .promo-prix,.date{color:#cfe0ff;font-weight:800}
         .barre{text-decoration:line-through; color:#9aa6c1}
 
         /* MAGASINS */
-        .itineraire-btn{ display:inline-block; width:100%; text-align:center; margin-top:.75rem;
+        .itineraire-btn{
+            display:inline-block; width:100%; text-align:center; margin-top:.75rem;
             border-radius:10px; padding:.7rem 1rem; background:var(--pi-red); color:#fff; font-weight:800;
             transition: transform .15s ease, box-shadow .25s ease;
         }
-        .itineraire-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 24px rgba(214,69,46,.35)}
+        .itineraire-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 24px var(--ring)}
 
-        /* CONTACT + MODAL “Merci” (identique postuler) */
+        /* CONTACT + MODAL “Merci” — couleurs & focus comme postuler.php */
         .contact .wrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:center}
         .contact .form, .contact .side{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px}
         .contact .form{flex:1 1 420px; max-width:520px}
         .contact .side{flex:1 1 320px; max-width:420px}
         .contact input,.contact select,.contact textarea{
-            width:100%; background:#0F1524; color:#fff; border:1px solid #2a3654; border-radius:10px; padding:.7rem; margin-top:.4rem;
+            width:100%; background:#0e131a; color:#fff; border:1px solid var(--border);
+            border-radius:10px; padding:.7rem; margin-top:.4rem;
             transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
+            /* anti-flash blanc focus */
+            box-shadow: inset 0 0 0 1000px #0e131a;
+            appearance:none; -webkit-appearance:none; background-image:none;
         }
         .contact input::placeholder,.contact textarea::placeholder{color:#9eb0d3}
-        .contact input:focus,.contact select:focus,.contact textarea:focus{outline:none; box-shadow:0 0 0 4px rgba(46,76,151,.25); border-color:rgba(46,76,151,.6)}
+        .contact input:focus,.contact select:focus,.contact textarea:focus{
+            outline:none;
+            background:#0e131a;
+            border-color:rgba(169,29,43,.6);
+            box-shadow: inset 0 0 0 1000px #0e131a, 0 0 0 .25rem rgba(169,29,43,.15);
+        }
+        /* Autofill sombre */
+        .contact input:-webkit-autofill,
+        .contact input:-webkit-autofill:focus{
+            -webkit-text-fill-color:#fff;
+            box-shadow: inset 0 0 0 1000px #0e131a;
+            transition: background-color 9999s ease-out 0s;
+        }
         .contact .form button{width:100%; margin-top:1rem}
 
         .pi-modal{position:fixed;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:9999}
@@ -214,12 +217,12 @@
         .pi-modal__dialog{position:relative;width:min(560px,92vw);border-radius:20px;padding:28px 24px;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.25);transform:translateY(8px) scale(.96);opacity:.9}
         .pi-modal--open .pi-modal__dialog{animation:piZoom .42s cubic-bezier(.2,.8,.2,1) forwards}
         @keyframes piZoom{to{transform:translateY(0) scale(1);opacity:1}}
-        .pi-modal__badge{width:82px;height:82px;border-radius:50%;display:grid;place-items:center;margin:-70px auto 12px;background:linear-gradient(135deg,var(--pi-blue) 0%,#5e7ad0 100%);color:#fff;font-size:40px;position:relative;box-shadow:0 10px 24px rgba(46,76,151,.35)}
-        .pi-modal__title{ text-align:center; margin:6px 0; font-size:1.35rem; font-weight:800; color:#003366}
+        .pi-modal__badge{width:82px;height:82px;border-radius:50%;display:grid;place-items:center;margin:-70px auto 12px;background:linear-gradient(135deg,var(--pi-red) 0%,#7e1221 100%);color:#fff;font-size:40px;position:relative;box-shadow:0 10px 24px var(--ring)}
+        .pi-modal__title{ text-align:center; margin:6px 0; font-size:1.35rem; font-weight:800; color:#28070b}
         .pi-modal__text{ text-align:center; color:#2b2b2b; margin:0 8px 18px; line-height:1.45}
         .pi-modal__actions{display:flex; justify-content:center; gap:12px}
         .pi-btn{border:0;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer;transition:transform .08s ease,box-shadow .18s ease}
-        .pi-btn--primary{background:#003366;color:#fff;box-shadow:0 6px 16px rgba(0,51,102,.35)}
+        .pi-btn--primary{background:#28070b;color:#fff;box-shadow:0 6px 16px rgba(169,29,43,.35)}
 
         /* FOOTER sombre */
         .footer{background:#0A0F1F;color:#fff;padding:48px 20px}
@@ -230,9 +233,9 @@
         .footer a:hover{color:#fff}
         .newsletter-form{display:flex;background:#151e31;border-radius:8px;overflow:hidden;margin-top:10px;max-width:300px}
         .newsletter-field{flex:1;border:0;background:transparent;color:#fff;padding:.7rem 1rem}
-        .newsletter-submit{border:0;background:var(--pi-blue);color:#fff;padding:0 16px;font-size:1.2rem;cursor:pointer}
+        .newsletter-submit{border:0;background:var(--pi-red);color:#fff;padding:0 16px;font-size:1.2rem;cursor:pointer}
 
-        /* ===== Reveal / Tilt / Magnetic / Utilities (identiques logique postuler) ===== */
+        /* ===== Reveal / Tilt / Magnetic / Utilities ===== */
         @media (prefers-reduced-motion: reduce){
             .reveal,.card,.video-container,.btn-outline,.btn-brand,nav.navbar{transition:none !important; animation:none !important}
         }
@@ -243,7 +246,7 @@
         @keyframes flipIn{0%{transform:rotateX(90deg);opacity:0}100%{transform:none;opacity:1}}
         #toTop{
             position:fixed; right:18px; bottom:18px; z-index:999; width:44px; height:44px; border-radius:50%;
-            background:var(--pi-blue); color:#fff; display:grid; place-items:center; box-shadow:0 10px 24px rgba(0,0,0,.25);
+            background:var(--pi-red); color:#fff; display:grid; place-items:center; box-shadow:0 10px 24px var(--ring);
             opacity:0; pointer-events:none; transform:translateY(10px); transition:opacity .3s, transform .3s;
         }
         #toTop.show{opacity:1; pointer-events:auto; transform:none}
@@ -279,7 +282,7 @@
     </div>
 </nav>
 
-<!-- ===== HERO (anim & design postuler) ===== -->
+<!-- ===== HERO ===== -->
 <header class="hero">
     <div class="wrap">
         <div class="hero-text reveal" style="--reveal-delay:0ms">
@@ -304,48 +307,45 @@
 </header>
 
 <!-- ===== RAYONS ===== -->
-<!-- ===== CATALOGUE ===== -->
-<section id="catalogue" class="section catalogue">
+<section class="section">
     <div class="container">
-        <h2 class="section-title reveal">En ce moment dans votre magasin Paristanbul</h2>
-        <p class="section-subtitle reveal" style="--reveal-delay:60ms">
-            Feuilletez notre catalogue interactif.
-        </p>
-
-        <div class="flipbook-shell tilt reveal" style="--reveal-delay:120ms">
-            <div class="ratio ratio-16x10">
-                <!-- Intégration PDF locale -->
-                <iframe
-                    id="catalogueFrame"
-                    title="Catalogue Paristanbul"
-                    src="../assets/pdf/catalogue.pdf#view=FitH&pagemode=thumbs"
-                    data-fallback="../assets/pdf/catalogue.pdf#view=FitH&pagemode=thumbs"
-                    loading="lazy"
-                    allowfullscreen>
-                </iframe>
-            </div>
-
-            <!-- Loader -->
-            <div class="loading" id="catalogueLoader">
-        <span class="pi-spinner" aria-hidden="true"
-              style="display:inline-block;width:28px;height:28px;border-radius:50%;
-                 border:3px solid rgba(255,255,255,.35);border-top-color:#fff;
-                 animation:spin .8s linear infinite"></span>
-            </div>
+        <h2 class="section-title reveal" data-reveal="fade">Nos rayons</h2>
+        <p class="section-subtitle reveal" style="--reveal-delay:60ms">Découvrez la diversité de nos produits frais et de qualité.</p>
+        <div class="reveal" style="--reveal-delay:120ms; margin-bottom:16px">
+            <a href="catalogue.php" class="btn-outline magnet">Découvrir nos rayons</a>
         </div>
 
-        <div class="actions reveal" style="--reveal-delay:180ms">
-            <a class="btn-outline magnet" href="../assets/pdf/catalogue.pdf" target="_blank" rel="noopener">
-                Télécharger le PDF
-            </a>
-            <a class="btn-brand magnet" href="../assets/pdf/catalogue.pdf" target="_blank" rel="noopener">
-                Ouvrir en plein écran
-            </a>
+        <div class="grid">
+            <article class="card tilt reveal" style="--reveal-delay:0ms">
+                <div class="icon mb-2"><i class="bi bi-cup-straw"></i></div>
+                <h3 class="fw-bold" style="margin-bottom:6px">Boissons</h3>
+                <p class="text" style="color:var(--muted);margin-bottom:10px">Jus, sodas, eaux et boissons chaudes pour tous les goûts.</p>
+                <a href="#" class="btn-outline magnet" style="width:max-content">Découvrir →</a>
+            </article>
+
+            <article class="card tilt reveal" style="--reveal-delay:60ms">
+                <div class="icon mb-2"><i class="bi bi-basket"></i></div>
+                <h3 class="fw-bold" style="margin-bottom:6px">Produits frais</h3>
+                <p style="color:var(--muted);margin-bottom:10px">Fruits, légumes, crèmerie — fraîcheur garantie.</p>
+                <a href="#" class="btn-outline magnet" style="width:max-content">Découvrir →</a>
+            </article>
+
+            <article class="card tilt reveal" style="--reveal-delay:120ms">
+                <div class="icon mb-2"><i class="bi bi-box-seam"></i></div>
+                <h3 class="fw-bold" style="margin-bottom:6px">Produits secs</h3>
+                <p style="color:var(--muted);margin-bottom:10px">Pâtes, riz, conserves — l’essentiel du placard.</p>
+                <a href="#" class="btn-outline magnet" style="width:max-content">Découvrir →</a>
+            </article>
+
+            <article class="card tilt reveal" style="--reveal-delay:180ms">
+                <div class="icon mb-2"><i class="bi bi-snow"></i></div>
+                <h3 class="fw-bold" style="margin-bottom:6px">Surgelés</h3>
+                <p style="color:var(--muted);margin-bottom:10px">Rapides, savoureux, toujours disponibles.</p>
+                <a href="#" class="btn-outline magnet" style="width:max-content">Découvrir →</a>
+            </article>
         </div>
     </div>
 </section>
-
-
 
 <!-- ===== PRODUITS POPULAIRES ===== -->
 <section id="populaires" class="section produits">
@@ -585,7 +585,7 @@
     </div>
 </div>
 
-<!-- ===== SCRIPTS (identiques logique à postuler.php) ===== -->
+<!-- ===== SCRIPTS ===== -->
 <script>
     /* Scroll progress */
     (function(){
@@ -691,16 +691,16 @@
         L.id='piLoader';
         L.innerHTML=`<div class="loader__wrap"><div class="loader__ring"></div><div class="loader__ring"></div><img class="loader__logo" src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul"></div>`;
         const css=`
-    #piLoader{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:
-      radial-gradient(1200px 700px at 15% 10%, rgba(46,76,151,.2), transparent 60%),
-      radial-gradient(1000px 700px at 85% 15%, rgba(214,69,46,.16), transparent 55%), #0A0F1F; transition:opacity .4s ease,visibility .4s ease}
-    #piLoader.hide{opacity:0;visibility:hidden}
-    .loader__wrap{position:relative;width:160px;height:160px;display:grid;place-items:center}
-    .loader__ring{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(255,255,255,.12);border-top-color: var(--pi-blue);animation:spin 1.1s linear infinite}
-    .loader__ring:nth-child(1){inset:12px;animation-duration:1.6s;border-top-color:var(--pi-red)}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .loader__logo{width:120px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
-  `;
+      #piLoader{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(169,29,43,.2), transparent 60%),
+        radial-gradient(1000px 700px at 85% 15%, rgba(19,41,70,.16), transparent 55%), #0A0F1F; transition:opacity .4s ease,visibility .4s ease}
+      #piLoader.hide{opacity:0;visibility:hidden}
+      .loader__wrap{position:relative;width:160px;height:160px;display:grid;place-items:center}
+      .loader__ring{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(255,255,255,.12);border-top-color: var(--pi-blue);animation:spin 1.1s linear infinite}
+      .loader__ring:nth-child(1){inset:12px;animation-duration:1.6s;border-top-color:var(--pi-red)}
+      @keyframes spin{to{transform:rotate(360deg)}}
+      .loader__logo{width:120px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
+    `;
         const s=document.createElement('style'); s.textContent=css; document.head.appendChild(s);
         document.body.appendChild(L);
         const minShow=new Promise(r=>setTimeout(r,500));
@@ -796,28 +796,6 @@
         go(document.getElementById('app-store-link'));
         go(document.getElementById('app-store-link-2'));
     });
-    <script>
-        (function(){
-        const f = document.getElementById('catalogueFrame');
-        const l = document.getElementById('catalogueLoader');
-        if(!f || !l) return;
-
-        let loaded = false;
-        const hideLoader = () => l.classList.add('hide');
-
-        // Masquer le loader dès que l'iframe est prête
-        f.addEventListener('load', () => { loaded = true; hideLoader(); }, { once:true });
-
-        // Fallback automatique si l'iframe ne charge pas (DNS, X-Frame-Options, etc.)
-        setTimeout(() => {
-        if (!loaded) {
-        const fb = f.dataset.fallback || '../assets/pdf/catalogue.pdf';
-        f.src = fb;
-    }
-    }, 2500);
-    })();
-
-
 </script>
 </body>
 </html>

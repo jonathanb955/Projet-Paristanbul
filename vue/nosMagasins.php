@@ -2,31 +2,74 @@
 /* =========================
    Nos Magasins — Paristanbul (upgrade)
    ========================= */
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
+// ====== MODE DEV (à adapter) ======
+define('DEV_MODE', true); // true pour voir les erreurs BDD à l'écran
+// Pour désactiver temporairement le fallback JS pendant le debug, passe DISABLE_FALLBACK_JS à true
+define('DISABLE_FALLBACK_JS', false);
+
+error_reporting(E_ALL);
+ini_set('display_errors', DEV_MODE ? '1' : '0');
+
+// Polyfill PHP 7.x
+if (!function_exists('str_contains')) {
+    function str_contains($haystack, $needle) {
+        return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+    }
+}
+
+/* --- Connexion PDO robuste (Mac/Windows) --- */
+$pdo = null;
+$connectedWith = null;
 try {
-    $pdo = new PDO(
-            'mysql:host=127.0.0.1;port=8889;dbname=bdd_paristanbul;charset=utf8mb4',
-            'root',
-            'root',
-            [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
-            ]
-    );
+    $options = [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
+    ];
+
+    $dsnList = [
+        'mysql:host=127.0.0.1;port=3306;dbname=bdd_paristanbul;charset=utf8mb4',
+        'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8mb4',
+        'mysql:host=127.0.0.1;port=8889;dbname=bdd_paristanbul;charset=utf8mb4',
+        'mysql:host=localhost;port=8889;dbname=bdd_paristanbul;charset=utf8mb4',
+    ];
+    $credList = [
+        ['root',''],      // WAMP/XAMPP (Windows)
+        ['root','root'],  // MAMP (Mac)
+    ];
+
+    $lastErr = null;
+    foreach ($dsnList as $dsn) {
+        foreach ($credList as [$user,$pass]) {
+            try {
+                $pdo = new PDO($dsn, $user, $pass, $options);
+                $connectedWith = $dsn.' | user='.$user;
+                break 2;
+            } catch (Throwable $e) {
+                $lastErr = $e->getMessage();
+            }
+        }
+    }
+    if (!$pdo) {
+        throw new RuntimeException('Impossible de se connecter à MySQL: '.$lastErr);
+    }
 } catch (Throwable $e) {
     error_log('DB error: '.$e->getMessage());
+    if (DEV_MODE) {
+        echo '<div style="background:#2b2b2b;color:#fff;padding:10px;border:1px solid #444;margin:10px 0">
+                <strong>Erreur BDD:</strong> '.htmlspecialchars($e->getMessage()).'
+              </div>';
+    }
     $pdo = null;
 }
 
 /* --- coordonnées connues par ville (slug) --- */
 $coords = [
-        'nogent-sur-oise' => [49.278948, 2.464688],
-        'villemomble'     => [48.8890,   2.5040],
-        'bondy'           => [48.9022,   2.48278],
-        'drancy'          => [48.924298, 2.445676],
-        'villiers-le-bel' => [49.0094,   2.3911],
+    'nogent-sur-oise' => [49.278948, 2.464688],
+    'villemomble'     => [48.8890,   2.5040],
+    'bondy'           => [48.9022,   2.48278],
+    'drancy'          => [48.924298, 2.445676],
+    'villiers-le-bel' => [49.0094,   2.3911],
 ];
 
 /* --- helpers --- */
@@ -38,6 +81,7 @@ function slugify($s) {
 function utf8_clean_array(&$arr) {
     array_walk_recursive($arr, function (&$v) {
         if (is_string($v)) {
+            // retire caractères de contrôle
             $v = preg_replace('/[^\PC\s]/u', '', $v);
             if (!mb_check_encoding($v, 'UTF-8')) {
                 $v = mb_convert_encoding($v, 'UTF-8', 'UTF-8, ISO-8859-1, ISO-8859-15, Windows-1252');
@@ -83,35 +127,40 @@ if ($pdo) {
             $fermeture = substr((string)$row['horaire_fermeture'], 0, 5);
 
             $magasins[] = [
-                    "nom"      => "Paristanbul " . $villeClean,
-                    "ville"    => $villeClean,
-                    "cp"       => $row['cp'] ?? '',
-                    "adresse"  => trim(($row['rue'] ?? '') . ", " . ($row['cp'] ?? '') . " " . $villeClean),
-                    "tel"      => $row['num_tel'] ?? '',
-                    "horaires" => ($row['jours_ouverture'] ?? '') . " : " . $ouverture . "–" . $fermeture,
-                    "h_ouverture" => $ouverture,
-                    "h_fermeture" => $fermeture,
-                    "lat"      => (float)$lat,
-                    "lon"      => (float)$lon,
-                    "services" => array_values(array_filter([
-                            "Boucherie",
-                            "Épicerie",
-                            !empty($row['parking']) ? "Parking" : null,
-                            !empty($row['drive']) ? "Drive" : null
-                    ])),
-                    "image"    => $row['image'] ?? ''
+                "nom"         => "Paristanbul " . $villeClean,
+                "ville"       => $villeClean,
+                "cp"          => $row['cp'] ?? '',
+                "adresse"     => trim(($row['rue'] ?? '') . ", " . ($row['cp'] ?? '') . " " . $villeClean),
+                "tel"         => $row['num_tel'] ?? '',
+                "horaires"    => ($row['jours_ouverture'] ?? '') . " : " . $ouverture . "–" . $fermeture,
+                "h_ouverture" => $ouverture,
+                "h_fermeture" => $fermeture,
+                "lat"         => (float)$lat,
+                "lon"         => (float)$lon,
+                "services"    => array_values(array_filter([
+                    "Boucherie",
+                    "Épicerie",
+                    !empty($row['parking']) ? "Parking" : null,
+                    !empty($row['drive'])   ? "Drive"   : null
+                ])),
+                "image"       => $row['image'] ?? ''
             ];
         }
     } catch (Throwable $e) {
         error_log('SQL error: '.$e->getMessage());
+        if (DEV_MODE) {
+            echo '<div style="background:#2b2b2b;color:#fff;padding:10px;border:1px solid #444;margin:10px 0">
+                    <strong>Erreur SQL:</strong> '.htmlspecialchars($e->getMessage()).'
+                  </div>';
+        }
     }
 }
 
 /* --- nettoyage + encodage JSON robuste --- */
 utf8_clean_array($magasins);
 $magasinsJson = json_encode(
-        $magasins,
-        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR
+    $magasins,
+    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR
 );
 if ($magasinsJson === false) {
     error_log('JSON error: '.json_last_error_msg());
@@ -298,6 +347,16 @@ if ($magasinsJson === false) {
     /* ===== Données PHP -> JS ===== */
     const magasins = (() => { try { return <?php echo ($magasinsJson ?: '[]'); ?>; } catch(_) { return []; } })();
 
+    // Log debug (source + longueur)
+    (function(){
+        const from = (Array.isArray(magasins) && magasins.length) ? 'bdd' : 'fallback';
+        console.log('magasins (depuis PHP):', Array.isArray(magasins) ? magasins.length : 'N/A', magasins);
+        console.log('source:', from);
+        <?php if (DEV_MODE): ?>
+        console.log('PDO DSN utilisé:', <?php echo json_encode($connectedWith ?? 'N/A'); ?>);
+        <?php endif; ?>
+    })();
+
     /* ===== Fallback si BDD vide ===== */
     const FALLBACK = [
         { nom:"Paristanbul Villiers-le-Bel", ville:"Villiers-le-Bel", cp:"95400", adresse:"117 Avenue Pierre Semard, 95400 Villiers-le-Bel", tel:"+33 7 49 82 61 33", h_ouverture:"08:30", h_fermeture:"20:00", horaires:"Lun-Dim : 08:30–20:00", lat:49.0094, lon:2.3911, services:["Boucherie","Épicerie","Parking"], image:"../assets/img/magasins/vlb.jpg" },
@@ -305,7 +364,10 @@ if ($magasinsJson === false) {
         { nom:"Paristanbul Drancy",         ville:"Drancy", cp:"93700", adresse:"83 Avenue Marceau, 93700 Drancy",                  tel:"+33 7 49 82 61 33", h_ouverture:"08:30", h_fermeture:"20:30", horaires:"Lun-Dim : 08:30–20:30", lat:48.924298, lon:2.445676, services:["Boucherie","Épicerie","Drive"], image:"../assets/img/magasins/drancy.jpg" }
     ];
 
-    const LIST_ORIG = (Array.isArray(magasins) && magasins.length) ? magasins : FALLBACK;
+    // Pour forcer le debug sans fallback visuel, passe DISABLE_FALLBACK_JS à true en PHP
+    const LIST_ORIG = (<?php echo DISABLE_FALLBACK_JS ? 'false' : 'true'; ?>)
+        ? ((Array.isArray(magasins) && magasins.length) ? magasins : FALLBACK)
+        : ((Array.isArray(magasins) && magasins.length) ? magasins : []); // debug: pas de fallback
 
     /* ===== Utils ===== */
     const toMinutes = (hhmm)=>{ const [h,m]=String(hhmm||"").split(":").map(n=>parseInt(n||0,10)); return h*60+(m||0); };
@@ -489,7 +551,6 @@ if ($magasinsJson === false) {
         setKPIs(LIST_ORIG);
         initMap();
         applySearchFilterSort();
-        // console.log('magasins depuis PHP:', magasins); // utile pour debug
     });
 </script>
 <style>

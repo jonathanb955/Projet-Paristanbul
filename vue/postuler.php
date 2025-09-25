@@ -357,7 +357,49 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
             .shape.s1,.shape.s2,.shape.s3{ will-change:auto }
             .reveal,.btn-red,.btn-ghost,.card-dark,.icon-bubble,.tilt{ transition:none }
             .faq .faq-a{ transition:none }
+
         }
+        /* Force le fond sombre en TOUTES circonstances (focus, click, anim, etc.) */
+        .form-control,
+        .form-select{
+            background:#0e131a !important;
+            color:#eaf0f7 !important;
+            border-color:var(--border);
+            /* on évite toute transition du background pour supprimer le flash */
+            transition: border-color .2s var(--ease), box-shadow .2s var(--ease), transform .15s var(--ease) !important;
+            /* hack infaillible: peindre l'intérieur en sombre */
+            box-shadow: inset 0 0 0 1000px #0e131a !important;
+            appearance:none; -webkit-appearance:none;
+            background-image:none !important;
+        }
+
+        .form-control:focus,
+        .form-select:focus{
+            background:#0e131a !important;
+            color:#fff !important;
+            border-color: rgba(169,29,43,.6) !important;
+            /* on garde l'anneau rouge mais sans flash blanc */
+            box-shadow: inset 0 0 0 1000px #0e131a, 0 0 0 .25rem rgba(169,29,43,.15) !important;
+            outline: none !important;
+            transform: translateY(-1px);
+        }
+
+        /* Chrome/Edge : when autofill tries to colorize */
+        input:-webkit-autofill,
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        select:-webkit-autofill{
+            -webkit-text-fill-color:#fff !important;
+            box-shadow: inset 0 0 0 1000px #0e131a !important;
+            transition: background-color 9999s ease-out 0s !important;
+        }
+
+        /* iOS/Android tap highlight */
+        * { -webkit-tap-highlight-color: transparent; }
+
+        /* Optionnel : dites explicitement “dark” aux contrôles natifs (date, etc.) */
+        form { color-scheme: dark; }
+
     </style>
 </head>
 <body>
