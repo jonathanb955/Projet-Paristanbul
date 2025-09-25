@@ -5,7 +5,7 @@ require_once '../bdd/Bdd.php';
 
 use bdd\Bdd;
 
-// 👈 ajoute cette ligne SI ta classe Bdd est dans le namespace bdd
+// 👈 ajoute cette ligne SI ta classe bdd est dans le namespace bdd
 
 
 $bdd = Bdd::getInstance();

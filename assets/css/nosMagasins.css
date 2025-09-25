@@ -342,3 +342,35 @@ body{
 /* Garde les mêmes anims que l’index */
 .pi-theme .magasin-card,
 .pi-theme .service-card{ will-change:transform; }
+.kpi-number {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: #fff; /* blanc éclatant */
+}
+
+.kpis .card {
+    color: #fff; /* texte plus lisible */
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+}
+
+.kpis .card .text-muted {
+    color: #c9d2e0 !important; /* gris plus clair */
+    font-weight: 500;
+}
+.store-card .text-muted {
+    color: #d1d5e0 !important; /* gris clair */
+    font-size: 0.95rem; /* un peu plus grand */
+    line-height: 1.4;
+}
+.store-card .bi-geo-alt-fill {
+    color: #ff4757 !important; /* rouge vif lisible */
+}
+.store-card .badge.bg-success {
+    background: #27ae60;
+    box-shadow: 0 0 6px rgba(39,174,96,.6);
+}
+
+.store-card .badge.bg-secondary {
+    background: #7f8c8d;
+    color: #fff;
+}
