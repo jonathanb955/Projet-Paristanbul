@@ -23,19 +23,19 @@ $pdo = null;
 $connectedWith = null;
 try {
     $options = [
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
     ];
 
     $dsnList = [
-        'mysql:host=127.0.0.1;port=3306;dbname=bdd_paristanbul;charset=utf8mb4',
-        'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8mb4',
-        'mysql:host=127.0.0.1;port=8889;dbname=bdd_paristanbul;charset=utf8mb4',
-        'mysql:host=localhost;port=8889;dbname=bdd_paristanbul;charset=utf8mb4',
+            'mysql:host=127.0.0.1;port=3306;dbname=bdd_paristanbul;charset=utf8mb4',
+            'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8mb4',
+            'mysql:host=127.0.0.1;port=8889;dbname=bdd_paristanbul;charset=utf8mb4',
+            'mysql:host=localhost;port=8889;dbname=bdd_paristanbul;charset=utf8mb4',
     ];
     $credList = [
-        ['root',''],      // WAMP/XAMPP (Windows)
-        ['root','root'],  // MAMP (Mac)
+            ['root',''],      // WAMP/XAMPP (Windows)
+            ['root','root'],  // MAMP (Mac)
     ];
 
     $lastErr = null;
@@ -65,11 +65,12 @@ try {
 
 /* --- coordonnées connues par ville (slug) --- */
 $coords = [
-    'nogent-sur-oise' => [49.278948, 2.464688],
-    'villemomble'     => [48.8890,   2.5040],
-    'bondy'           => [48.9022,   2.48278],
-    'drancy'          => [48.924298, 2.445676],
-    'villiers-le-bel' => [49.0094,   2.3911],
+        'nogent-sur-oise' => [49.278948, 2.464688],
+        'villemomble'     => [48.8890,   2.5040],
+        'bondy'           => [48.9022,   2.48278],
+        'drancy'          => [48.924298, 2.445676],
+        'villiers-le-bel' => [49.0094,   2.3911],
+        'vert-saint-denis'  => [48.5707,   2.6296],
 ];
 
 /* --- helpers --- */
@@ -81,7 +82,6 @@ function slugify($s) {
 function utf8_clean_array(&$arr) {
     array_walk_recursive($arr, function (&$v) {
         if (is_string($v)) {
-            // retire caractères de contrôle
             $v = preg_replace('/[^\PC\s]/u', '', $v);
             if (!mb_check_encoding($v, 'UTF-8')) {
                 $v = mb_convert_encoding($v, 'UTF-8', 'UTF-8, ISO-8859-1, ISO-8859-15, Windows-1252');
@@ -127,40 +127,35 @@ if ($pdo) {
             $fermeture = substr((string)$row['horaire_fermeture'], 0, 5);
 
             $magasins[] = [
-                "nom"         => "Paristanbul " . $villeClean,
-                "ville"       => $villeClean,
-                "cp"          => $row['cp'] ?? '',
-                "adresse"     => trim(($row['rue'] ?? '') . ", " . ($row['cp'] ?? '') . " " . $villeClean),
-                "tel"         => $row['num_tel'] ?? '',
-                "horaires"    => ($row['jours_ouverture'] ?? '') . " : " . $ouverture . "–" . $fermeture,
-                "h_ouverture" => $ouverture,
-                "h_fermeture" => $fermeture,
-                "lat"         => (float)$lat,
-                "lon"         => (float)$lon,
-                "services"    => array_values(array_filter([
-                    "Boucherie",
-                    "Épicerie",
-                    !empty($row['parking']) ? "Parking" : null,
-                    !empty($row['drive'])   ? "Drive"   : null
-                ])),
-                "image"       => $row['image'] ?? ''
+                    "nom"      => "Paristanbul " . $villeClean,
+                    "ville"    => $villeClean,
+                    "cp"       => $row['cp'] ?? '',
+                    "adresse"  => trim(($row['rue'] ?? '') . ", " . ($row['cp'] ?? '') . " " . $villeClean),
+                    "tel"      => $row['num_tel'] ?? '',
+                    "horaires" => ($row['jours_ouverture'] ?? '') . " : " . $ouverture . "–" . $fermeture,
+                    "h_ouverture" => $ouverture,
+                    "h_fermeture" => $fermeture,
+                    "lat"      => (float)$lat,
+                    "lon"      => (float)$lon,
+                    "services" => array_values(array_filter([
+                            "Boucherie",
+                            "Épicerie",
+                            !empty($row['parking']) ? "Parking" : null,
+                            !empty($row['drive']) ? "Drive" : null
+                    ])),
+                    "image"    => $row['image'] ?? ''
             ];
         }
     } catch (Throwable $e) {
         error_log('SQL error: '.$e->getMessage());
-        if (DEV_MODE) {
-            echo '<div style="background:#2b2b2b;color:#fff;padding:10px;border:1px solid #444;margin:10px 0">
-                    <strong>Erreur SQL:</strong> '.htmlspecialchars($e->getMessage()).'
-                  </div>';
-        }
     }
 }
 
 /* --- nettoyage + encodage JSON robuste --- */
 utf8_clean_array($magasins);
 $magasinsJson = json_encode(
-    $magasins,
-    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR
+        $magasins,
+        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR
 );
 if ($magasinsJson === false) {
     error_log('JSON error: '.json_last_error_msg());
@@ -188,6 +183,24 @@ if ($magasinsJson === false) {
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
     <style>
+        /* Forcer couleur claire sur la nav */
+        .navbar .nav-link {
+            color: #e6e9f2 !important;   /* gris clair */
+            font-weight: 600;
+            opacity: .9;
+        }
+
+        .navbar .nav-link:hover,
+        .navbar .nav-link:focus {
+            color: #fff !important;      /* blanc au survol */
+            opacity: 1;
+        }
+
+        /* Si tu veux l'onglet actif plus visible */
+        .navbar .nav-link.active {
+            color: #e21b3c !important;   /* rouge Paristanbul */
+            font-weight: 700;
+        }
         :root{
             --ink:#E6E9F2; --muted:#9aa3b2; --card:#0F1524; --card-2:#141b2b;
             --pi-red:#e21b3c; --pi-green:#27ae60; --pi-blue:#2E4C97; --shadow:0 10px 30px rgba(0,0,0,.25);
@@ -249,20 +262,34 @@ if ($magasinsJson === false) {
 
 <header>
     <nav class="navbar navbar-expand-lg">
-        <div class="container position-relative"><!-- position-relative pour l'absolu -->
-            <a class="navbar-brand" href="index.php">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
                 <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" style="height:48px">
             </a>
 
-            <div id="nav" class="collapse navbar-collapse">
-                <!-- AJOUTE center-nav -->
-                <ul class="navbar-nav center-nav">
-                    <li class="nav-item"><a class="nav-link" href="index.php">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="postuler.php">postuler</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="quiSommesNous.html">Notre histoire</a></li>
+            <!-- Burger mobile -->
+            <button class="navbar-toggler text-white border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="bi bi-list" style="font-size:1.6rem"></i>
+            </button>
+
+            <!-- Nav centrée + boutons à droite -->
+            <div class="collapse navbar-collapse" id="navMain">
+                <!-- Liens centraux -->
+                <ul class="navbar-nav mx-lg-auto my-3 my-lg-0 gap-lg-2">
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="index.php">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="postuler.php">Postuler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="quiSommesNous.html">Notre histoire</a>
+                    </li>
                 </ul>
 
-                <div class="ms-auto d-flex gap-2">
+                <!-- Boutons à droite -->
+                <div class="d-flex gap-2 ms-lg-0 ms-auto">
                     <a href="pageInscription.php" class="btn btn-light">Inscription</a>
                     <a href="pageConnexion.php" class="btn btn-dark">Connexion</a>
                 </div>
@@ -357,16 +384,6 @@ if ($magasinsJson === false) {
     /* ===== Données PHP -> JS ===== */
     const magasins = (() => { try { return <?php echo ($magasinsJson ?: '[]'); ?>; } catch(_) { return []; } })();
 
-    // Log debug (source + longueur)
-    (function(){
-        const from = (Array.isArray(magasins) && magasins.length) ? 'bdd' : 'fallback';
-        console.log('magasins (depuis PHP):', Array.isArray(magasins) ? magasins.length : 'N/A', magasins);
-        console.log('source:', from);
-        <?php if (DEV_MODE): ?>
-        console.log('PDO DSN utilisé:', <?php echo json_encode($connectedWith ?? 'N/A'); ?>);
-        <?php endif; ?>
-    })();
-
     /* ===== Fallback si BDD vide ===== */
     const FALLBACK = [
         { nom:"Paristanbul Villiers-le-Bel", ville:"Villiers-le-Bel", cp:"95400", adresse:"117 Avenue Pierre Semard, 95400 Villiers-le-Bel", tel:"+33 7 49 82 61 33", h_ouverture:"08:30", h_fermeture:"20:00", horaires:"Lun-Dim : 08:30–20:00", lat:49.0094, lon:2.3911, services:["Boucherie","Épicerie","Parking"], image:"../assets/img/magasins/vlb.jpg" },
@@ -374,10 +391,7 @@ if ($magasinsJson === false) {
         { nom:"Paristanbul Drancy",         ville:"Drancy", cp:"93700", adresse:"83 Avenue Marceau, 93700 Drancy",                  tel:"+33 7 49 82 61 33", h_ouverture:"08:30", h_fermeture:"20:30", horaires:"Lun-Dim : 08:30–20:30", lat:48.924298, lon:2.445676, services:["Boucherie","Épicerie","Drive"], image:"../assets/img/magasins/drancy.jpg" }
     ];
 
-    // Pour forcer le debug sans fallback visuel, passe DISABLE_FALLBACK_JS à true en PHP
-    const LIST_ORIG = (<?php echo DISABLE_FALLBACK_JS ? 'false' : 'true'; ?>)
-        ? ((Array.isArray(magasins) && magasins.length) ? magasins : FALLBACK)
-        : ((Array.isArray(magasins) && magasins.length) ? magasins : []); // debug: pas de fallback
+    const LIST_ORIG = (Array.isArray(magasins) && magasins.length) ? magasins : FALLBACK;
 
     /* ===== Utils ===== */
     const toMinutes = (hhmm)=>{ const [h,m]=String(hhmm||"").split(":").map(n=>parseInt(n||0,10)); return h*60+(m||0); };
@@ -561,6 +575,7 @@ if ($magasinsJson === false) {
         setKPIs(LIST_ORIG);
         initMap();
         applySearchFilterSort();
+        // console.log('magasins depuis PHP:', magasins); // utile pour debug
     });
 </script>
 <style>
@@ -574,36 +589,7 @@ if ($magasinsJson === false) {
     }
     .store-card .bi-geo-alt-fill, .magasin-card .bi-geo-alt-fill{ color:#ff4757 !important; }
     .store-card .badge.bg-success, .magasin-card .badge.bg-success{ background:#27ae60 !important; box-shadow:0 0 6px rgba(39,174,96,.6); }
-    .store-card .badge.bg-secondary, .magasin-card .badge.bg-secondary{ background:#7f8c8d !important; color:#fff !important; }
-    /* --- NAV : centrage + style cohérent --- */
-    header .navbar{
-        background: rgba(10,14,25,.45) !important; /* verre fumé, comme avant */
-        backdrop-filter: blur(6px) saturate(120%);
-        border-bottom: 1px solid rgba(255,255,255,.06);
-    }
-    header .navbar .nav-link{
-        color:#E6E9F2 !important;
-        font-weight:700;
-        opacity:.92;
-    }
-    header .navbar .nav-link:hover,
-    header .navbar .nav-link.active{
-        opacity:1;
-    }
-    header .navbar .nav-link.active::after{
-        content:""; display:block; height:2px; margin-top:6px;
-        background: linear-gradient(90deg,#2E4C97,#e21b3c);
-        border-radius:2px;
-    }
-
-    /* menu centré entre logo (gauche) et boutons (droite) */
-    header .navbar .container{ position:relative; }
-    header .navbar .center-nav{
-        position:absolute; left:50%; top:50%;
-        transform: translate(-50%,-50%);
-        display:flex; gap:18px; margin:0; padding:0; list-style:none;
-    }
-    header .navbar .btn-dark{ background:#e21b3c; border:none; }
+    .store-card .badge.bg-secondary, .magasin-card .badge.bg-secondary{ background: #cc2e40 !important; color:#fff !important; }
 </style>
 </body>
 </html>
