@@ -249,13 +249,23 @@ if ($magasinsJson === false) {
 
 <header>
     <nav class="navbar navbar-expand-lg">
-        <div class="container">
+        <div class="container position-relative"><!-- position-relative pour l'absolu -->
             <a class="navbar-brand" href="index.php">
                 <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" style="height:48px">
             </a>
-            <div class="ms-auto d-flex gap-2">
-                <a href="pageInscription.php" class="btn btn-light">Inscription</a>
-                <a href="pageConnexion.php" class="btn btn-dark">Connexion</a>
+
+            <div id="nav" class="collapse navbar-collapse">
+                <!-- AJOUTE center-nav -->
+                <ul class="navbar-nav center-nav">
+                    <li class="nav-item"><a class="nav-link" href="index.php">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="postuler.php">postuler</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="quiSommesNous.html">Notre histoire</a></li>
+                </ul>
+
+                <div class="ms-auto d-flex gap-2">
+                    <a href="pageInscription.php" class="btn btn-light">Inscription</a>
+                    <a href="pageConnexion.php" class="btn btn-dark">Connexion</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -565,6 +575,35 @@ if ($magasinsJson === false) {
     .store-card .bi-geo-alt-fill, .magasin-card .bi-geo-alt-fill{ color:#ff4757 !important; }
     .store-card .badge.bg-success, .magasin-card .badge.bg-success{ background:#27ae60 !important; box-shadow:0 0 6px rgba(39,174,96,.6); }
     .store-card .badge.bg-secondary, .magasin-card .badge.bg-secondary{ background:#7f8c8d !important; color:#fff !important; }
+    /* --- NAV : centrage + style cohérent --- */
+    header .navbar{
+        background: rgba(10,14,25,.45) !important; /* verre fumé, comme avant */
+        backdrop-filter: blur(6px) saturate(120%);
+        border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    header .navbar .nav-link{
+        color:#E6E9F2 !important;
+        font-weight:700;
+        opacity:.92;
+    }
+    header .navbar .nav-link:hover,
+    header .navbar .nav-link.active{
+        opacity:1;
+    }
+    header .navbar .nav-link.active::after{
+        content:""; display:block; height:2px; margin-top:6px;
+        background: linear-gradient(90deg,#2E4C97,#e21b3c);
+        border-radius:2px;
+    }
+
+    /* menu centré entre logo (gauche) et boutons (droite) */
+    header .navbar .container{ position:relative; }
+    header .navbar .center-nav{
+        position:absolute; left:50%; top:50%;
+        transform: translate(-50%,-50%);
+        display:flex; gap:18px; margin:0; padding:0; list-style:none;
+    }
+    header .navbar .btn-dark{ background:#e21b3c; border:none; }
 </style>
 </body>
 </html>
