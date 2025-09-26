@@ -1,3 +1,160 @@
+<?php
+/* =========================
+   Paristanbul — Accueil (cross-env Mac/Windows)
+   ========================= */
+
+// ===== DEV =====
+define('DEV_MODE', true); // true pour afficher les erreurs
+error_reporting(E_ALL);
+ini_set('display_errors', DEV_MODE ? '1' : '0');
+
+// Polyfill PHP 7.x
+if (!function_exists('str_contains')) {
+    function str_contains($haystack, $needle) {
+        return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+    }
+}
+
+/* --- coordonnées connues par ville (slug) --- */
+$coords = [
+    'nogent-sur-oise' => [49.278948, 2.464688],
+    'villemomble'     => [48.8890,   2.5040],
+    'bondy'           => [48.9022,   2.48278],
+    'drancy'          => [48.924298, 2.445676],
+    'villiers-le-bel' => [49.0094,   2.3911],
+];
+
+/* --- helpers --- */
+function slugify_pi($s) {
+    $s = iconv('UTF-8', 'ASCII//TRANSLIT', $s);
+    $s = strtolower(preg_replace('~[^\pL\d]+~u','-',$s));
+    return trim($s,'-');
+}
+function city_key_from_row($row, $coords) {
+    $villeRaw = trim((string)($row['ville_magasin'] ?? ''));
+    $villeClean = preg_replace('~\s*\(.*?\)\s*~', '', $villeRaw);
+    $villeClean = preg_replace('~\d.*$~', '', $villeClean);
+    $villeClean = trim($villeClean);
+    $villeKey = preg_replace('~-+~','-', slugify_pi($villeClean));
+
+    foreach ($coords as $k => $_) {
+        if ($villeKey === $k || str_contains($villeKey, $k) || str_contains($k, $villeKey)) {
+            return [$k, $villeClean];
+        }
+    }
+    $hay = slugify_pi(($row['rue'] ?? '').' '.($row['cp'] ?? '').' '.($row['ville_magasin'] ?? '').' '.($row['nom'] ?? ''));
+    foreach ($coords as $k => $_) {
+        if (str_contains($hay, $k)) { return [$k, $villeClean]; }
+    }
+    return [null, $villeClean];
+}
+
+/* --- Connexion PDO robuste (Mac/Windows) --- */
+$pdo = null; $connectedWith = null;
+try {
+    $options = [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
+    ];
+    $dsnList = [
+        'mysql:host=127.0.0.1;port=3306;dbname=bdd_paristanbul;charset=utf8mb4',
+        'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8mb4',
+        'mysql:host=127.0.0.1;port=8889;dbname=bdd_paristanbul;charset=utf8mb4',
+        'mysql:host=localhost;port=8889;dbname=bdd_paristanbul;charset=utf8mb4',
+    ];
+    $credList = [
+        ['root',''],      // Windows (WAMP/XAMPP)
+        ['root','root'],  // macOS (MAMP)
+    ];
+    $lastErr = null;
+    foreach ($dsnList as $dsn) {
+        foreach ($credList as [$u,$p]) {
+            try { $pdo = new PDO($dsn, $u, $p, $options); $connectedWith="$dsn | user=$u"; break 2; }
+            catch (Throwable $e) { $lastErr = $e->getMessage(); }
+        }
+    }
+    if (!$pdo) throw new RuntimeException('Connexion MySQL impossible: '.$lastErr);
+} catch (Throwable $e) {
+    error_log('DB error: '.$e->getMessage());
+    if (DEV_MODE) {
+        echo '<div style="background:#2b2b2b;color:#fff;padding:10px;border:1px solid #444;margin:10px 0">
+                <strong>Erreur BDD:</strong> '.htmlspecialchars($e->getMessage()).'
+              </div>';
+    }
+    $pdo = null;
+}
+
+/* --- Récup 3 derniers magasins (ou fallback) --- */
+$magasins3 = [];
+try {
+    if ($pdo) {
+        $req = $pdo->prepare("SELECT * FROM magasins ORDER BY id_magasin DESC LIMIT 3");
+        $req->execute();
+        $rows = $req->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as $r) {
+            [$keyMatch, $villeClean] = city_key_from_row($r, $coords);
+            [$lat,$lon] = $keyMatch ? $coords[$keyMatch] : [null,null];
+            $adresse = trim(($r['rue'] ?? '').', '.($r['cp'] ?? '').' '.$villeClean);
+            $h_ouverture = substr((string)($r['horaire_ouverture'] ?? ''), 0, 5) ?: '08:30';
+            $h_fermeture = substr((string)($r['horaire_fermeture'] ?? ''), 0, 5) ?: '20:00';
+            $jours       = trim((string)($r['jours_ouverture'] ?? 'Lun-Dim'));
+            $tel         = trim((string)($r['num_tel'] ?? '')) ?: '+33 7 49 82 61 33';
+
+            $horaires_txt = $jours . ' : ' . $h_ouverture . '–' . $h_fermeture;
+
+            $magasins3[] = [
+                'ville'    => $villeClean,
+                'adresse'  => $adresse,
+                'cp'       => (string)($r['cp'] ?? ''),
+                'tel'      => $tel,
+                'horaires' => $horaires_txt,
+                'lat'      => $lat,
+                'lon'      => $lon
+            ];
+        }
+    }
+} catch (Throwable $e) {
+    error_log('SQL error: '.$e->getMessage());
+    if (DEV_MODE) {
+        echo '<div style="background:#2b2b2b;color:#fff;padding:10px;border:1px solid #444;margin:10px 0">
+                <strong>Erreur SQL:</strong> '.htmlspecialchars($e->getMessage()).'
+              </div>';
+    }
+}
+if (empty($magasins3)) {
+    $magasins3 = [
+        [
+            'ville'=>'Villiers-le-Bel',
+            'adresse'=>'117 Avenue Pierre Semard, 95400 Villiers-le-Bel',
+            'cp'=>'95400',
+            'tel'=>'+33 7 49 82 61 33',
+            'horaires'=>'Lun-Dim : 08:30–20:00',
+            'lat'=>49.0094, 'lon'=>2.3911
+        ],
+        [
+            'ville'=>'Bondy',
+            'adresse'=>'116 Avenue Gallieni, 93140 Bondy',
+            'cp'=>'93140',
+            'tel'=>'+33 7 49 82 61 33',
+            'horaires'=>'Lun-Dim : 08:30–20:00',
+            'lat'=>48.9022, 'lon'=>2.48278
+        ],
+        [
+            'ville'=>'Drancy',
+            'adresse'=>'83 Avenue Marceau, 93700 Drancy',
+            'cp'=>'93700',
+            'tel'=>'+33 7 49 82 61 33',
+            'horaires'=>'Lun-Dim : 08:30–20:30',
+            'lat'=>48.924298, 'lon'=>2.445676
+        ],
+    ];
+}
+
+/* --- URL absolue pour FormSubmit (_next => ?sent=1) --- */
+$scheme  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$selfAbs = $scheme.'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+$nextUrl = htmlspecialchars(preg_replace('/\?.*/','',$selfAbs).'?sent=1', ENT_QUOTES, 'UTF-8');
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,185 +169,70 @@
     <link rel="stylesheet" href="../assets/css/index.css"/>
 
     <style>
-        /* ========== RESET & BASE ========== */
+        /* ====== Styles (inchangés) ====== */
         *{margin:0;padding:0;box-sizing:border-box}
         html,body{height:100%}
         body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.6}
-
-        /* ===== Scroll progress (même que postuler.php) ===== */
-        #scrollProgress{
-            position:fixed; inset:0 auto auto 0; height:3px; width:0;
-            background:linear-gradient(90deg, var(--pi-red), var(--pi-blue));
-            z-index:99999; box-shadow:0 0 12px rgba(214,69,46,.45);
-            transition:width .2s linear;
-        }
-
-        /* ========== THÈME SOMBRE PARISTANBUL (identique postuler.php) ========== */
-        :root{
-            --pi-blue:#2E4C97;       /* bleu logo */
-            --pi-red:#D6452E;        /* rouge logo */
-            --ink:#E6E9F2;           /* texte clair */
-            --muted:#cfd5e6;         /* texte secondaire */
-            --bg-1:#0B1326;          /* fond sombre */
-            --bg-2:#0A0F1F;          /* fond sombre 2 */
-            --card:#141B2B;          /* cartes */
-            --chip:#1B2436;          /* pictos / accents */
-            --border:rgba(255,255,255,.08);
-            --ring:rgba(46,76,151,.35);
-            --ease:cubic-bezier(.22,.61,.36,1);
-        }
-        body{
-            color:var(--ink) !important;
-            background:
-                    radial-gradient(1200px 700px at 15% 10%, rgba(46,76,151,.22), transparent 60%),
-                    radial-gradient(1000px 700px at 85% 15%, rgba(214,69,46,.16), transparent 55%),
-                    linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%) !important;
-        }
-        a{color:inherit;text-decoration:none}
-        img{max-width:100%;height:auto;display:block}
-
-        /* ========== NAVBAR (mêmes comportements) ========== */
-        nav.navbar{
-            position:sticky; top:0; z-index:1000;
-            display:flex; align-items:center; justify-content:space-between;
-            gap:24px; padding:12px 24px;
-            background:rgba(11,19,38,.98);
-            border-bottom:1px solid var(--border);
-            transition: background-color .35s ease, box-shadow .35s ease !important;
-        }
-        nav.navbar.nav--scrolled{
-            background:rgba(10,15,31,.92) !important;
-            box-shadow:0 10px 24px rgba(0,0,0,.28);
-            backdrop-filter:saturate(120%) blur(6px);
-        }
-        .logo img{height:46px; width:auto}
+        #scrollProgress{position:fixed;inset:0 auto auto 0;height:3px;width:0;background:linear-gradient(90deg, var(--pi-red), var(--pi-blue));z-index:99999;box-shadow:0 0 12px rgba(214,69,46,.45);transition:width .2s linear}
+        :root{--pi-blue:#2E4C97;--pi-red:#D6452E;--ink:#E6E9F2;--muted:#cfd5e6;--bg-1:#0B1326;--bg-2:#0A0F1F;--card:#141B2B;--chip:#1B2436;--border:rgba(255,255,255,.08);--ring:rgba(46,76,151,.35);--ease:cubic-bezier(.22,.61,.36,1)}
+        body{color:var(--ink)!important;background:radial-gradient(1200px 700px at 15% 10%, rgba(46,76,151,.22), transparent 60%),radial-gradient(1000px 700px at 85% 15%, rgba(214,69,46,.16), transparent 55%),linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%)!important}
+        a{color:inherit;text-decoration:none} img{max-width:100%;height:auto;display:block}
+        nav.navbar{position:sticky;top:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:12px 24px;background:rgba(11,19,38,.98);border-bottom:1px solid var(--border);transition:background-color .35s ease, box-shadow .35s ease!important}
+        nav.navbar.nav--scrolled{background:rgba(10,15,31,.92)!important;box-shadow:0 10px 24px rgba(0,0,0,.28);backdrop-filter:saturate(120%) blur(6px)}
+        .logo img{height:46px;width:auto}
         .nav-links{list-style:none;display:flex;gap:1.25rem;align-items:center}
         .nav-links a{position:relative;color:var(--muted);font-weight:600;letter-spacing:.2px}
         .nav-links a:hover,.nav-links a.active{color:#fff}
-        .nav-links a::after{
-            content:""; position:absolute; left:50%; bottom:-6px; width:0; height:2px;
-            background:linear-gradient(90deg,var(--pi-blue),var(--pi-red));
-            transition:width .25s ease,left .25s ease;
-        }
-        .nav-links a:hover::after,.nav-links a.active::after{width:100%; left:0}
-        .nav-buttons a{color:#fff; font-weight:600}
-
-        /* ========== HERO (mêmes halos/parallaxe) ========== */
-        .hero{
-            position:relative; overflow:hidden;
-            padding:64px 20px 40px; isolation:isolate;
-        }
-        .hero .wrap{
-            max-width:1200px; margin:0 auto; display:grid; gap:28px;
-            grid-template-columns:1.1fr .9fr; align-items:center;
-        }
-        @media (max-width: 980px){ .hero .wrap{grid-template-columns:1fr} }
-
-        .hero h1{
-            font-size: clamp(28px, 4vw, 48px);
-            font-weight:800; line-height:1.08;
-            background:linear-gradient(90deg,#fff,#9cc3ff);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-            margin-bottom:12px;
-        }
-        .hero p{color:var(--muted); font-size:1.08rem; margin-bottom:20px}
-
-        .btn-outline, .btn-brand{
-            display:inline-block; padding:.85rem 1.25rem; border-radius:12px;
-            font-weight:700; letter-spacing:.2px; cursor:pointer; position:relative; overflow:hidden; isolation:isolate;
-            transition: transform .15s ease, box-shadow .25s ease, background-color .25s ease, color .25s ease;
-        }
-        .btn-outline{ border:1px solid rgba(255,255,255,.65); color:#fff; background:transparent }
-        .btn-brand{ background:var(--pi-red); color:#fff; border:1px solid transparent }
-        .btn-outline:hover{ box-shadow:0 10px 24px rgba(230,233,242,.25); transform:translateY(-2px) }
-        .btn-brand:hover{ box-shadow:0 10px 24px rgba(214,69,46,.35); transform:translateY(-2px) }
-
-        /* ripple */
+        .nav-links a::after{content:"";position:absolute;left:50%;bottom:-6px;width:0;height:2px;background:linear-gradient(90deg,var(--pi-blue),var(--pi-red));transition:width .25s ease,left .25s ease}
+        .nav-links a:hover::after,.nav-links a.active::after{width:100%;left:0}
+        .nav-buttons a{color:#fff;font-weight:600}
+        .hero{position:relative;overflow:hidden;padding:64px 20px 40px;isolation:isolate}
+        .hero .wrap{max-width:1200px;margin:0 auto;display:grid;gap:28px;grid-template-columns:1.1fr .9fr;align-items:center}
+        @media (max-width:980px){.hero .wrap{grid-template-columns:1fr}}
+        .hero h1{font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.08;background:linear-gradient(90deg,#fff,#9cc3ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+        .hero p{color:var(--muted);font-size:1.08rem;margin-bottom:20px}
+        .btn-outline,.btn-brand{display:inline-block;padding:.85rem 1.25rem;border-radius:12px;font-weight:700;letter-spacing:.2px;cursor:pointer;position:relative;overflow:hidden;isolation:isolate;transition:transform .15s ease, box-shadow .25s ease, background-color .25s ease, color .25s ease}
+        .btn-outline{border:1px solid rgba(255,255,255,.65);color:#fff;background:transparent}
+        .btn-brand{background:var(--pi-red);color:#fff;border:1px solid transparent}
+        .btn-outline:hover{box-shadow:0 10px 24px rgba(230,233,242,.25);transform:translateY(-2px)}
+        .btn-brand:hover{box-shadow:0 10px 24px rgba(214,69,46,.35);transform:translateY(-2px)}
         .r{position:absolute;border-radius:50%;background:currentColor;opacity:.15;transform:scale(0);pointer-events:none;animation:ripple .6s ease-out forwards}
         @keyframes ripple{to{opacity:0;transform:scale(3)}}
-
-        /* hero halos (équivalents s1/s2/s3) */
         .hero::before,.hero::after{content:"";position:absolute;pointer-events:none;filter:blur(14px);opacity:.22}
-        .hero::before{
-            width:42vw;height:42vw; border-radius:50%;
-            background:radial-gradient(closest-side, rgba(46,76,151,.35), transparent 60%);
-            top:-10vw; left:-10vw; animation:float1 14s ease-in-out infinite alternate;
-        }
-        .hero::after{
-            width:36vw;height:36vw; border-radius:50%;
-            background:radial-gradient(closest-side, rgba(214,69,46,.28), transparent 60%);
-            bottom:-8vw; right:-8vw; animation:float2 18s ease-in-out infinite alternate;
-        }
+        .hero::before{width:42vw;height:42vw;border-radius:50%;background:radial-gradient(closest-side, rgba(46,76,151,.35), transparent 60%);top:-10vw;left:-10vw;animation:float1 14s ease-in-out infinite alternate}
+        .hero::after{width:36vw;height:36vw;border-radius:50%;background:radial-gradient(closest-side, rgba(214,69,46,.28), transparent 60%);bottom:-8vw;right:-8vw;animation:float2 18s ease-in-out infinite alternate}
         @keyframes float1{from{transform:translate(0,0)} to{transform:translate(5vw,3vw)}}
         @keyframes float2{from{transform:translate(0,0)} to{transform:translate(-4vw,-3vw)}}
-
-        .video-container{
-            border-radius:20px; overflow:hidden; will-change:transform;
-            transition: transform .6s cubic-bezier(.2,.8,.2,1), box-shadow .6s;
-        }
-        .video-container:hover{ transform:scale(1.02) rotateZ(.1deg); box-shadow:0 18px 40px rgba(0,0,0,.35) }
-
-        /* ========== SECTIONS & CARTES SOMBRES ========== */
+        .video-container{border-radius:20px;overflow:hidden;will-change:transform;transition:transform .6s cubic-bezier(.2,.8,.2,1), box-shadow .6s}
+        .video-container:hover{transform:scale(1.02) rotateZ(.1deg);box-shadow:0 18px 40px rgba(0,0,0,.35)}
         .section{padding:64px 20px}
-        .container{max-width:1200px; margin:0 auto}
+        .container{max-width:1200px;margin:0 auto}
         .section-title{font-size:clamp(22px,3vw,34px);font-weight:800;letter-spacing:.3px;margin-bottom:.5rem}
         .section-subtitle{color:var(--muted);margin-bottom:1.75rem}
-
-        .grid{display:flex; flex-wrap:wrap; gap:24px; justify-content:center}
-        .card{
-            position:relative; width:300px; padding:22px; border-radius:16px; background:var(--card);
-            border:1px solid var(--border); color:var(--ink);
-            transition: transform .12s ease, box-shadow .25s ease, border-color .25s ease; will-change:transform;
-            transform-style:preserve-3d;
-        }
-        .card:hover{border-color:rgba(255,255,255,.14); box-shadow:0 18px 50px -20px rgba(0,0,0,.6), 0 8px 24px -12px var(--ring)}
-        .card::before{
-            content:""; position:absolute; inset:-1px; z-index:-1; border-radius:inherit; opacity:0;
-            background:linear-gradient(135deg, rgba(46,76,151,.35), rgba(214,69,46,.35));
-            transition:opacity .35s ease;
-        }
+        .grid{display:flex;flex-wrap:wrap;gap:24px;justify-content:center}
+        .card{position:relative;width:300px;padding:22px;border-radius:16px;background:var(--card);border:1px solid var(--border);color:var(--ink);transition:transform .12s ease, box-shadow .25s ease, border-color .25s ease;will-change:transform;transform-style:preserve-3d}
+        .card:hover{border-color:rgba(255,255,255,.14);box-shadow:0 18px 50px -20px rgba(0,0,0,.6),0 8px 24px -12px var(--ring)}
+        .card::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:inherit;opacity:0;background:linear-gradient(135deg, rgba(46,76,151,.35), rgba(214,69,46,.35));transition:opacity .35s ease}
         .card:hover::before{opacity:1}
-        .icon{width:54px;height:54px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(180deg, rgba(46,76,151,.18), rgba(46,76,151,.06));border:1px solid var(--border);}
-
+        .icon{width:54px;height:54px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(180deg, rgba(46,76,151,.18), rgba(46,76,151,.06));border:1px solid var(--border)}
         .badge{display:inline-block;padding:.25rem .6rem;border-radius:999px;background:rgba(46,76,151,.12);border:1px solid rgba(46,76,151,.28);color:#cfe0ff;font-weight:700}
-
-        /* PRODUITS / PROMOS (compteur + shimmer) */
-        .produits .card, .promos .card{width:280px}
-        .produit-image{height:160px; display:grid; place-items:center; background:#0F1524; border-radius:12px; overflow:hidden; position:relative}
-        .produit-image.shimmer::before{
-            content:""; position:absolute; inset:0;
-            background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
-            transform:translateX(-100%); animation:shimmer 1.5s infinite;
-        }
+        .produits .card,.promos .card{width:280px}
+        .produit-image{height:160px;display:grid;place-items:center;background:#0F1524;border-radius:12px;overflow:hidden;position:relative}
+        .produit-image.shimmer::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);transform:translateX(-100%);animation:shimmer 1.5s infinite}
         @keyframes shimmer{to{transform:translateX(100%)}}
         .prix{color:var(--pi-red);font-weight:800}
-        .promo-header{
-            position:absolute; top:0; left:0; border-top-left-radius:16px; border-bottom-right-radius:16px;
-            background:var(--pi-blue); color:#fff; padding:.45rem .75rem; font-weight:800; font-size:.85rem;
-        }
+        .promo-header{position:absolute;top:0;left:0;border-top-left-radius:16px;border-bottom-right-radius:16px;background:var(--pi-blue);color:#fff;padding:.45rem .75rem;font-weight:800;font-size:.85rem}
         .promo-prix,.date{color:var(--pi-blue);font-weight:800}
-        .barre{text-decoration:line-through; color:#9aa6c1}
-
-        /* MAGASINS */
-        .itineraire-btn{ display:inline-block; width:100%; text-align:center; margin-top:.75rem;
-            border-radius:10px; padding:.7rem 1rem; background:var(--pi-red); color:#fff; font-weight:800;
-            transition: transform .15s ease, box-shadow .25s ease;
-        }
-        .itineraire-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 24px rgba(214,69,46,.35)}
-
-        /* CONTACT + MODAL “Merci” (identique postuler) */
+        .barre{text-decoration:line-through;color:#9aa6c1}
+        .itineraire-btn{display:inline-block;width:100%;text-align:center;margin-top:.75rem;border-radius:10px;padding:.7rem 1rem;background:var(--pi-red);color:#fff;font-weight:800;transition:transform .15s ease, box-shadow .25s ease}
+        .itineraire-btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(214,69,46,.35)}
         .contact .wrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:center}
-        .contact .form, .contact .side{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px}
-        .contact .form{flex:1 1 420px; max-width:520px}
-        .contact .side{flex:1 1 320px; max-width:420px}
-        .contact input,.contact select,.contact textarea{
-            width:100%; background:#0F1524; color:#fff; border:1px solid #2a3654; border-radius:10px; padding:.7rem; margin-top:.4rem;
-            transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
-        }
+        .contact .form,.contact .side{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px}
+        .contact .form{flex:1 1 420px;max-width:520px}.contact .side{flex:1 1 320px;max-width:420px}
+        .contact input,.contact select,.contact textarea{width:100%;background:#0F1524;color:#fff;border:1px solid #2a3654;border-radius:10px;padding:.7rem;margin-top:.4rem;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
         .contact input::placeholder,.contact textarea::placeholder{color:#9eb0d3}
-        .contact input:focus,.contact select:focus,.contact textarea:focus{outline:none; box-shadow:0 0 0 4px rgba(46,76,151,.25); border-color:rgba(46,76,151,.6)}
-        .contact .form button{width:100%; margin-top:1rem}
-
+        .contact input:focus,.contact select:focus,.contact textarea:focus{outline:none;box-shadow:0 0 0 4px rgba(46,76,151,.25);border-color:rgba(46,76,151,.6)}
+        .contact .form button{width:100%;margin-top:1rem}
         .pi-modal{position:fixed;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:9999}
         .pi-modal--open{opacity:1;pointer-events:auto}
         .pi-modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45);backdrop-filter:saturate(120%) blur(2px)}
@@ -198,13 +240,11 @@
         .pi-modal--open .pi-modal__dialog{animation:piZoom .42s cubic-bezier(.2,.8,.2,1) forwards}
         @keyframes piZoom{to{transform:translateY(0) scale(1);opacity:1}}
         .pi-modal__badge{width:82px;height:82px;border-radius:50%;display:grid;place-items:center;margin:-70px auto 12px;background:linear-gradient(135deg,var(--pi-blue) 0%,#5e7ad0 100%);color:#fff;font-size:40px;position:relative;box-shadow:0 10px 24px rgba(46,76,151,.35)}
-        .pi-modal__title{ text-align:center; margin:6px 0; font-size:1.35rem; font-weight:800; color:#003366}
-        .pi-modal__text{ text-align:center; color:#2b2b2b; margin:0 8px 18px; line-height:1.45}
-        .pi-modal__actions{display:flex; justify-content:center; gap:12px}
+        .pi-modal__title{text-align:center;margin:6px 0;font-size:1.35rem;font-weight:800;color:#003366}
+        .pi-modal__text{text-align:center;color:#2b2b2b;margin:0 8px 18px;line-height:1.45}
+        .pi-modal__actions{display:flex;justify-content:center;gap:12px}
         .pi-btn{border:0;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer;transition:transform .08s ease,box-shadow .18s ease}
         .pi-btn--primary{background:#003366;color:#fff;box-shadow:0 6px 16px rgba(0,51,102,.35)}
-
-        /* FOOTER sombre */
         .footer{background:#0A0F1F;color:#fff;padding:48px 20px}
         .footer .footer-container{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between}
         .footer .footer-column{flex:1 1 220px;min-width:220px}
@@ -214,27 +254,15 @@
         .newsletter-form{display:flex;background:#151e31;border-radius:8px;overflow:hidden;margin-top:10px;max-width:300px}
         .newsletter-field{flex:1;border:0;background:transparent;color:#fff;padding:.7rem 1rem}
         .newsletter-submit{border:0;background:var(--pi-blue);color:#fff;padding:0 16px;font-size:1.2rem;cursor:pointer}
-
-        /* ===== Reveal / Tilt / Magnetic / Utilities (identiques logique postuler) ===== */
-        @media (prefers-reduced-motion: reduce){
-            .reveal,.card,.video-container,.btn-outline,.btn-brand,nav.navbar{transition:none !important; animation:none !important}
-        }
+        @media (prefers-reduced-motion:reduce){.reveal,.card,.video-container,.btn-outline,.btn-brand,nav.navbar{transition:none!important;animation:none!important}}
         .reveal{opacity:0;transform:translateY(18px) scale(.98);filter:blur(2px);transition:opacity .6s var(--ease),transform .6s var(--ease),filter .6s var(--ease);transition-delay:var(--reveal-delay,0ms)}
         .reveal.reveal--in{opacity:1;transform:none;filter:none}
-        .tilt{transition:transform .12s ease, box-shadow .2s ease; transform:perspective(900px) rotateX(var(--rx,0)) rotateY(var(--ry,0))}
-        .flip-in{animation:flipIn .7s ease both; transform-origin:50% 60%}
+        .tilt{transition:transform .12s ease, box-shadow .2s ease;transform:perspective(900px) rotateX(var(--rx,0)) rotateY(var(--ry,0))}
+        .flip-in{animation:flipIn .7s ease both;transform-origin:50% 60%}
         @keyframes flipIn{0%{transform:rotateX(90deg);opacity:0}100%{transform:none;opacity:1}}
-        #toTop{
-            position:fixed; right:18px; bottom:18px; z-index:999; width:44px; height:44px; border-radius:50%;
-            background:var(--pi-blue); color:#fff; display:grid; place-items:center; box-shadow:0 10px 24px rgba(0,0,0,.25);
-            opacity:0; pointer-events:none; transform:translateY(10px); transition:opacity .3s, transform .3s;
-        }
-        #toTop.show{opacity:1; pointer-events:auto; transform:none}
-
-        /* Responsive quick */
-        @media (max-width: 860px){
-            .nav-links{display:none}
-        }
+        #toTop{position:fixed;right:18px;bottom:18px;z-index:999;width:44px;height:44px;border-radius:50%;background:var(--pi-blue);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .3s,transform .3s}
+        #toTop.show{opacity:1;pointer-events:auto;transform:none}
+        @media (max-width:860px){.nav-links{display:none}}
     </style>
 </head>
 <body>
@@ -262,7 +290,7 @@
     </div>
 </nav>
 
-<!-- ===== HERO (anim & design postuler) ===== -->
+<!-- ===== HERO ===== -->
 <header class="hero">
     <div class="wrap">
         <div class="hero-text reveal" style="--reveal-delay:0ms">
@@ -296,11 +324,10 @@
         </div>
 
         <div class="grid">
-            <!-- Exemple de carte rayon -->
             <article class="card tilt reveal" style="--reveal-delay:0ms">
                 <div class="icon mb-2"><i class="bi bi-cup-straw"></i></div>
                 <h3 class="fw-bold" style="margin-bottom:6px">Boissons</h3>
-                <p class="text" style="color:var(--muted);margin-bottom:10px">Jus, sodas, eaux et boissons chaudes pour tous les goûts.</p>
+                <p class="text" style="color:var(--muted);margin-bottom:10px">Jus, sodas, eaux et boissons chaudes.</p>
                 <a href="#" class="btn-outline magnet" style="width:max-content">Découvrir →</a>
             </article>
 
@@ -338,7 +365,7 @@
             <article class="card tilt reveal" style="--reveal-delay:0ms">
                 <div class="produit-image"><img src="placeholder.png" alt="Pommes Gala"/></div>
                 <h3 class="fw-bold" style="margin:.75rem 0 .35rem">Pommes Gala</h3>
-                <p style="color:var(--muted);margin-bottom:.6rem">Croquantes et sucrées, idéales en collation.</p>
+                <p style="color:var(--muted);margin-bottom:.6rem">Croquantes et sucrées.</p>
                 <div style="display:flex;gap:.5rem;align-items:baseline">
                     <span class="prix">2,49 €</span><span style="color:#9aa6c1">/ kg</span>
                 </div>
@@ -361,74 +388,13 @@
             <article class="card tilt reveal" style="--reveal-delay:180ms">
                 <div class="produit-image"><img src="placeholder.png" alt="Yaourt nature"/></div>
                 <h3 class="fw-bold" style="margin:.75rem 0 .35rem">Yaourt nature</h3>
-                <p style="color:var(--muted);margin-bottom:.6rem">Au lait entier, ultra onctueux.</p>
+                <p style="color:var(--muted);margin-bottom:.6rem">Au lait entier, onctueux.</p>
                 <div><span class="prix">2,75 €</span> <span style="color:#9aa6c1">/ 4x125g</span></div>
             </article>
         </div>
     </div>
 </section>
 
-<!-- ===== PROMOTIONS ===== -->
-<section class="section promos">
-    <div class="container">
-        <h2 class="section-title reveal">Nos promotions de la semaine</h2>
-        <p class="section-subtitle reveal" style="--reveal-delay:60ms">Profitez de nos offres spéciales.</p>
-
-
-        <div class="grid">
-            <article class="card tilt reveal" style="--reveal-delay:0ms">
-                <div class="promo-header">30%</div>
-                <h3 class="fw-bold" style="margin-top:1.8rem">Fruits de saison</h3>
-                <p style="color:var(--muted)">Réduction sur tous les fruits de saison.</p>
-                <p><span class="barre">4,99 €</span> <span class="promo-prix">3,49 €</span> / kg</p>
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                    <span class="date">Jusqu'à dimanche</span>
-                    <a href="#" class="btn-outline magnet">Voir plus</a>
-                </div>
-            </article>
-
-            <article class="card tilt reveal" style="--reveal-delay:60ms">
-                <div class="promo-header">2 + 1 GRATUIT</div>
-                <h3 class="fw-bold" style="margin-top:1.8rem">Yaourts Bio</h3>
-                <p style="color:var(--muted)">Le 3ème est offert (le moins cher).</p>
-                <p><span class="barre">3,75 €</span> <span class="promo-prix">3,75 €</span> / 6x125g</p>
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                    <span class="date">Cette semaine</span>
-                    <a href="#" class="btn-outline magnet">Voir plus</a>
-                </div>
-            </article>
-
-            <article class="card tilt reveal" style="--reveal-delay:120ms">
-                <div class="promo-header">-50% sur le 2ème</div>
-                <h3 class="fw-bold" style="margin-top:1.8rem">Filet de saumon</h3>
-                <p style="color:var(--muted)">Moitié prix sur le 2ème filet.</p>
-                <p><span class="barre">12,90 €</span> <span class="promo-prix">9,68 €</span> / 250g</p>
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                    <span class="date">Jusqu'à mercredi</span>
-                    <a href="#" class="btn-outline magnet">Voir plus</a>
-                </div>
-            </article>
-        </div>
-
-        <div class="reveal" style="--reveal-delay:180ms; margin-top:18px">
-            <a href="#" class="btn-brand magnet">Voir toutes les promotions</a>
-        </div>
-    </div>
-</section>
-
-<?php
-
-$pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8','root','root',[
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-]);
-
-$req = $pdo->prepare("SELECT *  FROM magasins ORDER BY id_magasin DESC LIMIT 3;");
-$req->execute();
-$lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
-
-
-?>
 <!-- ===== MAGASINS ===== -->
 <section class="section">
     <div class="container">
@@ -436,25 +402,27 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
         <p class="section-subtitle reveal" style="--reveal-delay:60ms">Trouvez le Paristanbul le plus proche.</p>
 
         <div class="grid">
-            <?php foreach ($lignesMagasin as $magasin) :?>
-
+            <?php foreach ($magasins3 as $m): ?>
                 <article class="card tilt reveal" style="--reveal-delay:0ms">
-                <h3 class="fw-bold mb-1">Paristanbul <?= htmlspecialchars($magasin['ville_magasin']) ?></h3>
-                <p style="color:var(--muted)"><i class="bi bi-geo-alt-fill"></i><?= htmlspecialchars($magasin['rue'].", ". htmlspecialchars($magasin['cp'])) ?> </p>
-                <p style="color:var(--muted)"><i class="bi bi-clock-fill"></i> Lun-Dim: 8h30–20h</p>
-                <p style="color:var(--muted)"><i class="bi bi-telephone-fill"></i> +33 7 49 82 61 33</p>
-                <a href="#" class="itineraire-btn magnet"
-                   data-address="117 Avenue Pierre Semard, 95400 Villiers-le-Bel"
-                   data-lat="49.0094" data-lon="2.3911">Itinéraire</a>
-            </article>
+                    <h3 class="fw-bold mb-1">Paristanbul <?= htmlspecialchars($m['ville']) ?></h3>
+                    <p style="color:var(--muted)"><i class="bi bi-geo-alt-fill"></i>
+                        <?= htmlspecialchars($m['adresse']) ?>
+                    </p>
+                    <p style="color:var(--muted)"><i class="bi bi-clock-fill"></i> <?= htmlspecialchars($m['horaires']) ?></p>
+                    <p style="color:var(--muted)"><i class="bi bi-telephone-fill"></i> <?= htmlspecialchars($m['tel']) ?></p>
+                    <a href="#" class="itineraire-btn magnet"
+                       data-address="<?= htmlspecialchars($m['adresse']) ?>"
+                       data-lat="<?= $m['lat'] !== null ? htmlspecialchars((string)$m['lat']) : '' ?>"
+                       data-lon="<?= $m['lon'] !== null ? htmlspecialchars((string)$m['lon']) : '' ?>">
+                        Itinéraire
+                    </a>
+                </article>
             <?php endforeach; ?>
-
-
         </div>
     </div>
 </section>
 
-<!-- ===== CONTACT ===== -->
+<!-- ===== CONTACT (FormSubmit) ===== -->
 <section class="section contact" id="contact">
     <div class="container">
         <h2 class="section-title reveal">Contactez-nous</h2>
@@ -463,12 +431,18 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
         <div class="wrap">
             <!-- Form -->
             <div class="form reveal" style="--reveal-delay:0ms">
-                <h3 class="fw-bold">Envoyez-nous un message</h3>
-                <form id="contactForm" action="javascript:void(0)" method="post" enctype="multipart/form-data" data-endpoint="contactSubmit.php">
+                <h3 class="fw-bold"><u>Envoyez-nous un message</u></h3>
+                <br>
+
+                <form id="contactForm"
+                      action="https://formsubmit.co/paristanbul.recrutement@gmail.com"
+                      method="post" accept-charset="UTF-8">
                     <label>Nom complet</label>
                     <input type="text" name="nom" placeholder="Votre nom" required>
+
                     <label>Email</label>
-                    <input type="email" name="email" placeholder="votre@email.com" required>
+                    <input type="email" name="email" placeholder="Votre@email.com" required>
+
                     <label>Sujet</label>
                     <select name="sujet" required>
                         <option value="">Sélectionnez un sujet</option>
@@ -476,14 +450,25 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
                         <option>Commande</option>
                         <option>Problème technique</option>
                     </select>
+
                     <label>Message</label>
                     <textarea name="message" rows="5" placeholder="Votre message..." required></textarea>
+
+                    <!-- Options FormSubmit -->
+                    <input type="hidden" name="_next" value="<?= $nextUrl ?>">
+                    <input type="hidden" name="_subject" value="Nouveau message — Site Paristanbul">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="text" name="_honey" style="display:none">
+
                     <button type="submit" class="btn-brand magnet">Envoyer le message</button>
                 </form>
             </div>
+
             <!-- Infos -->
             <div class="side reveal" style="--reveal-delay:90ms">
-                <h3 class="fw-bold">Service client</h3>
+                <h3 class="fw-bold"><u>Service client</u></h3>
+                <br>
                 <p><i class="bi bi-telephone-fill"></i> <strong>Téléphone</strong><br>07 49 82 61 33 (appel gratuit)</p>
                 <p><i class="bi bi-envelope-fill"></i> <strong>Email</strong><br>parisistambulnogent@gmail.com</p>
                 <p><i class="bi bi-clock-fill"></i> <strong>Horaires</strong><br>Lun–Ven : 9h00–18h00</p>
@@ -499,7 +484,6 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </section>
 
-<!-- ===== FOOTER ===== -->
 <footer class="footer">
     <div class="footer-container">
         <div class="footer-column paristanbul-col">
@@ -565,8 +549,14 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
-<!-- ===== SCRIPTS (identiques logique à postuler.php) ===== -->
+<!-- ===== SCRIPTS ===== -->
 <script>
+    // Debug BDD (console)
+    (function(){
+        console.log('PDO DSN utilisé:', <?= json_encode($connectedWith ?? 'N/A') ?>);
+        console.log('Magasins (index) nb:', <?= json_encode(count($magasins3)) ?>, <?= json_encode($magasins3) ?>);
+    })();
+
     /* Scroll progress */
     (function(){
         const bar=document.getElementById('scrollProgress');
@@ -577,7 +567,7 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
     /* Navbar shadow on scroll */
     (function(){
         const nav=document.querySelector('nav.navbar');
-        const onS=()=>{ if(!nav) return; nav.classList.toggle('nav--scrolled', (window.scrollY||0)>8);}
+        const onS=()=>{ if(!nav) return; nav.classList.toggle('nav--scrolled', (window.scrollY||0)>8);};
         document.addEventListener('scroll', onS, {passive:true}); onS();
     })();
 
@@ -586,9 +576,7 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
         const prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const els=[...document.querySelectorAll('.reveal, .card, .btn-outline, .btn-brand')];
         if(prefersReduced || !('IntersectionObserver' in window)){ els.forEach(el=>el.classList.add('reveal--in')); return; }
-        const io=new IntersectionObserver((entries)=>{
-            entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('reveal--in'); io.unobserve(e.target);} });
-        },{threshold:.12, rootMargin:'0px 0px -10% 0px'});
+        const io=new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('reveal--in'); io.unobserve(e.target);} }); },{threshold:.12, rootMargin:'0px 0px -10% 0px'});
         els.forEach((el,i)=>{ el.style.setProperty('--reveal-delay', (i%6)*60+'ms'); io.observe(el);});
     })();
 
@@ -602,7 +590,7 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
         });
     });
 
-    /* Magnetic buttons (subtil) */
+    /* Magnetic buttons */
     (function(){
         const prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const isTouch=('ontouchstart'in window)||navigator.maxTouchPoints>0;
@@ -687,7 +675,7 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
         Promise.all([minShow,new Promise(r=>(window.onload=r))]).then(()=>{requestAnimationFrame(()=>L.classList.add('hide')); setTimeout(()=>L.remove(),800);});
     })();
 
-    /* Shimmer produits + compteurs prix */
+    /* Shimmer + compteurs */
     (function(){
         document.querySelectorAll('.produit-image').forEach(box=>{
             const img=box.querySelector('img'); if(!img) return;
@@ -701,14 +689,8 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
             requestAnimationFrame(step);
         };
         if('IntersectionObserver' in window){
-            const io=new IntersectionObserver((entries)=>{
-                entries.forEach(e=>{
-                    if(!e.isIntersecting) return;
-                    const el=e.target; const n=parsePrice(el.textContent);
-                    if(!el.dataset.animated){ el.dataset.animated='1'; animateNumber(el,n); }
-                    io.unobserve(el);
-                });
-            },{threshold:.6});
+            const io=new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(!e.isIntersecting) return; const el=e.target; const n=parsePrice(el.textContent);
+                if(!el.dataset.animated){ el.dataset.animated='1'; animateNumber(el,n);} io.unobserve(el); }); },{threshold:.6});
             document.querySelectorAll('.prix, .promo-prix').forEach(el=>io.observe(el));
         }
     })();
@@ -719,8 +701,7 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
             btn.addEventListener('click',(e)=>{
                 e.preventDefault();
                 const lat=btn.dataset.lat, lon=btn.dataset.lon, addr=btn.dataset.address;
-                let dest='';
-                if(lat && lon) dest=`${lat},${lon}`; else if(addr) dest=encodeURIComponent(addr); else return;
+                let dest=''; if(lat && lon) dest=`${lat},${lon}`; else if(addr) dest=encodeURIComponent(addr); else return;
                 const base=`https://www.google.com/maps/dir/?api=1&destination=${dest}`;
                 if('geolocation' in navigator){
                     navigator.geolocation.getCurrentPosition(
@@ -733,33 +714,18 @@ $lignesMagasin = $req->fetchAll(PDO::FETCH_ASSOC);
         });
     })();
 
-    /* Modal 'Merci' + envoi AJAX contact */
+    /* Modal 'Merci' — submit classique FormSubmit (pas d'AJAX) */
     (function(){
         const modal=document.getElementById('piThanks');
-        const open=()=>{ modal.classList.add('pi-modal--open'); document.body.classList.add('pi-modal-open'); modal.querySelector('.pi-modal__dialog')?.focus(); };
-        const close=()=>{ modal.classList.remove('pi-modal--open'); document.body.classList.remove('pi-modal-open'); };
+        const open =()=>{ modal?.classList.add('pi-modal--open'); document.body.classList.add('pi-modal-open'); modal.querySelector('.pi-modal__dialog')?.focus(); };
+        const close=()=>{ modal?.classList.remove('pi-modal--open'); document.body.classList.remove('pi-modal-open'); };
         modal?.querySelectorAll('[data-pi-close]').forEach(el=>el.addEventListener('click',close));
         modal?.addEventListener('click',e=>{ if(e.target.classList.contains('pi-modal__backdrop')) close(); });
         document.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
 
-        const form=document.getElementById('contactForm');
-        if(!form) return;
-        const submitBtn=form.querySelector('button[type="submit"]');
-
-        form.addEventListener('submit', async (e)=>{
-            e.preventDefault(); if(!form.reportValidity()) return;
-            const oldBtn=submitBtn.innerHTML;
-            submitBtn.disabled=true; submitBtn.innerHTML='Envoi en cours <span class="pi-spinner" aria-hidden="true" style="display:inline-block;width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,.5);border-top-color:#fff;vertical-align:-3px;animation:spin .7s linear infinite;margin-left:8px"></span>';
-            try{
-                const endpoint=form.dataset.endpoint||form.getAttribute('action')||location.href;
-                const res=await fetch(endpoint,{method:'POST', body:new FormData(form), headers:{'X-Requested-With':'fetch'}});
-                const isJson=res.headers.get('content-type')?.includes('application/json');
-                const data=isJson?await res.json():{success:res.ok};
-                if(!res.ok || !data.success) throw new Error(data?.error||'Une erreur est survenue. Merci de réessayer.');
-                form.reset(); open();
-            }catch(err){ alert(err.message||'Erreur réseau. Merci de réessayer.'); }
-            finally{ submitBtn.disabled=false; submitBtn.innerHTML=oldBtn; }
-        });
+        // Ouvre la modale si on revient avec ?sent=1 (redirection FormSubmit)
+        const usp=new URLSearchParams(location.search);
+        if(usp.get('sent')==='1') open();
     })();
 
     /* Lien store (détection) */
