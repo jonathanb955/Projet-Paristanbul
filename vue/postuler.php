@@ -12,6 +12,34 @@ $ALLOWED_MIME = [
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 ];
+// ---------- UTIL: Connexion BDD multi-essais (Mac MAMP 8889/3306, mdp root ou vide) ----------
+function db_connect(): PDO {
+    $attempts = [
+        // MAMP par défaut
+            ['host'=>'127.0.0.1', 'port'=>8889, 'user'=>'root', 'pass'=>'root'],
+        // MySQL 3306 sans mdp
+            ['host'=>'127.0.0.1', 'port'=>3306, 'user'=>'root', 'pass'=>''],
+    ];
+    $last = null;
+    foreach ($attempts as $a) {
+        try {
+            $pdo = new PDO(
+                    "mysql:host={$a['host']};port={$a['port']};dbname=bdd_paristanbul;charset=utf8mb4",
+                    $a['user'],
+                    $a['pass'],
+                    [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                            PDO::ATTR_EMULATE_PREPARES => false,
+                    ]
+            );
+            return $pdo;
+        } catch (Throwable $e) {
+            $last = $e;
+        }
+    }
+    throw new Exception("Impossible de se connecter à MySQL (essayé ports 8889/3306, mdp root ou vide). Dernière erreur: " . ($last? $last->getMessage(): 'n/a'));
+}
 
 // ---------- FEEDBACK UI ----------
 $form_status = null; // 'success' | 'error'
@@ -584,11 +612,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         <div class="row g-4">
             <?php
             try {
-                $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8','root','',[
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-                ]);
-
+                $pdo = db_connect();
                 $req = $pdo->prepare("SELECT * FROM offres_emplois ORDER BY id_offre DESC;");
                 $req->execute();
 
@@ -613,7 +637,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
                         echo '    <div class="p-4">';
                         echo '      <h5 class="fw-bold mb-2">'.$titre_poste.'</h5>';
                         echo '      <p class="small text-white-50">'.$detail_poste.'</p>';
-                        echo '      <a href="postuler.php?id='.$id_offre.'#candidature" class="btn btn-red w-100 magnet">Postuler</a>';
+                        echo '      <a href="offre.php?id='.$id_offre.'#candidature" class="btn btn-red w-100 magnet">Postuler</a>';
                         echo '    </div>';
                         echo '  </div>';
                         echo '</div>';
@@ -626,6 +650,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
                 echo '<div class="col-12"><div class="alert alert-danger rounded-2xl reveal" data-reveal="fade">Erreur de chargement des offres.</div></div>';
             }
             ?>
+
         </div>
 
         <div class="text-center mt-4 reveal" data-reveal="fade">

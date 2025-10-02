@@ -336,7 +336,24 @@
         /* Petite entrée verticale des lettres (utilisée pour titrage si besoin)
         .h2-animate .char{display:inline-block;transform:translateY(20px);opacity:0}
         @keyframes rise{to{transform:none;opacity:1}} */
+        .reveal { padding: 0; } /* garde si tu veux */
+        .video-card{
+            width: 35vw;          /* plein écran en largeur */
+            height: 35vh;         /* plein écran en hauteur */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;      /* coupe ce qui dépasse */
+            border-radius: 0;      /* évite les bords noirs arrondis */
+            box-shadow: none;
+        }
 
+        #promoVideo{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;     /* remplit sans bandes noires */
+            object-position: center;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -365,11 +382,13 @@
 
 <header>
     <div class="container nav">
+        <!-- Logo -->
+
         <div class="brand">
-            <div class="brand-badge"><span>PI</span></div>
             <div>
-                <div style="font-weight:800; line-height:1">Paristanbul</div>
-                <div style="font-size:.78rem; color:#9fb0c7; line-height:1">Supermarché</div>
+                <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
+                    <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" style="height:48px">
+                </a>
             </div>
         </div>
         <nav class="nav-links">
@@ -396,16 +415,11 @@
 
             <div class="reveal" data-parallax data-speed="0.06">
                 <div class="video-card tilt">
-                    <video id="promoVideo" preload="metadata" playsinline muted poster="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop">
-                        <source src="assets/promo.mp4" type="video/mp4" />
+                    <video id="promoVideo" preload="metadata" playsinline muted poster="../assets/img/bondy%20.mp4">
+                        <source src="../assets/img/bondy%20.mp4" type="video/mp4" />
                         Votre navigateur ne supporte pas la vidéo HTML5.
                     </video>
-                    <div class="video-overlay">
-                        <button id="playBtn" class="play-hint" aria-label="Lire la vidéo">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                            Lire la vidéo
-                        </button>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -527,19 +541,13 @@
                 <div class="marquee-strip">
                     <div class="track-strip" id="trackStrip">
                         <!-- Série A -->
-                        <article class="card-strip"><span class="inner"><img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=1600&auto=format&fit=crop" alt="Rayon fruits"/></span></article>
-                        <article class="card-strip"><span class="inner"><!-- vide --></span></article>
-                        <article class="card-strip"><span class="inner"><img src="https://images.unsplash.com/photo-1515165562835-c3b8c2e1f9af?q=80&w=1600&auto=format&fit=crop" alt="Clients"/></span></article>
-                        <article class="card-strip"><span class="inner"><!-- vide --></span></article>
-                        <article class="card-strip"><span class="inner"><img src="https://images.unsplash.com/photo-1506806732259-39c2d0268443?q=80&w=1600&auto=format&fit=crop" alt="Légumes"/></span></article>
-                        <article class="card-strip"><span class="inner"><!-- vide --></span></article>
+                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09743.JPG" alt="Rayon fruits"/></span></article>
+                        <article class="card-strip"><span class="inner"><img src="../assets/img/DJI_0264.JPG"/></span></article>
+                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09757.JPG  " alt="Légumes"/></span></article>
                         <!-- Série B (dupliquée) -->
-                        <article class="card-strip"><span class="inner"><img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=1600&auto=format&fit=crop" alt="Rayon fruits"/></span></article>
-                        <article class="card-strip"><span class="inner"><!-- vide --></span></article>
-                        <article class="card-strip"><span class="inner"><img src="https://images.unsplash.com/photo-1515165562835-c3b8c2e1f9af?q=80&w=1600&auto=format&fit=crop" alt="Clients"/></span></article>
-                        <article class="card-strip"><span class="inner"><!-- vide --></span></article>
-                        <article class="card-strip"><span class="inner"><img src="https://images.unsplash.com/photo-1506806732259-39c2d0268443?q=80&w=1600&auto=format&fit=crop" alt="Légumes"/></span></article>
-                        <article class="card-strip"><span class="inner"><!-- vide --></span></article>
+                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09764.JPG" alt="Rayon fruits"/></span></article>
+                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09680.JPG" alt="Clients"/></span></article>
+                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09686.JPG" alt="Légumes"/></span></article>
                     </div>
                 </div>
             </div>
