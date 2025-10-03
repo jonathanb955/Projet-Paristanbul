@@ -1,6 +1,7 @@
 <?php
 
 $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // ============================
 // FILTRES & PAGINATION
@@ -8,98 +9,81 @@ $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root
 $search = $_GET['search'] ?? '';
 $poste  = $_GET['tri-par-poste'] ?? '';
 $ville  = $_GET['tri-par-magasin'] ?? '';
-$statut = $_GET['tri-par-statut'] ?? '';
 
 $limit  = 3;
 $page   = max(1, intval($_GET['page'] ?? 1));
 $offset = ($page - 1) * $limit;
 
-// Compter le total
-$sqlCount = "SELECT COUNT(*) FROM candidatures c
-             LEFT JOIN offres_emplois o ON c.ref_offre = o.id_offre
-             WHERE 1=1";
-$paramsCount = [];
-
-if (!empty($search)) {
-    $sqlCount .= " AND (c.nom LIKE :search OR c.prenom LIKE :search OR c.email LIKE :search OR o.titre_poste LIKE :search)";
-    $paramsCount[':search'] = "%$search%";
-}
-if (!empty($poste)) {
-    $sqlCount .= " AND o.titre_poste = :poste";
-    $paramsCount[':poste'] = $poste;
-}
-if (!empty($ville)) {
-    $sqlCount .= " AND o.ville = :ville";
-    $paramsCount[':ville'] = $ville;
-}
-if (!empty($statut)) {
-    $sqlCount .= " AND LOWER(c.statut) = LOWER(:statut)";
-    $paramsCount[':statut'] = $statut;
-}
-
-$stmt = $pdo->prepare($sqlCount);
-$stmt->execute($paramsCount);
-$total = $stmt->fetchColumn();
-$totalPages = ceil($total / $limit);
-
-// Récupérer les candidatures filtrées avec pagi nation
-$sql = "SELECT *
-        FROM offres_emplois o
-WHERE 1 = 1 ;";
-
-
+// ========== 1. Compter le total pour la pagination ==========
+$sqlCount = "SELECT COUNT(*) FROM offres_emplois WHERE 1=1";
 $params = [];
 
-// Recherche
 if (!empty($search)) {
-    $sql .= " AND (o.titre_poste LIKE :search OR o.secteur_activite LIKE :search OR c.ville LIKE :search OR o.departement LIKE :search OR o.type_contrat LIKE :search o.detail_poste LIKE :search)";
-    $params[':search'] = "%$search%";
+    $sqlCount .= " AND (titre_poste LIKE :search OR secteur_activite LIKE :search OR detail_poste LIKE :search)";
+    $params[':search'] = '%' . $search . '%';
 }
-
-// Poste
-if ($poste !== '') {
-    if ($poste === 'Candidature spontanée') {
-        $sql .= " AND c.ref_offre IS NULL";
-    } else {
-        $sql .= " AND o.titre_poste = :poste";
-        $params[':poste'] = $poste;
-    }
+if (!empty($poste)) {
+    $sqlCount .= " AND titre_poste = :poste";
+    $params[':poste'] = $poste;
 }
-
-// Ville
 if (!empty($ville)) {
-    $sql .= " AND o.ville = :ville";
+    $sqlCount .= " AND ville = :ville";
     $params[':ville'] = $ville;
 }
 
+$stmt = $pdo->prepare($sqlCount);
+$stmt->execute($params);
+$total = $stmt->fetchColumn();
+$totalPages = ceil($total / $limit);
 
+// ========== 2. Récupérer les résultats paginés =============
+$sql = "SELECT * FROM offres_emplois WHERE 1=1";
 
-// Pagination
-$sql .= " ORDER BY o.id_offre DESC LIMIT :limit OFFSET :offset";
+if (!empty($search)) {
+    $sql .= " AND (titre_poste LIKE :search OR secteur_activite LIKE :search OR detail_poste LIKE :search)";
+}
+if (!empty($poste)) {
+    $sql .= " AND titre_poste = :poste";
+}
+if (!empty($ville)) {
+    $sql .= " AND ville = :ville";
+}
+
+$sql .= " ORDER BY id_offre DESC LIMIT :limit OFFSET :offset";
+
+$params[':limit'] = $limit;
+$params[':offset'] = $offset;
 
 $stmt = $pdo->prepare($sql);
 
-// Lier les paramètres dynamiques
-foreach ($params as $key => $val) {
-    $stmt->bindValue($key, $val);
-}
+// Il faut binder limit/offset en tant qu'entiers
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 
-// Lier LIMIT et OFFSET
-$stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-$stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+// Les autres paramètres (search, poste, ville)
+if (!empty($search)) {
+    $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+}
+if (!empty($poste)) {
+    $stmt->bindValue(':poste', $poste, PDO::PARAM_STR);
+}
+if (!empty($ville)) {
+    $stmt->bindValue(':ville', $ville, PDO::PARAM_STR);
+}
 
 $stmt->execute();
 $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Paristanbul — Admin • Candidatures</title>
+    <title>Paristanbul — Admin • Offres d'emplois</title>
     <link rel="stylesheet" href=../../assets/css/admin.css />
-    <link rel="stylesheet" href=../../assets/css/candidatureAdmin.css />
+    <link rel="stylesheet" href=../../assets/css/gestionOffreAdmin.css />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
@@ -114,7 +98,7 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <a class="menu-item" href="../../vue/Admin/promoAdmin.php"><i class="bi bi-megaphone"></i><span>Promotions</span></a>
         <div class="menu-title">Administration</div>
-        <a class="menu-item" href="gestionOffreAdmin.php"><i class="bi bi-briefcase"></i><span>Offres</span></a>
+        <a class="menu-item" href="candidatureAdmin.php"><i class="bi bi-briefcase"></i><span>Candidatures</span></a>
 
         <a class="menu-item" href="../../vue/Admin/gestionUserAdmin.php"><i class="bi bi-people"></i><span>Utilisateurs</span></a>
 
@@ -126,7 +110,7 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <main class="main">
     <header class="topbar">
-        <h1>Candidatures — Administration</h1>
+        <h1>Offres — Administration</h1>
         <div class="top-actions">
             <form method="post" style="display:inline;">
                 <button type="submit" name="archiver_lues" class="btn ghost">
@@ -141,12 +125,10 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </form>
         </div>
     </header>
-<style>
-
-</style>
 
 
-    
+
+
 
 
     <section class="filters">
@@ -154,17 +136,17 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <!-- Recherche -->
             <div class="field">
                 <i class="bi bi-search"></i>
-                <input type="search" name="search" placeholder="Rechercher (nom, email, poste)…" value="<?= htmlspecialchars($search) ?>">
+                <input type="search" name="search" placeholder="Rechercher (nom, ville, code postal) …">
             </div>
 
             <!-- Poste -->
             <div class="field select"><i class="bi bi-briefcase"></i>
                 <select name="tri-par-poste">
                     <option value="">Poste (tous)</option>
-                    <option <?= $poste === "Caissier(ère)" ? 'selected' : '' ?>>Caissier(ère)</option>
-                    <option <?= $poste === "Préparateur(trice)" ? 'selected' : '' ?>>Préparateur(trice)</option>
-                    <option <?= $poste === "Manager" ? 'selected' : '' ?>>Manager</option>
-                    <option <?= $poste === "" ? 'selected' : '' ?>>Candidature spontanée</option>
+                    <option value="Caissier(ère)" <?= $poste === "Caissier(ère)" ? 'selected' : '' ?>>Caissier(ère)</option>
+                    <option value="Préparateur de commande" <?= $poste === "Préparateur de commande" ? 'selected' : '' ?>>Préparateur de commande</option>
+                    <option value="Comptable" <?= $poste === "Comptable" ? 'selected' : '' ?>>Comptable</option>
+                    <option value="Manutentionnaire" <?= $poste === "Manutentionnaire" ? 'selected' : '' ?>>Manutentionnaire</option>
                 </select>
             </div>
 
@@ -181,14 +163,10 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <select name="tri-par-magasin">
                     <option value="">Magasin (tous)</option>
                     <?php foreach ($villes as $v) : ?>
-                        <option value="<?= htmlspecialchars($v) ?>" <?= ($ville === $v ? 'selected' : '') ?>>
-                            <?= htmlspecialchars($v) ?>
-                        </option>
+                        <option value="<?= htmlspecialchars($v) ?>" <?= $ville === $v ? 'selected' : '' ?>><?= htmlspecialchars($v) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
-
-
             <button class="btn"><i class="bi bi-funnel"></i> Filtrer</button>
         </form>
     </section>
@@ -197,9 +175,7 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="card">
             <div class="card-head">
                 <h2>Liste des offres d'emplois</h2>
-                <div class="actions">
-                    <button class="btn ghost"><i class="bi bi-eye"></i> Aperçu formulaire public</button>
-                </div>
+
             </div>
 
             <div class="table-wrap">
@@ -223,18 +199,13 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                                <td class="row-actions">
                                 <!-- Modifier -->
-                                <form action="../../src/traitement/update_offresAdmin.php" method="post" style="display:inline;">
-                                    <input type="hidden" name="id" value="<?= $offre['id_offre'] ?>">
-                                    <input type="hidden" name="action" value="supprimer">
-                                    <form action="../../src/traitement/update_offresAdmin.php" method="post" style="display:inline;" onsubmit="return confirm('Confirmer la suppression de cette offre ?');">
-                                        <input type="hidden" name="id" value="<?= $offre['id_offre'] ?>">
-                                        <input type="hidden" name="action" value="supprimer">
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash"></i> Supprimer
-                                        </button>
-                                    </form>
-
-                                </form>
+                            <form action="../../src/traitement/update_offresAdmin.php" method="post" style="display:inline;" onsubmit="return confirm('Confirmer la suppression de cette offre ?');">
+                              <input type="hidden" name="id" value="<?= $offre['id_offre'] ?>">
+                              <input type="hidden" name="action" value="supprimer">
+                              <button type="submit" class="btn btn-sm btn-danger">
+                              <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                            </form>
 
                             </td>
                         </tr>
@@ -255,7 +226,7 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
-                    const rows = document.querySelectorAll("#candidaturesTable tbody tr");
+                    const rows = document.querySelectorAll("#table tbody tr");
                     console.log("Total lignes trouvées :", rows.length);
                     const rowsPerPage = 3;
                     let currentPage = 1;
