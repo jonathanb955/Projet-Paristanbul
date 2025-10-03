@@ -118,7 +118,7 @@ $lignesCandidatures = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <a class="menu-item" href="../../vue/Admin/promoAdmin.php"><i class="bi bi-megaphone"></i><span>Promotions</span></a>
         <div class="menu-title">Administration</div>
-        <a class="menu-item" href="../../vue/Admin/candidatureAdmin.php"><i class="bi bi-briefcase"></i><span>Candidatures</span></a>
+        <a class="menu-item" href="gestionOffreAdmin.php"><i class="bi bi-briefcase"></i><span>Offres</span></a>
 
         <a class="menu-item" href="../../vue/Admin/gestionUserAdmin.php"><i class="bi bi-people"></i><span>Utilisateurs</span></a>
 
@@ -348,94 +348,7 @@ $lignesCandidatures = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </script>
         <br>
         <br>
-        <?php
-        $dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
-        $bdd = new PDO($dsn, 'root', '');
 
-        // formulaire a été soumis
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $secteur_activite = $_POST['secteur_activite'];
-            $titre_poste      = $_POST['titre_poste'];
-            $ville            = $_POST['ville'];
-            $departement      = $_POST['departement'];
-            $type_contrat     = $_POST['type_contrat'];
-            $detail_poste     = $_POST['detail_poste'];
-
-            $sql = $bdd->prepare("
-        INSERT INTO offres_emplois 
-        (secteur_activite, titre_poste, ville, departement, type_contrat, detail_poste)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ");
-            $sql->execute([$secteur_activite, $titre_poste, $ville, $departement, $type_contrat, $detail_poste]);
-
-            echo "<p style='color:green;'>Offre d'emploi enregistrée avec succès !</p>";
-        }
-
-        ?>
-        <!-- Panneau Offre -->
-        <aside class="sidepanel card">
-            <div class="card-head"><h2>Créer une offre d'emploi</h2></div>
-            <form class="form" action="candidatureAdmin.php" method="post">
-                <!-- Secteur d'activité -->
-                <label>
-                    <span>Secteur d'activité</span>
-                    <input type="text" name="secteur_activite" placeholder="Ex : Commerce, Restauration" required>
-                </label>
-
-                <!-- Titre du poste -->
-                <label>
-                    <span>Titre du poste</span>
-                    <input type="text" name="titre_poste" placeholder="Ex : Caissier(ère)" required>
-                </label>
-
-                <?php
-                $dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
-                $bdd = new PDO($dsn, 'root', '');
-                $sqlMagasin = $bdd->prepare("SELECT * FROM magasins ");
-                $sqlMagasin->execute();
-                $lignesMagasins = $sqlMagasin->fetchAll();
-                ?>
-                <!-- Ville -->
-                <label>
-                    <span>Villes</span>
-                    <select name="ville" required>
-                        <?php foreach($lignesMagasins as $magasin): ?>
-                            <option value="<?= $magasin['ville_magasin'] ?>"><?= $magasin['ville_magasin'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-
-                </label>
-
-                <!-- Département -->
-                <label>
-                    <span>Département</span>
-                    <input type="text" name="departement" placeholder="Ex : 95" required>
-                </label>
-
-                <!-- Type de contrat -->
-                <label>
-                    <span>Type de contrat</span>
-                    <select name="type_contrat" required>
-                        <option value="CDD">CDD</option>
-                        <option value="CDI">CDI</option>
-                        <option value="Stage">Stage</option>
-                        <option value="Alternance">Alternance</option>
-                    </select>
-                </label>
-
-                <!-- Détails du poste -->
-                <label>
-                    <span>Détails du poste</span>
-                    <textarea name="detail_poste" rows="4" placeholder="Description du poste..." required></textarea>
-                </label>
-
-                <div class="form-actions">
-                    <button type="reset" class="btn ghost">Annuler</button>
-                    <button type="submit" class="btn"><i class="bi bi-send"></i> Enregistrer</button>
-                </div>
-            </form>
-        </aside>
-    </section>
 
     <footer class="footer"><small>© 2025 — Back-office Paristanbul • Candidatures</small></footer>
 </main>
