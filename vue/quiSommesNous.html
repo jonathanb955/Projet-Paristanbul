@@ -159,9 +159,99 @@
         @keyframes spin{to{transform:rotate(360deg)}}
         .loader__logo{width:120px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
     </style>
+    <style id="pi-orbs-and-hairlines">
+        :root{
+            --bg-base:#010309;             /* encore plus sombre */
+            --ink:#E6E9F2;
+            --hair:rgba(255,255,255,.12);  /* filets fins */
+            --hair-strong:rgba(255,255,255,.20);
+
+            --orb-blue:rgba(46,76,151,.18);
+            --orb-red: rgba(226,27,60,.16);
+        }
+
+        /* fond global + encre */
+        body{ background:var(--bg-base) !important; color:var(--ink); }
+
+        /* calque orbes animé (derrière tout) */
+        .pi-orbs{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+        .pi-orbs .orb{
+            position:absolute; width:48vmax; height:48vmax; border-radius:9999px;
+            filter:blur(80px); opacity:.75; mix-blend-mode:screen; will-change:transform;
+        }
+        .pi-orbs .blue{ background:var(--orb-blue); }
+        .pi-orbs .red { background:var(--orb-red);  }
+
+        /* positions + dérive lente */
+        .pi-orbs .a{ top:-10vmax; left:-6vmax;  animation:orbA 36s linear infinite; }
+        .pi-orbs .b{ top:-8vmax; right:-10vmax; animation:orbB 42s linear infinite; }
+        .pi-orbs .c{ bottom:-12vmax; left:15vw; animation:orbC 40s linear infinite; width:42vmax;height:42vmax;}
+        .pi-orbs .d{ bottom:-14vmax; right:10vw; animation:orbD 46s linear infinite; width:50vmax;height:50vmax;}
+
+        @keyframes orbA{ 50%{ transform:translate3d(4vw,2vh,0) scale(1.05);} }
+        @keyframes orbB{ 50%{ transform:translate3d(-3vw,3vh,0) scale(1.03);} }
+        @keyframes orbC{ 50%{ transform:translate3d(2vw,-2vh,0) scale(1.06);} }
+        @keyframes orbD{ 50%{ transform:translate3d(-2vw,-3vh,0) scale(1.04);} }
+
+        /* nav translucide + filet fin */
+        nav.navbar{ background:transparent !important; border:none !important; box-shadow:none !important; position:sticky; top:0; }
+        nav.navbar::after{
+            content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+            background:linear-gradient(90deg,transparent,var(--hair),transparent);
+        }
+
+        /* hero “fondu” dans le fond (retire grosses masses) */
+        .hero{
+            background:linear-gradient(180deg, rgba(0,0,0,.28), transparent 35%) !important;
+        }
+
+        /* —— cartes & éléments : plus transparents, juste des hairlines —— */
+        .tl-card, .stat, .value, .cta{
+            background:transparent !important;
+            border:1px solid var(--hair) !important;
+            box-shadow:none !important; border-radius:16px;
+        }
+        .tl-card:hover, .value:hover, .stat:hover, .cta:hover{
+            border-color:var(--hair-strong) !important;
+        }
+        /* timeline spine un poil plus visible */
+        .timeline::before{ opacity:.5 !important; }
+
+        /* footer plus clair et fondu */
+        .footer{ background:rgba(255,255,255,.02) !important; border-top:1px solid var(--hair) !important; }
+
+        /* accessibilité */
+        @media (prefers-reduced-motion:reduce){ .pi-orbs .orb{ animation:none; opacity:.55; } }
+    </style>
+    <style id="pi-animated-word">
+        .pi-word-anim{
+            --c1:#e21b3c;  /* rouge */
+            --c2:#2E4C97;  /* bleu  */
+            background-image:linear-gradient(90deg,var(--c1),var(--c2),var(--c1));
+            background-size:200% 100%; background-position:0% 50%;
+            -webkit-background-clip:text; background-clip:text;
+            -webkit-text-fill-color:transparent; color:transparent;
+            display:inline-block; animation:piWord 6s ease-in-out infinite alternate;
+        }
+        .pi-word-anim.glow{
+            text-shadow:0 0 12px rgba(226,27,60,.15), 0 0 14px rgba(46,76,151,.12);
+        }
+        @keyframes piWord{
+            0%{ background-position:0% 50%; filter:saturate(110%); }
+            50%{ background-position:100% 50%; filter:saturate(130%); }
+            100%{ background-position:0% 50%; filter:saturate(110%); }
+        }
+        @media (prefers-reduced-motion:reduce){ .pi-word-anim{ animation:none; } }
+    </style>
 </head>
 
 <body>
+<div class="pi-orbs" aria-hidden="true">
+    <span class="orb blue a"></span>
+    <span class="orb red  b"></span>
+    <span class="orb blue c"></span>
+    <span class="orb red  d"></span>
+</div>
 <div id="scrollProgress" aria-hidden="true"></div>
 
 <!-- Loader -->
@@ -202,7 +292,7 @@
         <div class="reveal" style="--reveal-delay:80ms" id="heroText">
             <span class="eyebrow">Notre ADN</span>
             <h1 style="margin:.35rem 0 .6rem;line-height:1.06;letter-spacing:-.02em;font-weight:900">
-                Une histoire de famille, de courage et de goût.
+                <span class="pi-word-anim glow">Une histoire de famille</span>, de courage et de goût.
             </h1>
             <p style="color:var(--muted)">
                 Arrivé jeune en Europe, <strong>Metin</strong> apprend vite le métier, de la plonge au service. À Paris,

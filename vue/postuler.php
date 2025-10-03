@@ -159,6 +159,38 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
     <!-- Design sombre moderne + Animations -->
     <style>
+        /* Soulignement dégradé au survol/actif — comme sur "Notre histoire" */
+        :root{ --pi-blue:#2E4C97; --pi-red:#D6452E; } /* si pas déjà définies */
+
+        .navbar .navbar-nav .nav-link{
+            position: relative;
+            font-weight: 700;
+            opacity: .92;
+            padding-bottom: .35rem;          /* petit espace pour la ligne */
+        }
+        .navbar .navbar-nav .nav-link:hover,
+        .navbar .navbar-nav .nav-link:focus{
+            opacity: 1;
+        }
+
+        /* la ligne animée */
+        .navbar .navbar-nav .nav-link::after{
+            content:"";
+            position:absolute;
+            left:50%;
+            bottom:-6px;                     /* ajuste si besoin */
+            width:0;
+            height:2px;
+            background:linear-gradient(90deg, var(--pi-blue), var(--pi-red));
+            transition:width .25s, left .25s;
+        }
+
+        /* au survol ou quand le lien a .active */
+        .navbar .navbar-nav .nav-link:hover::after,
+        .navbar .navbar-nav .nav-link.active::after{
+            width:100%;
+            left:0;
+        }
         :root{
             --black:#0A0A0A;
             --black-2:#0D0F13;
@@ -429,8 +461,115 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         form { color-scheme: dark; }
 
     </style>
+    <style id="pi-orbs-and-hairlines">
+        :root{
+            --bg-base:#010309;
+            --ink:#E6E9F2;
+            --hair:rgba(255,255,255,.12);
+            --hair-strong:rgba(255,255,255,.20);
+
+            --orb-blue:rgba(46,76,151,.18);
+            --orb-red: rgba(226,27,60,.16);
+        }
+        body{ background:var(--bg-base)!important; color:var(--ink) }
+        /* nav translucide + filet fin */
+        .navbar{ background:transparent!important; border:none!important; box-shadow:none!important; position:sticky; top:0 }
+        .navbar::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+            background:linear-gradient(90deg,transparent,var(--hair),transparent) }
+
+        /* sections & cartes : pas de grosses boîtes, juste un filet 1px */
+        .card-dark, .faq .faq-item, .cta{
+            background:transparent!important; border:1px solid var(--hair)!important; box-shadow:none!important; border-radius:16px
+        }
+        .card-dark:hover, .faq .faq-item.active, .cta:hover{ border-color:var(--hair-strong)!important }
+
+        /* hero qui fond dans le fond */
+        .hero{ background:linear-gradient(180deg, rgba(0,0,0,.28), transparent 35%)!important }
+        .section-title{ background:linear-gradient(90deg,#fff,#9cc3ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent }
+
+        /* calque d’orbes animé derrière tout */
+        .pi-orbs{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden }
+        .pi-orbs .orb{ position:absolute; width:48vmax; height:48vmax; border-radius:9999px;
+            filter:blur(80px); opacity:.75; mix-blend-mode:screen; will-change:transform }
+        .pi-orbs .blue{background:var(--orb-blue)} .pi-orbs .red{background:var(--orb-red)}
+        .pi-orbs .a{ top:-10vmax; left:-6vmax;  animation:orbA 36s linear infinite }
+        .pi-orbs .b{ top:-8vmax; right:-10vmax; animation:orbB 42s linear infinite }
+        .pi-orbs .c{ bottom:-12vmax; left:15vw;  animation:orbC 40s linear infinite; width:42vmax;height:42vmax }
+        .pi-orbs .d{ bottom:-14vmax; right:10vw; animation:orbD 46s linear infinite; width:50vmax;height:50vmax }
+        @keyframes orbA{50%{transform:translate3d(4vw,2vh,0) scale(1.05)}}
+        @keyframes orbB{50%{transform:translate3d(-3vw,3vh,0) scale(1.03)}}
+        @keyframes orbC{50%{transform:translate3d(2vw,-2vh,0) scale(1.06)}}
+        @keyframes orbD{50%{transform:translate3d(-2vw,-3vh,0) scale(1.04)}}
+
+        @media (prefers-reduced-motion:reduce){ .pi-orbs .orb{ animation:none; opacity:.55 } }
+    </style>
+    <style id="pi-animated-word">
+        .pi-word-anim{
+            --c1:#e21b3c; --c2:#2E4C97;
+            background-image:linear-gradient(90deg,var(--c1),var(--c2),var(--c1));
+            background-size:200% 100%; background-position:0% 50%;
+            -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
+            display:inline-block; animation:piWord 6s ease-in-out infinite alternate;
+        }
+        .pi-word-anim.glow{ text-shadow:0 0 12px rgba(226,27,60,.15), 0 0 14px rgba(46,76,151,.12) }
+        @keyframes piWord{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        @media (prefers-reduced-motion:reduce){ .pi-word-anim{ animation:none } }
+    </style>
+    <style id="pi-fix-postuler">
+        /* 1) Orbes au bon plan */
+        body{ position:relative; background:#010309 !important; }
+        .pi-orbs{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+        /* tout le contenu passe AU-DESSUS des orbes */
+        body > *:not(.pi-orbs){ position:relative; z-index:1; }
+
+        /* 2) Hero & nav fondus */
+        .hero{ background:linear-gradient(180deg, rgba(0,0,0,.28), transparent 35%)!important; }
+        .navbar{ background:transparent!important; border:none!important; box-shadow:none!important; }
+        .navbar::after{
+            content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+        }
+
+        /* 3) Plus de boîtes : hairlines only */
+        .card-dark, .faq .faq-item, .cta{
+            background:transparent !important;
+            border:1px solid rgba(255,255,255,.12) !important;
+            box-shadow:none !important; border-radius:16px;
+        }
+        .offer .head{ background:transparent !important; border-bottom:1px solid rgba(255,255,255,.12) !important; }
+        /* colonne “infos RH” du formulaire (elle a un style inline → forcer) */
+        #candidature .col-md-4{ background:transparent !important; border:1px solid rgba(255,255,255,.12) !important; }
+
+        /* champs & sélecteurs restent dark même en focus/autofill */
+        .form-control, .form-select{
+            background:#0e131a !important; color:#eaf0f7 !important;
+            border-color:rgba(255,255,255,.12) !important;
+            box-shadow: inset 0 0 0 1000px #0e131a !important;
+        }
+
+        /* 4) Orbes (si pas déjà collé) */
+        .pi-orbs .orb{ position:absolute; width:48vmax; height:48vmax; border-radius:9999px;
+            filter:blur(80px); opacity:.75; mix-blend-mode:screen; }
+        .pi-orbs .blue{ background:rgba(46,76,151,.18) }
+        .pi-orbs .red { background:rgba(226,27,60,.16) }
+        .pi-orbs .a{ top:-10vmax; left:-6vmax;  animation:orbA 36s linear infinite }
+        .pi-orbs .b{ top:-8vmax; right:-10vmax; animation:orbB 42s linear infinite }
+        .pi-orbs .c{ bottom:-12vmax; left:15vw;  animation:orbC 40s linear infinite; width:42vmax;height:42vmax }
+        .pi-orbs .d{ bottom:-14vmax; right:10vw; animation:orbD 46s linear infinite; width:50vmax;height:50vmax }
+        @keyframes orbA{50%{transform:translate3d(4vw,2vh,0) scale(1.05)}}
+        @keyframes orbB{50%{transform:translate3d(-3vw,3vh,0) scale(1.03)}}
+        @keyframes orbC{50%{transform:translate3d(2vw,-2vh,0) scale(1.06)}}
+        @keyframes orbD{50%{transform:translate3d(-2vw,-3vh,0) scale(1.04)}}
+        @media (prefers-reduced-motion:reduce){ .pi-orbs .orb{ animation:none; opacity:.55 } }
+    </style>
 </head>
 <body>
+<div class="pi-orbs" aria-hidden="true">
+    <span class="orb blue a"></span>
+    <span class="orb red  b"></span>
+    <span class="orb blue c"></span>
+    <span class="orb red  d"></span>
+</div>
 
 <div id="scrollProgress" aria-hidden="true"></div>
 
@@ -461,13 +600,12 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
 <!-- HERO -->
 <header class="hero py-5">
-    <div class="shape s1"></div>
-    <div class="shape s2"></div>
-    <div class="shape s3"></div>
+
     <div class="container text-center py-4 reveal hero-parallax" data-reveal="fade">
         <span class="badge badge-soft mb-3">Carrières Paristanbul</span>
-        <h1 class="display-5 fw-extrabold mb-3">Rejoignez l’aventure</h1>
-        <p class="lead text-white-50 mb-4">Un commerce plus <strong>responsable</strong>, plus <strong>innovant</strong> et surtout plus <strong>humain</strong>.</p>
+        <h1 class="display-5 fw-extrabold mb-3">
+            Rejoignez la <span class="pi-word-anim glow">famille</span>
+        </h1>        <p class="lead text-white-50 mb-4">Un commerce plus <strong>responsable</strong>, plus <strong>innovant</strong> et surtout plus <strong>humain</strong>.</p>
         <div class="d-flex justify-content-center gap-2 flex-wrap">
             <a href="#offres" class="btn btn-red btn-lg px-4 magnet">Voir nos offres</a>
             <a href="#candidature" class="btn btn-ghost btn-lg px-4 magnet">Candidature spontanée</a>

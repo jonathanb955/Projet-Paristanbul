@@ -1,3 +1,8 @@
+<?php
+session_start();
+$flash = $_SESSION['flash_success'] ?? null;
+unset($_SESSION['flash_success']);
+?>
 <!doctype html>
 <html lang="fr">
 <head>
@@ -11,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Leaflet -->
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin />
 
@@ -39,15 +45,86 @@
         a{color:inherit;text-decoration:none}
         .container{max-width:1200px;margin:0 auto;padding:0 20px}
 
-        /* Header */
-        header{position:sticky; top:0; z-index:50; background:transparent; border-bottom:1px solid #141826}
-        .nav{display:flex; align-items:center; justify-content:space-between; gap:16px; height:66px}
+        /* =========================
+   Header (nav centrée + boutons à droite)
+   ========================= */
+        header{
+            position:sticky; top:0; z-index:50;
+            background:transparent;
+            border-bottom:1px solid #141826;
+        }
+
+        /* grille 3 colonnes : gauche=logo | centre=liens | droite=boutons */
+        .nav{
+            display:grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items:center;
+            gap:16px;
+            height:66px;
+        }
+
+        /* Logo / marque (garde ton style) */
         .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.3px}
         .brand-badge{width:34px;height:34px;border-radius:10px; background:linear-gradient(145deg,var(--blue),#0a204a); display:grid;place-items:center; box-shadow:0 8px 20px #0a1a38}
-        .nav a.btn{padding:10px 16px;border-radius:12px; background:linear-gradient(145deg,#1a2237,#0f172a); border:1px solid #1e2740}
-        .nav a.btn:hover{outline:2px solid var(--ring)}
-        .nav-links{display:flex; gap:14px; align-items:center}
 
+        /* Liens vraiment centrés */
+        .nav-links{
+            justify-self:center;
+            display:flex;
+            gap:14px;
+            align-items:center;
+        }
+
+        /* Boutons Inscription / Connexion à droite */
+        .auth{
+            justify-self:end;
+            display:flex;
+            gap:10px;
+        }
+
+        /* Style des boutons */
+        .nav a.btn{
+            padding:10px 16px;
+            border-radius:12px;
+            background:linear-gradient(145deg,#1a2237,#0f172a);
+            border:1px solid #1e2740;
+        }
+        .nav a.btn:hover{ outline:2px solid var(--ring) }
+
+        /* Soulignement dégradé au survol/actif — sauf .primary */
+        :root{ --pi-blue:#2E4C97; --pi-red:#D6452E; } /* sécurité */
+        header .nav-links a.btn:not(.primary){
+            position:relative;
+            background:transparent;
+            border:0;
+            padding-inline:10px;
+            padding-bottom:6px;           /* espace pour la ligne */
+        }
+        header .nav-links a.btn:not(.primary)::after{
+            content:"";
+            position:absolute;
+            left:50%;
+            bottom:-6px;
+            width:0;
+            height:2px;
+            background:linear-gradient(90deg,var(--pi-blue),var(--pi-red));
+            transition:width .25s,left .25s;
+        }
+        header .nav-links a.btn:not(.primary):hover::after,
+        header .nav-links a.btn:not(.primary).is-active::after{
+            width:100%;
+            left:0;
+        }
+
+        /* Optionnel : petit ajustement mobile */
+        @media (max-width: 768px){
+            .nav{
+                grid-template-columns: 1fr auto;  /* logo | burger/cta */
+                row-gap:10px; height:auto;
+            }
+            .nav-links{ justify-self:start; flex-wrap:wrap }
+            .auth{ justify-self:end }
+        }
         /* Marquee */
         .marquee{position:relative; overflow:hidden; border-top:1px solid #151a2a; border-bottom:1px solid #151a2a; background:transparent;}
         .marquee__inner{display:flex; gap:40px; padding:10px 0; white-space:nowrap; animation:marquee 22s linear infinite}
@@ -354,9 +431,54 @@
             object-position: center;
             display: block;
         }
+        /* Nav index : soulignement dégradé au survol / actif */
+        :root{ --pi-blue:#2E4C97; --pi-red:#D6452E; } /* au cas où */
+        /* Nav index : soulignement dégradé, sauf pour .primary */
+        header .nav-links a.btn:not(.primary){
+            position: relative;
+            background: transparent;
+            border: 0;
+            padding-inline: 10px;
+            padding-bottom: 6px; /* espace pour la ligne */
+        }
+
+        header .nav-links a.btn:not(.primary)::after{
+            content:"";
+            position:absolute;
+            left:50%;
+            bottom:-6px;
+            width:0;
+            height:2px;
+            background:linear-gradient(90deg,var(--pi-blue),var(--pi-red));
+            transition:width .25s,left .25s;
+        }
+
+        header .nav-links a.btn:not(.primary):hover::after,
+        header .nav-links a.btn:not(.primary).is-active::after{
+            width:100%;
+            left:0;
+        }
     </style>
 </head>
 <body>
+<?php if (!empty($flash)): ?>
+    <div id="toast" style="position:fixed;right:16px;top:16px;z-index:9999;
+                         padding:10px 14px;border-radius:10px;
+                         background:rgba(16,185,129,.95);color:#fff;font-weight:700;
+                         border:1px solid rgba(16,185,129,.4);box-shadow:0 10px 30px rgba(0,0,0,.25)">
+        <?= htmlspecialchars($flash) ?>
+    </div>
+    <script>
+        setTimeout(()=>{
+            const t=document.getElementById('toast');
+            if(!t) return;
+            t.style.transition='opacity .35s ease, transform .35s ease';
+            t.style.opacity='0';
+            t.style.transform='translateY(-6px)';
+            setTimeout(()=>t.remove(),380);
+        },2200);
+    </script>
+<?php endif; ?>
 <!-- Progress bar + custom cursor -->
 <div class="progress" id="progress"></div>
 <div class="cursor-dot" id="cDot"></div>
@@ -379,23 +501,28 @@
         <span class="pill"><span class="dot"></span> Produits frais & de saison</span>
     </div>
 </div>
-
 <header>
     <div class="container nav">
         <!-- Logo -->
-
         <div class="brand">
-            <div>
-                <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
-                    <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" style="height:48px">
-                </a>
-            </div>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
+                <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" style="height:48px">
+            </a>
         </div>
+
+        <!-- Liens centrés -->
         <nav class="nav-links">
             <a href="quiSommesNous.html" class="btn magnet">Notre Histoire</a>
             <a href="postuler.php" class="btn magnet">Postuler</a>
-            <a href="#contact" class="btn primary magnet">Nous contacter</a>
+            <a href="#contact" class="btn magnet">Nous contacter</a>
+            <a href="nosMagasins.php" class="btn magnet">Nos Magasins</a>
         </nav>
+
+        <!-- Boutons à droite -->
+        <div class="auth">
+            <a href="pageInscription.php" class="btn">Inscription</a>
+            <a href="pageConnexion.php" class="btn primary">Connexion</a>
+        </div>
     </div>
 </header>
 
@@ -997,6 +1124,12 @@
     })();
 </script>
 <script>
+    document.querySelectorAll('header .nav-links a').forEach(a=>{
+        const clean = (u)=>u.split('#')[0].replace(/\/+$/,'');
+        if (clean(a.href) === clean(location.href)) a.classList.add('is-active');
+    });
+</script>
+<script>
     (() => {
         const $ = (s,el=document)=>el.querySelector(s);
         const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
@@ -1088,7 +1221,19 @@
 
         /* 8) Confettis quand on valide la newsletter */
         const fx = document.createElement('canvas');
-        fx.id='fx'; fx.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9998'
+        fx.id='fx'; fx.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9998';
+        </script>
 
-            </body>
-    </html>
+<script>
+    (() => {
+        const $ = (s,el=document)=>el.querySelector(s);
+        const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
+  …
+  const fx = document.createElement('canvas');
+        fx.id='fx';
+        fx.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9998';
+        // document.body.appendChild(fx); // si tu comptes l'utiliser
+    })();
+</script>
+</body>
+</html>
