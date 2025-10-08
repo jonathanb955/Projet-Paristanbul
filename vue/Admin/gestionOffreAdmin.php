@@ -127,10 +127,6 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </header>
 
 
-
-
-
-
     <section class="filters">
         <form class="filters-bar" action="" method="get">
             <!-- Recherche -->

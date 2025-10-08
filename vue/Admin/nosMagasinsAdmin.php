@@ -59,15 +59,7 @@
                 <i class="bi bi-geo-alt"></i>
                 <input type="text" placeholder="Ville…">
             </div>
-            <div class="field select">
-                <i class="bi bi-lightbulb"></i>
-                <select>
-                    <option value="">Statut (tous)</option>
-                    <option>Publié</option>
-                    <option>Brouillon</option>
-                    <option>Fermé temporairement</option>
-                </select>
-            </div>
+            
             <button class="btn"><i class="bi bi-funnel"></i> Filtrer</button>
         </form>
         <small class="filters-note">Astuce : exporte ta liste en CSV pour la réimporter après modification.</small>
@@ -91,6 +83,32 @@
             $sqlMagasin = $bdd->prepare("SELECT * FROM magasins ");
             $sqlMagasin->execute();
             $lignesMagasins = $sqlMagasin->fetchAll();
+
+
+            require_once "../../src/bdd/Bdd.php";
+            use bdd\Bdd;
+
+            $pdo = (new Bdd())->getBdd();
+
+            // PAGINATION
+            $limit  = 3;
+            $page   = max(1, intval($_GET['page'] ?? 1));
+            $offset = ($page - 1) * $limit;
+
+            // Total des lignes
+            $sqlCountMagasins = "SELECT COUNT(*) FROM magasins";
+            $stmt = $pdo->prepare($sqlCountMagasins);
+            $stmt->execute();
+            $total = $stmt->fetchColumn();
+            $totalPages = ceil($total / $limit);
+
+            // Récupération des lignes paginées
+            $sqlMagasin = $pdo->prepare("SELECT * FROM magasins LIMIT :limit OFFSET :offset");
+            $sqlMagasin->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $sqlMagasin->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $sqlMagasin->execute();
+            $lignesMagasins = $sqlMagasin->fetchAll();
+
             ?>
             <div class="table-wrap">
                 <table class="table">
@@ -118,16 +136,49 @@
                     <?php endforeach; ?>
                     </tbody>
                 </table>
-            </div>
+                <div class="pagination">
+                    <?php if ($page > 1): ?>
+                        <a href="?page=<?= $page - 1 ?>#tableau" class="prev">&larr; Précédent</a>
+                    <?php endif; ?>
 
-            <div class="table-foot">
-                <span>3 / 3</span>
-                <div class="pager">
-                    <button class="btn ghost">‹</button>
-                    <button class="btn ghost">›</button>
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <a href="?page=<?= $i ?>#tableau" class="<?= ($i == $page) ? 'active' : '' ?>"><?= $i ?></a>
+                    <?php endfor; ?>
+
+                    <?php if ($page < $totalPages): ?>
+                        <a href="?page=<?= $page + 1 ?>#tableau" class="next">Suivant &rarr;</a>
+                    <?php endif; ?>
                 </div>
             </div>
+
         </div>
+        <style>
+            <style>
+            .pagination {
+                margin-top: 20px;
+                text-align: center;
+            }
+            .pagination a {
+                display: inline-block;
+                margin: 0 5px;
+                padding: 6px 12px;
+                background-color: #eee;
+                color: #333;
+                text-decoration: none;
+                border-radius: 4px;
+            }
+            .pagination a.active {
+                background-color: #333;
+                color: #fff;
+                font-weight: bold;
+            }
+            .pagination a.prev,
+            .pagination a.next {
+                font-weight: bold;
+            }
+
+        </style>
+
         <?php
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -161,10 +212,6 @@
             </div>
 
             <form class="form">
-                <label>
-                    <span>Nom du magasin</span>
-                    <input type="text" placeholder="Paristanbul — Villiers-le-Bel">
-                </label>
 
                 <label>
                     <span>Adresse</span>
@@ -187,10 +234,7 @@
                     <input type="tel" name="num_telephone" placeholder="07 49 82 61 33">
                 </label>
 
-                <label>
-                    <span>URL itinéraire Google (Optionnel)</span>
-                    <input type="url" placeholder="https://www.google.com/maps/dir/?api=1&destination=...">
-                </label>
+
 
                 <div class="hours">
                     <div class="hours-head">
@@ -208,42 +252,8 @@
                     </div>
                 </div>
 
-                <label>
-                    <span>Services (tags)</span>
-                    <input type="text" placeholder="Fruits & Légumes, Produits frais, Surgelés, Boissons">
-                </label>
-
-                <div class="grid two">
-                    <label>
-                        <span>Statut</span>
-                        <select>
-                            <option>Publié</option>
-                            <option>Brouillon</option>
-                            <option>Fermé temporairement</option>
-                        </select>
-                    </label>
-                    <label>
-                        <span>Affichage public</span>
-                        <select>
-                            <option>Afficher</option>
-                            <option>Masquer</option>
-                        </select>
-                    </label>
-                </div>
-
-                <div class="map-preview">
-                    <div class="map-thumb">
-                        <i class="bi bi-map"></i>
-                    </div>
-                    <div class="map-meta">
-                        <strong>Aperçu carte</strong>
-                        <p>Colle ici ton lien Google Maps d’itinéraire ou d’adresse.</p>
-                    </div>
-                </div>
-
                 <div class="form-actions">
                     <button type="reset" class="btn ghost">Annuler</button>
-                    <button type="button" class="btn ghost"><i class="bi bi-box-arrow-down"></i> Enregistrer brouillon</button>
                     <button type="submit" class="btn"><i class="bi bi-check2-circle"></i> Publier</button>
                 </div>
             </form>

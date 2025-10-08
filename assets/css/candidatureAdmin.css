@@ -17,6 +17,21 @@
 .hero h1{margin:0 0 6px}
 .hero p{margin:0;color:var(--muted)}
 
+/* ===== Filtres ===== */
+.filters{border-bottom:1px solid var(--line); background:rgba(255,255,255,0.02)}
+.filters-bar{display:grid; grid-template-columns:2fr 1.2fr 1fr auto; gap:10px; padding:14px 20px}
+.filters .field{position:relative}
+.filters .field i{position:absolute; left:10px; top:50%; transform:translateY(-50%); opacity:.8}
+.filters input, .filters select{
+    width:100%; padding:11px 12px 11px 34px; border-radius:12px; border:1px solid var(--line);
+    background:rgba(255,255,255,0.02); color:var(--text); outline:none;
+}
+.filters .btn{height:44px}
+.filters-note{display:block; color:var(--muted); padding:0 20px 12px}
+
+@media (max-width:1100px){ .filters-bar{grid-template-columns:1fr 1fr} }
+@media (max-width:560px){ .filters-bar{grid-template-columns:1fr} }
+
 /* form */
 .form-wrap{padding:22px 0 32px}
 .card{border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);background:var(--panel)}

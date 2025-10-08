@@ -106,78 +106,6 @@
         </div>
     </section>
 
-    <!-- 2 colonnes -->
-    <section class="grid two">
-        <!-- Table produits / rayons -->
-        <div class="card">
-            <div class="card-head">
-                <h2>Rayons & Produits à surveiller</h2>
-                <div class="actions">
-                    <button class="btn ghost"><i class="bi bi-download"></i> Exporter</button>
-                    <button class="btn"><i class="bi bi-plus-circle"></i> Ajouter un rayon</button>
-                </div>
-            </div>
-            <div class="table-wrap">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Libellé</th>
-                        <th>Rayon</th>
-                        <th>Stock</th>
-                        <th>DLC / DLUO</th>
-                        <th>Statut</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><span class="pill blue"><i class="bi bi-stars"></i> Produit</span></td>
-                        <td>Yaourt nature 4x125g</td>
-                        <td>Produits frais</td>
-                        <td>28</td>
-                        <td>—</td>
-                        <td><span class="pill success">OK</span></td>
-                        <td><a class="link" href="#"><i class="bi bi-pencil"></i> Éditer</a></td>
-                    </tr>
-                    <tr>
-                        <td><span class="pill green"><i class="bi bi-grid-1x2"></i> Rayon</span></td>
-                        <td>Boissons</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td>—</td>
-                        <td><span class="pill warning">Images manquantes</span></td>
-                        <td><a class="link" href="#"><i class="bi bi-upload"></i> Ajouter visuels</a></td>
-                    </tr>
-                    <tr>
-                        <td><span class="pill blue"><i class="bi bi-stars"></i> Produit</span></td>
-                        <td>Pâtes Penne 500g</td>
-                        <td>Produits secs</td>
-                        <td>0</td>
-                        <td>—</td>
-                        <td><span class="pill danger">Rupture</span></td>
-                        <td><a class="link" href="#"><i class="bi bi-truck"></i> Commander</a></td>
-                    </tr>
-                    <tr>
-                        <td><span class="pill blue"><i class="bi bi-stars"></i> Produit</span></td>
-                        <td>Filet de saumon 250g</td>
-                        <td>Produits frais</td>
-                        <td>12</td>
-                        <td>—</td>
-                        <td><span class="pill warning">Promo active</span></td>
-                        <td><a class="link" href="#"><i class="bi bi-megaphone"></i> Voir promo</a></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="table-foot">
-                <span>4 / 48</span>
-                <div class="pager">
-                    <button class="btn ghost">‹</button>
-                    <button class="btn ghost">›</button>
-                </div>
-            </div>
-        </div>
 
         <!-- Form promos + activités -->
         <div class="card">
@@ -197,11 +125,17 @@
                         <option>Emballages</option>
                     </select>
                 </label>
-                <label class="grid two">
+                <label><span>Type</span>
+                    <select name="type" required>
+                        <option>-%</option><option>2+1</option>
+                        <option>-50% sur 2e</option><option>Prix choc</option>
+                    </select>
+                </label>
+
                     <span>Taux de remise (%)</span>
                     <input type="number" min="1" max="90" placeholder="20" />
                 </label>
-                <label class="grid two">
+
                     <span>Période</span>
                     <input type="text" placeholder="03/09/2025 → 10/09/2025" />
                 </label>
@@ -227,13 +161,35 @@
     </section>
 
     <?php
-    $dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
-    $bdd = new PDO($dsn, 'root', '');
-    $sqlMagasin = $bdd->prepare("SELECT * FROM magasins ");
+
+    require_once "../src/bdd/Bdd.php";
+    use bdd\Bdd;
+
+    $pdo = (new Bdd())->getBdd();
+
+    // PAGINATION
+    $limit  = 3;
+    $page   = max(1, intval($_GET['page'] ?? 1));
+    $offset = ($page - 1) * $limit;
+
+    // Total des lignes
+    $sqlCountMagasins = "SELECT COUNT(*) FROM magasins";
+    $stmt = $pdo->prepare($sqlCountMagasins);
+    $stmt->execute();
+    $total = $stmt->fetchColumn();
+    $totalPages = ceil($total / $limit);
+
+    // Récupération des lignes paginées
+    $sqlMagasin = $pdo->prepare("SELECT * FROM magasins LIMIT :limit OFFSET :offset");
+    $sqlMagasin->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $sqlMagasin->bindValue(':offset', $offset, PDO::PARAM_INT);
     $sqlMagasin->execute();
     $lignesMagasins = $sqlMagasin->fetchAll();
-    ?>
-    ?>
+
+
+     ?>
+
+
     <!-- Gestion magasins / messages -->
     <section class="grid two">
         <!-- Magasins -->
@@ -245,7 +201,7 @@
                     <button class="btn"><i class="bi bi-plus-circle"></i> Ajouter un magasin</button>
                 </div>
             </div>
-            <div class="table-wrap">
+            <div class="table-wrap" id="tableau">
                 <table class="table">
                     <thead>
                     <tr>
@@ -267,11 +223,54 @@
                             <td>07 49 82 61 33</td>
                             <td><a class="link" href="#"><i class="bi bi-pencil"></i> Éditer</a></td>
                         </tr>
+
                     <?php endforeach; ?>
+
                     </tbody>
+                    <!-- Pagination (placée ici, hors de la table) -->
+
                 </table>
+
+            </div>
+            <div class="pagination">
+                <?php if ($page > 1): ?>
+                    <a href="?page=<?= $page - 1 ?>#tableau" class="prev">&larr; Précédent</a>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                    <a href="?page=<?= $i ?>#tableau" class="<?= ($i == $page) ? 'active' : '' ?>"><?= $i ?></a>
+                <?php endfor; ?>
+
+                <?php if ($page < $totalPages): ?>
+                    <a href="?page=<?= $page + 1 ?>#tableau" class="next">Suivant &rarr;</a>
+                <?php endif; ?>
             </div>
         </div>
+        <style>
+            .pagination {
+                margin-top: 20px;
+                text-align: center;
+            }
+            .pagination a {
+                display: inline-block;
+                margin: 0 5px;
+                padding: 6px 12px;
+                background-color: #eee;
+                color: #333;
+                text-decoration: none;
+                border-radius: 4px;
+            }
+            .pagination a.active {
+                background-color: #333;
+                color: #fff;
+                font-weight: bold;
+            }
+            .pagination a.prev,
+            .pagination a.next {
+                font-weight: bold;
+            }
+
+        </style>
 
         <!-- Messages contact & candidatures -->
         <div class="card">

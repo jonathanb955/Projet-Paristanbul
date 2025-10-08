@@ -118,14 +118,12 @@
             $role = $_POST['role'];
             $mdp_hash = password_hash($mdp,PASSWORD_DEFAULT);
 
-
             // Préparation de la requête
             $sql = "INSERT INTO utilisateurs (nom, prenom,email,mdp,role) 
             VALUES (?, ?, ?, ?, ?)";
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$nom,$prenom,$email,$mdp_hash,$role]);
-
         }
 
         ?>
@@ -145,18 +143,11 @@
                     <label><span>Rôle</span>
                         <select name="role"><option>Éditeur</option><option>Manager</option><option>Admin</option><option>Super Admin</option></select>
                     </label>
-                    <label><span>Magasin (optionnel)</span>
-                        <select><option>—</option><option>Villiers-le-Bel</option><option>Bondy</option><option>Drancy</option></select>
-                    </label>
+
                 </div>
-                <div class="grid two">
-                    <label><span>Statut</span><select><option>Actif</option><option>Inactif</option><option>Invité</option></select></label>
-                    <label><span>Mot de passe (temp.)</span><input type="password" name="mdp" placeholder="Générer ou saisir"></label>
-                </div>
-                <label class="check"><input type="checkbox"><span>Forcer la réinitialisation du mot de passe à la première connexion</span></label>
+
                 <div class="form-actions">
                     <button type="reset" class="btn ghost">Annuler</button>
-                    <button type="button" class="btn ghost"><i class="bi bi-envelope-paper"></i> Envoyer invitation</button>
                     <button type="submit" class="btn"><i class="bi bi-check2-circle"></i> Enregistrer</button>
                 </div>
             </form>
