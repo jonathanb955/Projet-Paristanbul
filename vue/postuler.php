@@ -586,7 +586,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
             <!-- UL sans ms-auto/me-3 pour permettre le centrage absolu -->
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="index.php">Accueil</a></li>
-                <li class="nav-item"><a class="nav-link" href="index.php#magasins">Nos magasins</a></li>
+                <li class="nav-item"><a class="nav-link" href="nosMagasins.php">Nos magasins</a></li>
                 <li class="nav-item"><a class="nav-link" href="quiSommesNous.html">Notre histoire</a></li>
             </ul>
             <!-- Ajout de la classe actions -->
