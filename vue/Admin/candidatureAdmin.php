@@ -327,28 +327,24 @@ $lignesCandidatures = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     prevBtn.disabled = page === 1;
                     nextBtn.disabled = page === totalPages;
                 }
-
                 prevBtn.addEventListener("click", () => {
                     if (currentPage > 1) {
                         currentPage--;
                         showPage(currentPage);
                     }
                 });
-
                 nextBtn.addEventListener("click", () => {
                     if (currentPage < totalPages) {
                         currentPage++;
                         showPage(currentPage);
                     }
                 });
-
                 // Initialiser
                 showPage(currentPage);
             });
         </script>
         <br>
         <br>
-
 
     <footer class="footer"><small>© 2025 — Back-office Paristanbul • Candidatures</small></footer>
 </main>

@@ -81,6 +81,19 @@
     $stmt->execute($params);
     $utilisateurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
+    // PAGINATION
+    $limit  = 3;
+    $page   = max(1, intval($_GET['page'] ?? 1));
+    $offset = ($page - 1) * $limit;
+
+    // Total des lignes
+    $sqlCountMagasins = "SELECT COUNT(*) FROM utilisateurs";
+    $stmt = $pdo->prepare($sqlCountMagasins);
+    $stmt->execute();
+    $total = $stmt->fetchColumn();
+    $totalPages = ceil($total / $limit);
+
     ?>
 
     <section class="layout">
@@ -102,6 +115,17 @@
                     <?php endforeach; ?>
                     </tbody>
                 </table>
+                <div class="table-foot">
+                    <span><?= $page ?> / <?= $totalPages ?></span>
+                    <div class="pager">
+                        <?php if ($page > 1): ?>
+                            <a class="btn ghost" href="?page=<?= $page - 1 ?>">‹</a>
+                        <?php endif; ?>
+                        <?php if ($page < $totalPages): ?>
+                            <a class="btn ghost" href="?page=<?= $page + 1 ?>">›</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -59,7 +59,7 @@
                 <i class="bi bi-geo-alt"></i>
                 <input type="text" placeholder="Ville…">
             </div>
-            
+
             <button class="btn"><i class="bi bi-funnel"></i> Filtrer</button>
         </form>
         <small class="filters-note">Astuce : exporte ta liste en CSV pour la réimporter après modification.</small>
@@ -136,18 +136,16 @@
                     <?php endforeach; ?>
                     </tbody>
                 </table>
-                <div class="pagination">
-                    <?php if ($page > 1): ?>
-                        <a href="?page=<?= $page - 1 ?>#tableau" class="prev">&larr; Précédent</a>
-                    <?php endif; ?>
-
-                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                        <a href="?page=<?= $i ?>#tableau" class="<?= ($i == $page) ? 'active' : '' ?>"><?= $i ?></a>
-                    <?php endfor; ?>
-
-                    <?php if ($page < $totalPages): ?>
-                        <a href="?page=<?= $page + 1 ?>#tableau" class="next">Suivant &rarr;</a>
-                    <?php endif; ?>
+                <div class="table-foot">
+                    <span><?= $page ?> / <?= $totalPages ?></span>
+                    <div class="pager">
+                        <?php if ($page > 1): ?>
+                            <a class="btn ghost" href="?page=<?= $page - 1 ?>">‹</a>
+                        <?php endif; ?>
+                        <?php if ($page < $totalPages): ?>
+                            <a class="btn ghost" href="?page=<?= $page + 1 ?>">›</a>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
 
