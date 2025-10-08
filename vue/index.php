@@ -11,12 +11,12 @@ unset($_SESSION['flash_success']);
     <title>Paristanbul — Supermarché</title>
     <meta name="description" content="Paristanbul : vos courses, nos magasins, notre catalogue interactif et nos meilleures offres." />
 
-    <!-- Police élégante -->
+    <!-- Fonts + Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-    <!-- Leaflet -->
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin />
 
@@ -28,13 +28,12 @@ unset($_SESSION['flash_success']);
             --black:#0a0c10; --blue:#0b3b8a; --red:#7b0f20;
             --text:#ffffff; --muted:#c9d4ea; --panel:#0f1320; --ring:#2c59ff55;
             --edge:#1b2235; --panel-2:#0e1422;
-
-            /* Strip défilant */
             --strip-gap: clamp(24px, 3vw, 48px);
             --strip-card: clamp(180px, 20vw, 300px);
             --strip-radius: 18px;
             --strip-border: 5px;
             --strip-speed: 22s;
+            --pi-blue:#2E4C97; --pi-red:#D6452E;
         }
         *{box-sizing:border-box}
         html,body{height:100%}
@@ -45,86 +44,30 @@ unset($_SESSION['flash_success']);
         a{color:inherit;text-decoration:none}
         .container{max-width:1200px;margin:0 auto;padding:0 20px}
 
-        /* =========================
-   Header (nav centrée + boutons à droite)
-   ========================= */
-        header{
-            position:sticky; top:0; z-index:50;
-            background:transparent;
-            border-bottom:1px solid #141826;
-        }
-
-        /* grille 3 colonnes : gauche=logo | centre=liens | droite=boutons */
-        .nav{
-            display:grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items:center;
-            gap:16px;
-            height:66px;
-        }
-
-        /* Logo / marque (garde ton style) */
+        /* Header */
+        header{position:sticky; top:0; z-index:50; background:transparent; border-bottom:1px solid #141826;}
+        .nav{display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:16px; height:66px;}
         .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.3px}
         .brand-badge{width:34px;height:34px;border-radius:10px; background:linear-gradient(145deg,var(--blue),#0a204a); display:grid;place-items:center; box-shadow:0 8px 20px #0a1a38}
-
-        /* Liens vraiment centrés */
-        .nav-links{
-            justify-self:center;
-            display:flex;
-            gap:14px;
-            align-items:center;
-        }
-
-        /* Boutons Inscription / Connexion à droite */
-        .auth{
-            justify-self:end;
-            display:flex;
-            gap:10px;
-        }
-
-        /* Style des boutons */
-        .nav a.btn{
-            padding:10px 16px;
-            border-radius:12px;
-            background:linear-gradient(145deg,#1a2237,#0f172a);
-            border:1px solid #1e2740;
-        }
+        .nav-links{justify-self:center; display:flex; gap:14px; align-items:center;}
+        .auth{justify-self:end; display:flex; gap:10px;}
+        .nav a.btn{padding:10px 16px; border-radius:12px; background:linear-gradient(145deg,#1a2237,#0f172a); border:1px solid #1e2740;}
         .nav a.btn:hover{ outline:2px solid var(--ring) }
-
-        /* Soulignement dégradé au survol/actif — sauf .primary */
-        :root{ --pi-blue:#2E4C97; --pi-red:#D6452E; } /* sécurité */
         header .nav-links a.btn:not(.primary){
-            position:relative;
-            background:transparent;
-            border:0;
-            padding-inline:10px;
-            padding-bottom:6px;           /* espace pour la ligne */
+            position:relative; background:transparent; border:0; padding-inline:10px; padding-bottom:6px;
         }
         header .nav-links a.btn:not(.primary)::after{
-            content:"";
-            position:absolute;
-            left:50%;
-            bottom:-6px;
-            width:0;
-            height:2px;
-            background:linear-gradient(90deg,var(--pi-blue),var(--pi-red));
-            transition:width .25s,left .25s;
+            content:""; position:absolute; left:50%; bottom:-6px; width:0; height:2px;
+            background:linear-gradient(90deg,var(--pi-blue),var(--pi-red)); transition:width .25s,left .25s;
         }
         header .nav-links a.btn:not(.primary):hover::after,
-        header .nav-links a.btn:not(.primary).is-active::after{
-            width:100%;
-            left:0;
-        }
-
-        /* Optionnel : petit ajustement mobile */
+        header .nav-links a.btn:not(.primary).is-active::after{ width:100%; left:0; }
         @media (max-width: 768px){
-            .nav{
-                grid-template-columns: 1fr auto;  /* logo | burger/cta */
-                row-gap:10px; height:auto;
-            }
+            .nav{ grid-template-columns: 1fr auto; row-gap:10px; height:auto; }
             .nav-links{ justify-self:start; flex-wrap:wrap }
             .auth{ justify-self:end }
         }
+
         /* Marquee */
         .marquee{position:relative; overflow:hidden; border-top:1px solid #151a2a; border-bottom:1px solid #151a2a; background:transparent;}
         .marquee__inner{display:flex; gap:40px; padding:10px 0; white-space:nowrap; animation:marquee 22s linear infinite}
@@ -141,11 +84,8 @@ unset($_SESSION['flash_success']);
         .cta-row{display:flex; gap:12px; margin-top:18px}
         .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:14px; border:1px solid #1f2842; background:linear-gradient(145deg,#151c32,#0f1424); font-weight:700}
         .btn.primary{background:linear-gradient(145deg,#102453,var(--blue)); border-color:#0f2b6a}
-
-        .video-card{position:relative; border-radius:18px; overflow:hidden; border:1px solid #1a2033; box-shadow:0 20px 60px #070a12}
-        .video-card video{display:block; width:100%; height:auto}
-        .video-overlay{position:absolute; inset:0; display:grid; place-items:center; background:linear-gradient(180deg,#00000055,#00000000); pointer-events:none}
-        .play-hint{pointer-events:auto; display:inline-flex; align-items:center; gap:10px; background:#00000080; padding:10px 14px; border-radius:12px; border:1px solid #ffffff20}
+        .video-card{position:relative; border-radius:18px; overflow:hidden; border:1px solid #1a2033; box-shadow:0 20px 60px #070a12; width:35vw; height:35vh; margin:0; padding:0;}
+        .video-card video{display:block; width:100%; height:100%; object-fit:cover; object-position:center}
 
         /* Sections */
         section{padding:64px 0}
@@ -153,163 +93,90 @@ unset($_SESSION['flash_success']);
         .section-hd h2{font-size:clamp(24px,3.3vw,40px); margin:0}
         .sub{color:var(--muted)}
 
-        /* Reveal anim */
+        /* Reveal base */
         .reveal{opacity:0; transform:translateY(16px) scale(.98); filter:saturate(.9); transition:opacity .5s ease, transform .5s ease, filter .5s ease}
         .reveal.is-visible{opacity:1; transform:none; filter:none}
 
-        /* ===== CATALOGUE ===== */
+        /* Catalogue */
         #catalog .catalog-app{display:flex; flex-direction:column; gap:16px}
-        #catalog .toolbar{
-            position:static;
-            background:linear-gradient(180deg,#0d1321cc 0%,#0d132199 100%);
-            border:1px solid #182037; border-radius:14px; overflow:hidden;
-            backdrop-filter:blur(8px);
-        }
+        #catalog .toolbar{position:static; background:linear-gradient(180deg,#0d1321cc 0%,#0d132199 100%); border:1px solid #182037; border-radius:14px; overflow:hidden; backdrop-filter:blur(8px);}
         #catalog .toolbar .row{ display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; padding:.65rem 1rem }
         #catalog .brand{font-weight:800; letter-spacing:.2px; display:flex; gap:.6rem; align-items:center}
         #catalog .brand .dot{ width:.6rem; height:.6rem; border-radius:999px; background:#3aa0ff; box-shadow:0 0 0 4px #3aa0ff22; }
-        #catalog .btn{
-            appearance:none; border:1px solid #1f2942; background:#131a2a; color:var(--text);
-            border-radius:999px; padding:.55rem .9rem; cursor:pointer; display:inline-flex; align-items:center; gap:.5rem; font-weight:800;
-            box-shadow:0 1px 0 #ffffff10 inset, 0 1px 10px #0004; transition:transform .1s ease, border-color .2s ease, background .2s ease;
-        }
+        #catalog .btn{ appearance:none; border:1px solid #1f2942; background:#131a2a; color:var(--text); border-radius:999px; padding:.55rem .9rem; cursor:pointer; display:inline-flex; align-items:center; gap:.5rem; font-weight:800; box-shadow:0 1px 0 #ffffff10 inset, 0 1px 10px #0004; transition:transform .1s ease, border-color .2s ease, background .2s ease; }
         #catalog .btn:hover{ border-color:#2a3659; background:#0f1626 }
         #catalog .btn.icon{ padding:.55rem .7rem }
         #catalog .sep{ width:1px; height:28px; background:#223052; opacity:.6; margin:0 .25rem }
         #catalog .metric{ margin-left:auto; display:inline-flex; align-items:center; gap:.5rem; font-weight:800; color:#cfe0ff; background:#0e1423; border:1px solid #1f2942; padding:.45rem .75rem; border-radius:.75rem; box-shadow:0 1px 0 #ffffff0d inset; }
         #catalog .metric small{ color:#8fa0bf; font-weight:700 }
-
-        #catalog .stage{
-            position:relative; border:1px solid var(--edge); background:var(--panel); border-radius:18px;
-            box-shadow:0 24px 60px #0009, inset 0 1px 0 #ffffff12, inset 0 0 0 1px #0008;
-            display:grid; place-items:center; overflow:hidden;
-        }
+        #catalog .stage{ position:relative; border:1px solid var(--edge); background:var(--panel); border-radius:18px; box-shadow:0 24px 60px #0009, inset 0 1px 0 #ffffff12, inset 0 0 0 1px #0008; display:grid; place-items:center; overflow:hidden; }
         #catalog .stage::after{ content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(1400px 700px at 50% -10%, transparent 0%, #00000022 60%, #00000055 100%) }
         #catalog .stage-inner{ position:relative; transform-origin:50% 50%; transition:transform .15s ease; overflow:hidden; border-radius:14px }
-
-        /* Taille d'origine */
         #flipbook{ width:min(92vw,1040px); height:88vh }
-        #catalog .icon svg{ width:18px; height:18px; display:block }
         @media (max-width:768px){ #flipbook{ height:92dvh } #catalog .metric{ display:none } }
 
-        /* ======= Nos avantages ======= */
-        #advantages .carousel{
-            position:relative; isolation:isolate;
-            background:linear-gradient(180deg,var(--panel),var(--panel-2));
-            border:1px solid var(--edge); border-radius:18px;
-            padding:clamp(14px,2vw,18px);
-            box-shadow:0 18px 40px rgba(0,0,0,.35);
-        }
+        /* Avantages (carousel) */
+        #advantages .carousel{ position:relative; isolation:isolate; background:linear-gradient(180deg,var(--panel),var(--panel-2)); border:1px solid var(--edge); border-radius:18px; padding:clamp(14px,2vw,18px); box-shadow:0 18px 40px rgba(0,0,0,.35); }
         #advantages .track-viewport{position:relative; overflow:hidden; border-radius:12px;}
         #advantages .track{display:flex; gap:16px; will-change:transform; transition:transform .45s cubic-bezier(.22,.84,.3,1); touch-action:pan-y;}
-        #advantages .card{
-            min-width:clamp(260px,42vw,340px); flex:0 0 clamp(260px,42vw,340px);
-            background:linear-gradient(180deg,#0e1422,#0b101b); border:1px solid var(--edge); border-radius:16px; overflow:hidden; padding:16px;
-            transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-        }
+        #advantages .card{ min-width:clamp(260px,42vw,340px); flex:0 0 clamp(260px,42vw,340px); background:linear-gradient(180deg,#0e1422,#0b101b); border:1px solid var(--edge); border-radius:16px; overflow:hidden; padding:16px; transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
         #advantages .thumb{aspect-ratio:16/9; background:linear-gradient(135deg,#142036,#171d2b); border:1px solid #202a44; border-radius:12px; margin-bottom:12px; overflow:hidden;}
         #advantages .thumb img{width:110%; height:110%; object-fit:cover; transform:scale(1); transition:transform .35s ease;}
         #advantages .card:hover .thumb img{transform:scale(1.06)}
         #advantages .meta{display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; margin-bottom:6px}
-        #advantages .dot{width:8px; height:8px; border-radius:50%; background:#2f7bff}
-        #advantages .card h3{margin:6px 0 6px; font-size:clamp(16px,2.2vw,19px)}
-        #advantages .tags{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
-        #advantages .tag{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #243055; color:#e9f1ff; opacity:.95}
-
-        /* Flèches statiques */
+        #advantages .dot{width:8px; height:8px; border-radius:50%;}
         #advantages .adv-nav{ position:absolute; inset:0; pointer-events:none; z-index:2; }
-        #advantages .adv-nav button{
-            pointer-events:auto; position:absolute; top:50%; transform:translateY(-50%);
-            width:46px; height:46px; border-radius:14px;
-            border:1px solid #223055; background:rgba(15,22,35,.86); color:#cfe0ff;
-            display:grid; place-items:center; cursor:pointer; backdrop-filter:blur(6px);
-            transition:background .2s ease, border-color .2s ease, box-shadow .2s ease;
-        }
-        #advantages .adv-nav .prev{left:10px}
-        #advantages .adv-nav .next{right:10px}
+        #advantages .adv-nav button{ pointer-events:auto; position:absolute; top:50%; transform:translateY(-50%); width:46px; height:46px; border-radius:14px; border:1px solid #223055; background:rgba(15,22,35,.86); color:#cfe0ff; display:grid; place-items:center; cursor:pointer; backdrop-filter:blur(6px); transition:background .2s ease, border-color .2s ease, box-shadow .2s ease; }
+        #advantages .adv-nav .prev{left:10px} .adv-nav .next{right:10px}
         #advantages .adv-nav button:hover{box-shadow:0 6px 24px rgba(0,0,0,.35); background:rgba(20,28,48,.95)}
-        #advantages .adv-nav svg{width:22px; height:22px}
 
-        /* ======= STRIP défilant (au-dessus des magasins) ======= */
+        /* Strip défilant */
         .strip-section{ padding:48px 0 24px; }
-        .strip{
-            width:100%; padding: clamp(12px, 2.2vh, 24px) 0; overflow:hidden; position:relative;
-            border-radius:18px;
-        }
-        .strip::before,.strip::after{
-            content:""; position:absolute; top:0; bottom:0; width:10vw; pointer-events:none; z-index:2;
-        }
+        .strip{ width:100%; padding:clamp(12px, 2.2vh, 24px) 0; overflow:hidden; position:relative; border-radius:18px; }
+        .strip::before,.strip::after{ content:""; position:absolute; top:0; bottom:0; width:10vw; pointer-events:none; z-index:2; }
         .strip::before{ left:0; background:linear-gradient(90deg, var(--black) 0%, rgba(10,10,10,0.0) 100%); }
         .strip::after{ right:0; background:linear-gradient(270deg, var(--black) 0%, rgba(10,10,10,0.0) 100%); }
         .marquee-strip{ width: max(200%, 200vw); }
         .track-strip{ display:flex; align-items:center; gap:var(--strip-gap); width:max-content; animation: stripScroll var(--strip-speed) linear infinite; }
         .strip:hover .track-strip{ animation-play-state: paused; }
         @keyframes stripScroll{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
-
-        .card-strip{
-            width:var(--strip-card); aspect-ratio:1/1;
-            border-radius: calc(var(--strip-radius) + var(--strip-border));
-            padding: var(--strip-border);
-            background:
-                    linear-gradient(#0b0b0b, #0b0b0b) padding-box,
-                    conic-gradient(from 225deg at 20% 80%, rgba(255,255,255,.95),
-                    rgba(255,255,255,.15), rgba(255,255,255,.6), rgba(255,255,255,.2),
-                    rgba(255,255,255,.9)) border-box;
-            border:2px solid transparent;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 12px 40px rgba(0,0,0,0.55);
+        .card-strip{ width:var(--strip-card); aspect-ratio:1/1; border-radius: calc(var(--strip-radius) + var(--strip-border)); padding: var(--strip-border);
+            background: linear-gradient(#0b0b0b, #0b0b0b) padding-box, conic-gradient(from 225deg at 20% 80%, rgba(255,255,255,.95), rgba(255,255,255,.15), rgba(255,255,255,.6), rgba(255,255,255,.2), rgba(255,255,255,.9)) border-box;
+            border:2px solid transparent; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 12px 40px rgba(0,0,0,0.55);
         }
         .card-strip .inner{ width:100%; height:100%; border-radius:var(--strip-radius); overflow:hidden; background:#0a0a0a; position:relative; display:block; }
         .card-strip img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
-        .card-strip .inner::after{ content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035); }
 
-        /* ======= NOS MAGASINS (onglets + carte) ======= */
-        #stores .nav-tabs{
-            display:flex; justify-content:center; gap:12px; margin-bottom:26px; flex-wrap:wrap;
-        }
-        #stores .nav-tab{
-            background:transparent; border:1px solid #1f2942; color:#e6edff;
-            font-weight:800; padding:.75rem 1.1rem; cursor:pointer; border-radius:999px;
-            transition:all .25s ease; display:inline-flex; align-items:center; gap:8px;
-        }
+        /* STORES */
+        #stores .nav-tabs{ display:flex; justify-content:center; gap:12px; margin-bottom:26px; flex-wrap:wrap; position:relative }
+        #stores .nav-tab{ background:transparent; border:1px solid #1f2942; color:#e6edff; font-weight:800; padding:.75rem 1.1rem; cursor:pointer; border-radius:999px; transition:all .25s ease; display:inline-flex; align-items:center; gap:8px; }
         #stores .nav-tab:hover{ background:#121a30; }
         #stores .nav-tab.active{ background:#1c305c; color:#fff; box-shadow:0 0 10px rgba(28,48,92,.35) }
-
-        /* Badge "New" animé */
-        .badge-new{
-            padding:2px 8px; font-size:.75rem; border-radius:999px; font-weight:800; letter-spacing:.4px;
-            color:#fff; text-transform:uppercase;
+        .tabs-underline{position:absolute;bottom:-6px;height:3px;border-radius:3px;
+            background:linear-gradient(90deg,#e11d48,#f59e0b);transition:transform .25s ease,width .25s ease}
+        .badge-new{ padding:2px 8px; font-size:.75rem; border-radius:999px; font-weight:800; letter-spacing:.4px; color:#fff; text-transform:uppercase;
             background:linear-gradient(90deg,#e11d48,#f59e0b,#e11d48); background-size:200% 100%;
-            animation:shimmer 2s linear infinite, floatY 2.6s ease-in-out infinite;
-            box-shadow:0 0 0 1px #ffffff40 inset, 0 0 10px #e11d4880;
-        }
+            animation:shimmer 2s linear infinite, floatY 2.6s ease-in-out infinite; box-shadow:0 0 0 1px #ffffff40 inset, 0 0 10px #e11d4880; }
         @keyframes shimmer { to{ background-position:200% 0; } }
         @keyframes floatY { 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-1.5px) } }
-
-        #stores .content-area{
-            background:linear-gradient(180deg,#0f1525,#0d1321); border:1px solid #1d2742; border-radius:20px;
-            padding:1.6rem; backdrop-filter:blur(15px); min-height:500px;
-            display:grid; grid-template-columns:1fr 1fr; gap:1.6rem; align-items:stretch;
-        }
+        #stores .content-area{ background:linear-gradient(180deg,#0f1525,#0d1321); border:1px solid #1d2742; border-radius:20px; padding:1.6rem; backdrop-filter:blur(15px); min-height:500px; display:grid; grid-template-columns:1fr 1fr; gap:1.6rem; align-items:stretch; }
         #stores .map-section{ border-radius:18px; overflow:hidden; position:relative; min-height:420px }
         #stores .map-container{ width:100%; height:100%; min-height:420px }
         #stores #map{ width:100%; height:100%; border-radius:18px }
-
         #stores .info-section{ display:flex; flex-direction:column; gap:1rem }
         #stores .store-image{ width:100%; height:200px; border-radius:15px; object-fit:cover; border:2px solid #233055 }
         #stores .store-title{ font-size:1.6rem; font-weight:800; margin:.2rem 0; background:linear-gradient(45deg,#8b1a1a,#1c305c); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
         #stores .info-item{ display:flex; align-items:center; gap:.8rem; padding:.7rem .8rem; background:#0e1528; border:1px solid #233055; border-radius:12px; }
         #stores .icon{ width:20px; height:20px; fill:#A32929 }
-
         #stores .actions{ display:flex; gap:1rem; margin-top:auto }
         #stores .btn{ flex:1; justify-content:center; border-radius:25px }
         #stores .btn-primary{ background:linear-gradient(45deg,#A32929,#8B1A1A); color:#fff }
         #stores .btn-secondary{ background:#1c305c; border:1px solid #233055; color:#fff }
-
-        /* Leaflet popups - clair */
-        .leaflet-popup-content-wrapper{ background:#ffffff; color:#0b0f1a; border-radius:10px; box-shadow:0 12px 26px rgba(0,0,0,.25); }
+        .leaflet-popup-content-wrapper{ background:#ffffff; color:#0b0f1a; border-radius:10px; box-shadow:0 12px 26px rgba(0,0,0,.25) }
         .leaflet-popup-tip{ background:#ffffff; }
         .leaflet-popup-content{ color:#0b0f1a; font-weight:600 }
-
+        .leaflet-marker-icon div{animation:bounce 1.6s ease-in-out infinite;transform-origin:center bottom}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
         @media (max-width:1024px){
             #stores .nav-tabs{ justify-content:flex-start; overflow-x:auto; padding-bottom:.5rem }
         }
@@ -319,153 +186,80 @@ unset($_SESSION['flash_success']);
             .strip-section{ padding:36px 0 8px; }
         }
 
-        /* ===== CONTACT ===== */
+        /* CONTACT */
         #contact { padding: 72px 0; }
         #contact .section-hd { flex-direction: column; align-items: center; gap: 6px; text-align: center; }
         .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:stretch; }
-        .contact-panel{
-            background: linear-gradient(180deg,#121826,#0e1422);
-            border: 1px solid #1e2740; border-radius: 22px;
-            box-shadow: 0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 #ffffff10;
-            padding: 28px 24px; display:flex; flex-direction:column; gap:22px;
-        }
-        .contact-title{
-            margin:0; text-align:center; font-size: clamp(20px, 2.2vw, 24px); font-weight: 800;
-            text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 3px;
-        }
+        .contact-panel{ background: linear-gradient(180deg,#121826,#0e1422); border: 1px solid #1e2740; border-radius: 22px; box-shadow: 0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 #ffffff10; padding: 28px 24px; display:flex; flex-direction:column; gap:22px; }
+        .contact-title{ margin:0; text-align:center; font-size: clamp(20px, 2.2vw, 24px); font-weight: 800; text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 3px; }
         .form-row{ display:flex; flex-direction:column; gap:12px; }
-        .form-control{
-            width:100%; padding:16px 18px; border-radius:14px; color:#fff;
-            background:linear-gradient(145deg,#0f152b,#0c1223); border:1px solid #1e2740; outline:none;
-            font: 600 16px/1.2 "Plus Jakarta Sans",system-ui,Segoe UI,Roboto,Arial;
-        }
+        .form-control{ width:100%; padding:16px 18px; border-radius:14px; color:#fff; background:linear-gradient(145deg,#0f152b,#0c1223); border:1px solid #1e2740; outline:none; font: 600 16px/1.2 "Plus Jakarta Sans",system-ui,Segoe UI,Roboto,Arial; }
         .form-control::placeholder{ color:#a9b6d3; font-weight:600; }
         .form-control:focus{ outline:2px solid var(--ring); }
         .form-textarea{ min-height:140px; resize:vertical; }
-        .btn-send{
-            appearance:none; cursor:pointer; border:0; width:100%; padding:16px 18px; border-radius:14px;
-            font-weight:800; font-size:16px; letter-spacing:.1px; color:#fff;
-            background: linear-gradient(145deg, #d26043, #8b1f22);
-            box-shadow: 0 12px 32px rgba(139,31,34,.35);
-            transition: transform .08s ease, box-shadow .2s ease, filter .2s ease;
-        }
+        .btn-send{ appearance:none; cursor:pointer; border:0; width:100%; padding:16px 18px; border-radius:14px; font-weight:800; font-size:16px; letter-spacing:.1px; color:#fff; background: linear-gradient(145deg, #d26043, #8b1f22); box-shadow: 0 12px 32px rgba(139,31,34,.35); transition: transform .08s ease, box-shadow .2s ease, filter .2s ease; }
         .btn-send:hover{ filter:brightness(1.05); box-shadow:0 18px 40px rgba(139,31,34,.45); }
         .btn-send:active{ transform: translateY(1px); }
-
-        /* === Alignement parfait des infos (icône / libellé / valeur) === */
-        .info-table{
-            display:grid;
-            grid-template-columns: 24px 130px 1fr; /* valeur centrale fixe => toutes les valeurs alignées */
-            row-gap:14px; column-gap:12px; align-items:center;
-            color:#e7ecf5; font-weight:700;
-            margin-top:-6px;
-        }
+        .info-table{ display:grid; grid-template-columns: 24px 130px 1fr; row-gap:14px; column-gap:12px; align-items:center; color:#e7ecf5; font-weight:700; margin-top:-6px; }
         .info-ico{ width:24px; height:24px; display:block; color:#cdd9ff; opacity:.95 }
         .info-label{ font-weight:800; line-height:1.1 }
         .info-value{ color:#c4d0ea; font-weight:600; line-height:1.2 }
-
         .newsletter{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:6px; }
         .news-wrap{ display:flex; width:100%; max-width:520px; gap:10px; }
-        .news-input{
-            flex:1; padding:14px 16px; border-radius:12px; border:1px solid #1e2740;
-            background:linear-gradient(145deg,#0f152b,#0c1223); color:#fff; font-weight:600;
-        }
+        .news-input{ flex:1; padding:14px 16px; border-radius:12px; border:1px solid #1e2740; background:linear-gradient(145deg,#0f152b,#0c1223); color:#fff; font-weight:600; }
         .news-input::placeholder{ color:#a9b6d3; }
-        .news-btn{
-            display:grid; place-items:center; width:56px; border-radius:12px; border:1px solid #213055;
-            background: linear-gradient(145deg, #122043, #0e1731); color:#cfe0ff; cursor:pointer;
-            transition: transform .08s ease, background .2s ease, border-color .2s ease;
-        }
+        .news-btn{ display:grid; place-items:center; width:56px; border-radius:12px; border:1px solid #213055; background: linear-gradient(145deg, #122043, #0e1731); color:#cfe0ff; cursor:pointer; transition: transform .08s ease, background .2s ease, border-color .2s ease; }
         .news-btn:hover{ background:#0f1b3b; border-color:#2a3d73; }
         .news-btn:active{ transform: translateY(1px); }
         @media (max-width:980px){ .contact-grid{ grid-template-columns:1fr; } }
 
         /* Footer */
-        footer{border-top:1px solid #141a2b; background:transparent;}
-        .foot{display:grid; grid-template-columns:1fr auto; gap:16px; padding:24px 0; color:#b7c2d9}
+        footer.pi-footer{ background: var(--black, #0a0c10) !important; border-top: 1px solid #141a2b; }
+        .pi-footer .wrap{ max-width:1100px; margin:0 auto; text-align:center; }
+        .pi-footer .brand{ height:72px; width:auto; object-fit:contain; display:block; margin:0 auto 18px; }
+        .pi-footer .headline{ display:flex; align-items:center; justify-content:center; gap:22px; margin:6px auto 18px; }
+        .pi-footer .headline h2{ margin:0; font-weight:800; letter-spacing:.12em; color:var(--pi-red, #D6452E); font-size:24px; }
+        .pi-footer .headline .line{ height:4px; width:260px; border-radius:2px; background:var(--pi-red, #D6452E); transform-origin:center; transform:scaleX(0); transition:transform .6s cubic-bezier(.22,.84,.3,1) }
+        @media (max-width:720px){ .pi-footer .headline .line{ width:20vw } .pi-footer .headline h2{ font-size:20px } }
+        .pi-footer .social{ list-style:none; display:flex; justify-content:center; align-items:center; gap:14px; padding:0; margin:14px 0 20px; }
+        .pi-footer .social a{ width:42px; height:42px; display:grid; place-items:center; background:#101733; color:#cfe0ff; border-radius:50%; border:1px solid #1e2740; font-size:18px; transition:transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease; }
+        .pi-footer .social a:hover{ background: linear-gradient(145deg, var(--pi-blue,#2E4C97), var(--pi-red,#D6452E)); border-color:#2a3659; color:#fff; transform:translateY(-2px); }
+        .pi-footer .footer-nav{ display:flex; flex-wrap:wrap; justify-content:center; gap:26px 30px; padding:12px 0 8px; margin:0 auto 12px; }
+        .pi-footer .footer-nav a{ text-decoration:none; color:#e9f1ff; font-weight:800; font-size:14px; letter-spacing:.04em; text-transform:uppercase; transition:color .2s ease; }
+        .pi-footer .footer-nav a:hover{ color:var(--pi-red,#D6452E) }
+        .pi-footer .copyright{ margin:6px 0 0; font-size:12px; color:var(--muted); user-select:none; }
 
-        /* Gradient animé "à deux pas" */
-        .gradient-text{
-            background-image: linear-gradient(90deg, var(--blue), #b6152f, var(--red), #b6152f, var(--blue));
-            background-size:300% 100%; background-position:0% 50%;
-            -webkit-background-clip:text; background-clip:text; color:transparent;
-        }
-
-        /* Canvas fond */
+        /* Canvas fond + extras */
         #bg-anim{position:fixed; inset:0; z-index:-1; pointer-events:none; background:var(--black);}
-
-        /* === Extra animations (global) === */
-        .progress{position:fixed;top:0;left:0;height:3px;width:0;
-            background:linear-gradient(90deg,#3aa0ff,#e11d48);z-index:1000;box-shadow:0 0 12px #3aa0ff88}
+        .progress{position:fixed;top:0;left:0;height:3px;width:0; background:linear-gradient(90deg,#3aa0ff,#e11d48);z-index:1000;box-shadow:0 0 12px #3aa0ff88}
         .cursor-dot,.cursor-ring{position:fixed;pointer-events:none;z-index:10000;left:0;top:0;transform:translate(-50%,-50%)}
         .cursor-dot{width:6px;height:6px;border-radius:50%;background:#fff}
         .cursor-ring{width:36px;height:36px;border-radius:50%;border:1px solid #ffffff55;mix-blend-mode:exclusion;transition:width .15s ease,height .15s ease}
         .click-ripple{position:fixed;left:0;top:0;width:12px;height:12px;border-radius:999px;background:#ffffff40;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
 
-        #stores .nav-tabs{position:relative}
-        .tabs-underline{position:absolute;bottom:-6px;height:3px;border-radius:3px;
-            background:linear-gradient(90deg,#e11d48,#f59e0b);transition:transform .25s ease,width .25s ease}
+        /* Gradient animé "à deux pas" */
+        .gradient-text{ background-image: linear-gradient(90deg, var(--blue), #b6152f, var(--red), #b6152f, var(--blue)); background-size:300% 100%; background-position:0% 50%; -webkit-background-clip:text; background-clip:text; color:transparent; }
 
-        /* Leaflet marker gentle bounce */
-        .leaflet-marker-icon div{animation:bounce 1.6s ease-in-out infinite;transform-origin:center bottom}
-        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-
-        /* Petite entrée verticale des lettres (utilisée pour titrage si besoin)
-        .h2-animate .char{display:inline-block;transform:translateY(20px);opacity:0}
-        @keyframes rise{to{transform:none;opacity:1}} */
-        .reveal { padding: 0; } /* garde si tu veux */
-        .video-card{
-            width: 35vw;          /* plein écran en largeur */
-            height: 35vh;         /* plein écran en hauteur */
-            margin: 0;
-            padding: 0;
-            overflow: hidden;      /* coupe ce qui dépasse */
-            border-radius: 0;      /* évite les bords noirs arrondis */
-            box-shadow: none;
-        }
-
-        #promoVideo{
-            width: 100%;
-            height: 100%;
-            object-fit: cover;     /* remplit sans bandes noires */
-            object-position: center;
-            display: block;
-        }
-        /* Nav index : soulignement dégradé au survol / actif */
-        :root{ --pi-blue:#2E4C97; --pi-red:#D6452E; } /* au cas où */
-        /* Nav index : soulignement dégradé, sauf pour .primary */
-        header .nav-links a.btn:not(.primary){
-            position: relative;
-            background: transparent;
-            border: 0;
-            padding-inline: 10px;
-            padding-bottom: 6px; /* espace pour la ligne */
-        }
-
-        header .nav-links a.btn:not(.primary)::after{
-            content:"";
-            position:absolute;
-            left:50%;
-            bottom:-6px;
-            width:0;
-            height:2px;
-            background:linear-gradient(90deg,var(--pi-blue),var(--pi-red));
-            transition:width .25s,left .25s;
-        }
-
-        header .nav-links a.btn:not(.primary):hover::after,
-        header .nav-links a.btn:not(.primary).is-active::after{
-            width:100%;
-            left:0;
+        /* === AOS mini (sections stores, contact, footer) === */
+        .aos{opacity:0; will-change:transform,opacity,clip-path}
+        .aos.in{opacity:1}
+        @keyframes aos-rise   {from{transform:translateY(22px);opacity:0} to{transform:none;opacity:1}}
+        @keyframes aos-scale  {from{transform:scale(.96);opacity:0}        to{transform:scale(1);opacity:1}}
+        @keyframes aos-sweep  {from{clip-path:inset(0 50% 0 50%);opacity:0} to{clip-path:inset(0 0 0 0);opacity:1}}
+        @keyframes aos-pop    {0%{transform:scale(.6);opacity:0} 70%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1}}
+        [data-anim="rise"].in  {animation:aos-rise .65s cubic-bezier(.22,.84,.3,1) both;  animation-delay:var(--aos-delay,0ms)}
+        [data-anim="scale"].in {animation:aos-scale .55s ease-out both;                animation-delay:var(--aos-delay,0ms)}
+        [data-anim="sweep"].in {animation:aos-sweep .70s ease-out both;                animation-delay:var(--aos-delay,0ms)}
+        [data-anim="pop"].in   {animation:aos-pop .45s cubic-bezier(.2,.9,.2,1.2) both;animation-delay:var(--aos-delay,0ms)}
+        .pi-footer .headline.in .line{transform:scaleX(1)}
+        @media (prefers-reduced-motion: reduce){
+            .aos,[data-anim]{opacity:1!important; animation:none!important; transform:none!important; clip-path:none!important}
         }
     </style>
 </head>
 <body>
 <?php if (!empty($flash)): ?>
-    <div id="toast" style="position:fixed;right:16px;top:16px;z-index:9999;
-                         padding:10px 14px;border-radius:10px;
-                         background:rgba(16,185,129,.95);color:#fff;font-weight:700;
-                         border:1px solid rgba(16,185,129,.4);box-shadow:0 10px 30px rgba(0,0,0,.25)">
+    <div id="toast" style="position:fixed;right:16px;top:16px;z-index:9999; padding:10px 14px;border-radius:10px; background:rgba(16,185,129,.95);color:#fff;font-weight:700; border:1px solid rgba(16,185,129,.4);box-shadow:0 10px 30px rgba(0,0,0,.25)">
         <?= htmlspecialchars($flash) ?>
     </div>
     <script>
@@ -479,13 +273,13 @@ unset($_SESSION['flash_success']);
         },2200);
     </script>
 <?php endif; ?>
-<!-- Progress bar + custom cursor -->
+
+<!-- Progress + cursor -->
 <div class="progress" id="progress"></div>
 <div class="cursor-dot" id="cDot"></div>
 <div class="cursor-ring" id="cRing"></div>
 
-
-<!-- Canvas du fond animé -->
+<!-- Canvas fond -->
 <canvas id="bg-anim" aria-hidden="true"></canvas>
 
 <!-- Bandeau -->
@@ -494,31 +288,30 @@ unset($_SESSION['flash_success']);
         <span class="pill"><span class="dot"></span> Promotions fraîches chaque semaine</span>
         <span class="pill"><span class="dot"></span> Qualité halal • Boucherie & primeur</span>
         <span class="pill"><span class="dot"></span> Épicerie du monde • Turquie, Maghreb & +</span>
-        <span class="pill"><span class="dot"></span>  Produits frais & de saison</span>
+        <span class="pill"><span class="dot"></span> Produits frais & de saison</span>
         <span class="pill"><span class="dot"></span> Promotions fraîches chaque semaine</span>
         <span class="pill"><span class="dot"></span> Qualité halal • Boucherie & primeur</span>
         <span class="pill"><span class="dot"></span> Épicerie du monde • Turquie, Maghreb & +</span>
         <span class="pill"><span class="dot"></span> Produits frais & de saison</span>
     </div>
 </div>
+
 <header>
     <div class="container nav">
-        <!-- Logo -->
         <div class="brand">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
                 <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" style="height:48px">
             </a>
         </div>
 
-        <!-- Liens centrés -->
         <nav class="nav-links">
+            <a href="index.php" class="btn magnet">Accueil</a>
             <a href="quiSommesNous.html" class="btn magnet">Notre Histoire</a>
             <a href="postuler.php" class="btn magnet">Postuler</a>
             <a href="#contact" class="btn magnet">Nous contacter</a>
             <a href="nosMagasins.php" class="btn magnet">Nos Magasins</a>
         </nav>
 
-        <!-- Boutons à droite -->
         <div class="auth">
             <a href="pageInscription.php" class="btn">Inscription</a>
             <a href="pageConnexion.php" class="btn primary">Connexion</a>
@@ -546,7 +339,6 @@ unset($_SESSION['flash_success']);
                         <source src="../assets/img/bondy%20.mp4" type="video/mp4" />
                         Votre navigateur ne supporte pas la vidéo HTML5.
                     </video>
-
                 </div>
             </div>
         </div>
@@ -599,7 +391,7 @@ unset($_SESSION['flash_success']);
     <section id="advantages">
         <div class="container">
             <div class="section-hd reveal">
-                <h2>Nos avantages</h2>
+                <h2>Nos rayons</h2>
                 <div class="sub">Défilement infini — mini-zoom au survol — clics inactifs</div>
             </div>
 
@@ -608,8 +400,8 @@ unset($_SESSION['flash_success']);
                     <div class="track" id="adv-track">
                         <article class="card tilt" tabindex="0">
                             <div class="thumb"><img src="https://picsum.photos/seed/fruits/1280/720" alt=""></div>
-                            <div class="meta"><span class="dot"></span><span>Fraîcheur</span></div>
-                            <h3>Fruits & légumes croquants</h3>
+                            <div class="meta"><span class="dot" style="background:#2f7bff"></span><span>Fraîcheur</span></div>
+                            <h3>Surgelés</h3>
                             <p>Des arrivages quotidiens directement des producteurs pour une qualité au top.</p>
                             <div class="tags"><span class="tag">Local</span><span class="tag">Saisonnier</span></div>
                         </article>
@@ -618,14 +410,14 @@ unset($_SESSION['flash_success']);
                             <div class="thumb"><img src="https://picsum.photos/seed/butcher/1280/720" alt=""></div>
                             <div class="meta"><span class="dot" style="background:#b9143f"></span><span>Qualité</span></div>
                             <h3>Boucherie sélection</h3>
-                            <p>Contrôles stricts, origine vérifiée, découpe fraîche chaque jour.</p>
+                            <p>Viandes حلال, origine vérifiée, découpe fraîche chaque jour.</p>
                             <div class="tags"><span class="tag">Label</span><span class="tag">Traçable</span></div>
                         </article>
 
                         <article class="card tilt" tabindex="0">
                             <div class="thumb"><img src="https://picsum.photos/seed/grocery/1280/720" alt=""></div>
                             <div class="meta"><span class="dot" style="background:#19c37d"></span><span>Prix</span></div>
-                            <h3>Indispensables à petit prix</h3>
+                            <h3>Produits frais</h3>
                             <p>Des tarifs justes et stables toute l’année sur les essentiels du quotidien.</p>
                             <div class="tags"><span class="tag">Promo</span><span class="tag">Budget</span></div>
                         </article>
@@ -633,7 +425,7 @@ unset($_SESSION['flash_success']);
                         <article class="card tilt" tabindex="0">
                             <div class="thumb"><img src="https://picsum.photos/seed/delivery/1280/720" alt=""></div>
                             <div class="meta"><span class="dot" style="background:#f5a524"></span><span>Service</span></div>
-                            <h3>Près de vous</h3>
+                            <h3>Produits secs</h3>
                             <p>Retrait rapide, créneaux souples, équipe réactive pour vous servir.</p>
                             <div class="tags"><span class="tag">Rapide</span><span class="tag">Local</span></div>
                         </article>
@@ -641,13 +433,28 @@ unset($_SESSION['flash_success']);
                         <article class="card tilt" tabindex="0">
                             <div class="thumb"><img src="https://picsum.photos/seed/traiteur/1280/720" alt=""></div>
                             <div class="meta"><span class="dot" style="background:#b07cff"></span><span>Gourmand</span></div>
-                            <h3>Traiteur maison</h3>
+                            <h3>Boissons</h3>
                             <p>Recettes authentiques, ingrédients frais, prêt à déguster.</p>
                             <div class="tags"><span class="tag">Fait-maison</span><span class="tag">Fraîcheur</span></div>
                         </article>
+
+                        <article class="card tilt" tabindex="0">
+                            <div class="thumb"><img src="https://picsum.photos/seed/butcher/1280/720" alt=""></div>
+                            <div class="meta"><span class="dot" style="background:#b9143f"></span><span>Qualité</span></div>
+                            <h3>Emballages</h3>
+                            <p>Viandes حلال, origine vérifiée, découpe fraîche chaque jour.</p>
+                            <div class="tags"><span class="tag">Label</span><span class="tag">Traçable</span></div>
+                        </article>
+
+                        <article class="card tilt" tabindex="0">
+                            <div class="thumb"><img src="https://picsum.photos/seed/butcher/1280/720" alt=""></div>
+                            <div class="meta"><span class="dot" style="background:#b9143f"></span><span>Qualité</span></div>
+                            <h3>Hygiènes</h3>
+                            <p>حلال, origine vérifiée, découpe fraîche chaque jour.</p>
+                            <div class="tags"><span class="tag">Label</span><span class="tag">Traçable</span></div>
+                        </article>
                     </div>
 
-                    <!-- Flèches centrées et statiques -->
                     <div class="adv-nav">
                         <button class="prev" id="adv-prev" aria-label="Précédent">
                             <svg viewBox="0 0 24 24" fill="none"><path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -661,17 +468,15 @@ unset($_SESSION['flash_success']);
         </div>
     </section>
 
-    <!-- STRIP défilant (au-dessus des magasins) -->
+    <!-- STRIP défilant -->
     <section class="strip-section">
         <div class="container">
             <div class="strip" aria-label="Galerie défilante">
                 <div class="marquee-strip">
                     <div class="track-strip" id="trackStrip">
-                        <!-- Série A -->
                         <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09743.JPG" alt="Rayon fruits"/></span></article>
-                        <article class="card-strip"><span class="inner"><img src="../assets/img/DJI_0264.JPG"/></span></article>
-                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09757.JPG  " alt="Légumes"/></span></article>
-                        <!-- Série B (dupliquée) -->
+                        <article class="card-strip"><span class="inner"><img src="../assets/img/DJI_0264.JPG" alt="Vue drone"/></span></article>
+                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09757.JPG" alt="Légumes"/></span></article>
                         <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09764.JPG" alt="Rayon fruits"/></span></article>
                         <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09680.JPG" alt="Clients"/></span></article>
                         <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09686.JPG" alt="Légumes"/></span></article>
@@ -681,7 +486,7 @@ unset($_SESSION['flash_success']);
         </div>
     </section>
 
-    <!-- MAGASINS (onglets + carte) -->
+    <!-- MAGASINS -->
     <section id="stores">
         <div class="container">
             <div class="section-hd reveal">
@@ -714,7 +519,6 @@ unset($_SESSION['flash_success']);
             </div>
 
             <div class="contact-grid">
-                <!-- Formulaire -->
                 <div class="contact-panel">
                     <h3 class="contact-title">Envoyez-nous un message</h3>
 
@@ -741,27 +545,22 @@ unset($_SESSION['flash_success']);
                     </form>
                 </div>
 
-                <!-- Infos + newsletter -->
                 <div class="contact-panel">
                     <h3 class="contact-title">Service client</h3>
 
-                    <!-- Grille d'alignement parfait -->
                     <div class="info-table">
-                        <!-- TÉLÉPHONE -->
                         <svg class="info-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.08 4.18 2 2 0 0 1 4.06 2h3a2 2 0 0 1 2 1.72c.12.9.3 1.77.55 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.47-1.08a2 2 0 0 1 2.11-.45c.84.25 1.71.43 2.61.55A2 2 0 0 1 22 16.92z"/>
                         </svg>
                         <div class="info-label">Téléphone</div>
                         <div class="info-value">07 49 82 61 33 (appel gratuit)</div>
 
-                        <!-- EMAIL -->
                         <svg class="info-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/>
                         </svg>
                         <div class="info-label">Email</div>
                         <div class="info-value">parisistambulnogent@gmail.com</div>
 
-                        <!-- HORAIRES -->
                         <svg class="info-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
                         </svg>
@@ -785,14 +584,38 @@ unset($_SESSION['flash_success']);
     </section>
 </main>
 
-<footer>
-    <div class="container foot">
-        <div>
-            <div style="font-weight:800">Paristanbul</div>
-            <div>Service client : <a href="mailto:contact@paristanbul.com">contact@paristanbul.com</a></div>
-            <div style="font-size:.92rem; color:#9fb0c7">Suivez-nous : Instagram • Facebook • TikTok</div>
+<footer class="pi-footer">
+    <div class="wrap">
+        <img class="brand" src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul">
+
+        <div class="headline">
+            <span class="line" aria-hidden="true"></span>
+            <h2>REJOIGNEZ-NOUS</h2>
+            <span class="line" aria-hidden="true"></span>
         </div>
-        <div>© <span id="year"></span> Paristanbul – Tous droits réservés</div>
+
+        <ul class="social" aria-label="Réseaux sociaux">
+            <li><a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a></li>
+            <li><a href="https://www.instagram.com/paristanbul_supermarche/?hl=fr" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a></li>
+            <li><a href="https://www.tiktok.com/@supermarche_paristanbul" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a></li>
+            <li><a href="https://www.youtube.com/channel/UCsjy3bdpFzBwM7MF923gKvA" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a></li>
+        </ul>
+
+        <nav class="footer-nav" aria-label="Navigation pied de page">
+            <a href="index.php">Accueil</a>
+            <a href="nosMagasins.php">Nos magasins</a>
+            <a href="#catalog">Catalogue</a>
+            <a href="quiSommesNous.html">À propos</a>
+            <a href="postuler.php">Postuler</a>
+            <a href="#contact">Contact</a>
+            <a href="#">Mentions légales</a>
+            <a href="#">CGV</a>
+        </nav>
+
+        <p class="copyright">
+            © <span id="year"></span> Paristanbul — Tous droits réservés.
+            <br><br>
+        </p>
     </div>
 </footer>
 
@@ -818,10 +641,10 @@ unset($_SESSION['flash_success']);
     const onScrollParallax=()=>{ const y=window.scrollY||document.documentElement.scrollTop; parallaxNodes.forEach(n=>{ const sp=parseFloat(n.dataset.speed||'0.05'); n.style.transform=`translateY(${y*sp}px)`; });};
     onScrollParallax(); addEventListener('scroll', onScrollParallax, {passive:true});
 
-    /* ===== Catalogue : couverture seule centrée ===== */
+    /* ===== Catalogue ===== */
     (function(){
         const TOTAL_PAGES = 5;
-        const PATH = '/Projet-paristanbul/assets/pages'; // <-- adapte si besoin
+        const PATH = '/Projet-paristanbul/assets/pages';
         const FILENAME = i => String(i).padStart(2,'0') + '.jpg';
         const MOBILE_BREAKPOINT = 768;
         const MIN_W = 480, MAX_W = 1040;
@@ -835,7 +658,6 @@ unset($_SESSION['flash_success']);
         const flipEl    = document.getElementById('flipbook');
         const pageLabel = document.getElementById('pageLabel');
 
-        function applyScale(){ stageInner.style.transform = `scale(${scale})`; }
         function updateMetric(){ if(pageFlip){ const i = pageFlip.getCurrentPageIndex(); pageLabel.textContent = `${i+1} / ${TOTAL_PAGES}`; } }
 
         async function detectAspect(){
@@ -858,11 +680,9 @@ unset($_SESSION['flash_success']);
         function coverMaskAndCenter(){
             const idx = pageFlip.getCurrentPageIndex();
             const isDouble = !pageFlip.getSettings().usePortrait;
-
             flipEl.style.clipPath = 'none';
             flipEl.style.webkitClipPath = 'none';
             stageInner.style.transform = `scale(${scale})`;
-
             if (isDouble && idx === 0) {
                 flipEl.style.clipPath = 'inset(0 0 0 50%)';
                 flipEl.style.webkitClipPath = 'inset(0 0 0 50%)';
@@ -908,7 +728,7 @@ unset($_SESSION['flash_success']);
         if(document.readyState!=='loading') initFlip(0); else window.addEventListener('load', ()=> initFlip(0));
     })();
 
-    /* ===== Nos avantages : loop + flèches ===== */
+    /* ===== Avantages carousel ===== */
     (function(){
         const root=document.getElementById('advantages'); if(!root) return;
         const vp=root.querySelector('.track-viewport');
@@ -922,7 +742,7 @@ unset($_SESSION['flash_success']);
         function cardWidth(){ return originals[0].getBoundingClientRect().width; }
         function visibleCount(){ const w=vp.getBoundingClientRect().width; return Math.max(1, Math.floor((w+GAP)/(cardWidth()+GAP))); }
         function clearClones(){ [...track.children].forEach(n=>{ if(n.dataset.clone) n.remove();});}
-        function cloneNode(n){ const c=n.cloneNode(true); wireTilt(c); return c; }
+        function cloneNode(n){ return n.cloneNode(true); }
 
         function setupClones(){
             clearClones();
@@ -933,8 +753,8 @@ unset($_SESSION['flash_success']);
         }
         function translate(){ const x=-(index*(cardWidth()+GAP)); track.style.transform=`translateX(${x}px)`; }
         function instantTranslate(){ const t=track.style.transition; track.style.transition='none'; translate(); track.offsetHeight; track.style.transition=t||''; }
-        function next(){ index++; translate(); ripple(nextBtn); }
-        function prev(){ index--; translate(); ripple(prevBtn); }
+        function next(){ index++; translate(); }
+        function prev(){ index--; translate(); }
 
         track.addEventListener('transitionend',()=>{
             const V=startIndex, total=originals.length, tailStart=V+total;
@@ -953,28 +773,9 @@ unset($_SESSION['flash_success']);
         vp.addEventListener('mousedown', onDown); window.addEventListener('mousemove', onMove); window.addEventListener('mouseup', onUp);
         vp.addEventListener('touchstart', onDown, {passive:true}); vp.addEventListener('touchmove', onMove, {passive:true}); vp.addEventListener('touchend', onUp);
 
-        // Autoplay
         function startAuto(){ stopAuto(); autoplay=setInterval(()=>next(), 3500); }
         function stopAuto(){ if(autoplay) { clearInterval(autoplay); autoplay=null; } }
         root.addEventListener('mouseenter', stopAuto); root.addEventListener('mouseleave', startAuto);
-
-        // Ripple anim
-        function ripple(btn){
-            const r=document.createElement('span');
-            r.style.cssText=`position:absolute; left:50%; top:50%; width:10px;height:10px;border-radius:999px;background:#cfe0ff33; transform:translate(-50%,-50%); pointer-events:none;`;
-            btn.appendChild(r);
-            requestAnimationFrame(()=>{ r.style.transition='transform .4s ease, opacity .4s ease'; r.style.transform='translate(-50%,-50%) scale(8)'; r.style.opacity='0'; });
-            setTimeout(()=>r.remove(), 450);
-        }
-
-        // Tilt 3D
-        function wireTilt(el){ if(!el.classList.contains('tilt')) return;
-            const r=10; let raf=null;
-            const move=(x,y,w,h)=>{ const rx=((y-h/2)/(h/2))*-r, ry=((x-w/2)/(w/2))*r; el.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`; };
-            el.addEventListener('mousemove',(e)=>{ const rc=el.getBoundingClientRect(); const x=e.clientX-rc.left, y=e.clientY-rc.top; if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(()=>move(x,y,rc.width,rc.height)); });
-            el.addEventListener('mouseleave',()=>{ el.style.transform='rotateX(0) rotateY(0)'; });
-        }
-        $$('.tilt', track).forEach(wireTilt);
 
         function init(){ originals=[...track.children].filter(el=>!el.dataset.clone); setupClones(); translate(); startAuto(); }
         init();
@@ -984,49 +785,48 @@ unset($_SESSION['flash_success']);
     /* ===== Strip : pause onglet masqué ===== */
     (function(){ const track = document.getElementById('trackStrip'); document.addEventListener('visibilitychange',()=>{ track.style.animationPlayState = document.hidden ? 'paused' : 'running'; });})();
 
-    /* ===== STORES : tabs + Leaflet ===== */
+    /* ===== STORES (images locales + lazy) ===== */
     const storesData = {
-        villiers1: { title:'Paristanbul VILLIERS-LE-BEL', image:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=200&fit=crop&crop=center', address:'3 avenue des entrepreneurs, VILLIERS-LE-BEL', hours:'Lundi à Dimanche : 08:30-20:00', phone:'01 39 94 12 34', coordinates:[49.0010, 2.3894] },
-        villiers2: { title:'Paristanbul VILLIERS-LE-BEL 2', image:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=200&fit=crop&crop=center', address:'117 Avenue Pierre Semard, VILLIERS-LE-BEL', hours:'Lundi à Dimanche : 08:30-20:00', phone:'01 39 95 12 34', coordinates:[49.0015, 2.3900] },
-        drancy:    { title:'Paristanbul DRANCY', image:'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=200&fit=crop&crop=center', address:'83 avenue Marceau, DRANCY', hours:'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00', phone:'01 48 95 12 34', coordinates:[48.9242, 2.4456] },
-        bondy:     { title:'Paristanbul BONDY', image:'https://images.unsplash.com/photo-1574719602651-bce1b0cb84a3?w=400&h=200&fit=crop&crop=center', address:'116 Av. Gallieni, BONDY', hours:'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00', phone:'01 48 47 12 34', coordinates:[48.9024, 2.4823] },
-        villemomble:{ title:'Paristanbul VILLEMOMBLE', image:'https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?w=400&h=200&fit=crop&crop=center', address:'68 ALLEE DU PLATEAU, VILLEMOMBLE', hours:'Lundi à Dimanche : 08:00-20:30', phone:'01 45 28 12 34', coordinates:[48.8844, 2.5103] },
-        nogent:    { title:'Paristanbul NOGENT-SUR-OISE', image:'https://images.unsplash.com/photo-1604719312566-9d6eed8dd866?w=400&h=200&fit=crop&crop=center', address:'171 Rue Jean Monnet, NOGENT-SUR-OISE', hours:'Lundi à Samedi : 09:30-20:00, Dimanche : 10:00-19:00', phone:'03 44 74 12 34', coordinates:[49.2765, 2.2011] },
-        vertsaintdenis:{ title:'Paristanbul VERT-SAINT-DENIS', image:'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=200&fit=crop&crop=center', address:'La Fontaine Ronde, VERT-SAINT-DENIS', hours:'Lundi à Dimanche : 08:30-20:30', phone:'01 64 10 12 34', coordinates:[48.6478, 2.6223] }
+        villiers1: { title:'Paristanbul VILLIERS-LE-BEL', image:'../assets/img/magasins/villiers1.jpg', address:'3 avenue des entrepreneurs, VILLIERS-LE-BEL', hours:'Lundi à Dimanche : 08:30-20:00', phone:'01 39 94 12 34', coordinates:[49.0010, 2.3894] },
+        villiers2: { title:'Paristanbul VILLIERS-LE-BEL 2', image:'../assets/img/magasins/villiers2.jpg', address:'117 Avenue Pierre Semard, VILLIERS-LE-BEL', hours:'Lundi à Dimanche : 08:30-20:00', phone:'01 39 95 12 34', coordinates:[49.0015, 2.3900] },
+        drancy:    { title:'Paristanbul DRANCY', image:'../assets/img/magasins/drancy.jpg', address:'83 avenue Marceau, DRANCY', hours:'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00', phone:'01 48 95 12 34', coordinates:[48.9242, 2.4456] },
+        bondy:     { title:'Paristanbul BONDY', image:'../assets/img/magasins/bondy.jpg', address:'116 Av. Gallieni, BONDY', hours:'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00', phone:'01 48 47 12 34', coordinates:[48.9024, 2.4823] },
+        villemomble:{ title:'Paristanbul VILLEMOMBLE', image:'../assets/img/magasins/villemomble.jpg', address:'68 ALLEE DU PLATEAU, VILLEMOMBLE', hours:'Lundi à Dimanche : 08:00-20:30', phone:'01 45 28 12 34', coordinates:[48.8844, 2.5103] },
+        nogent:    { title:'Paristanbul NOGENT-SUR-OISE', image:'../assets/img/magasins/nogent.jpg', address:'171 Rue Jean Monnet, NOGENT-SUR-OISE', hours:'Lundi à Samedi : 09:30-20:00, Dimanche : 10:00-19:00', phone:'03 44 74 12 34', coordinates:[49.2765, 2.2011] },
+        vertsaintdenis:{ title:'Paristanbul VERT-SAINT-DENIS', image:'../assets/img/magasins/vertsaintdenis.jpg', address:'La Fontaine Ronde, VERT-SAINT-DENIS', hours:'Lundi à Dimanche : 08:30-20:30', phone:'01 64 10 12 34', coordinates:[48.6478, 2.6223] }
     };
     let currentMap = null;
 
     function createStoreContent(storeKey){
         const s = storesData[storeKey];
         return `
-    <div class="map-section"><div class="map-container"><div id="map"></div></div></div>
-    <div class="info-section">
-      <img src="${s.image}" alt="${s.title}" class="store-image">
-      <div class="store-info">
-        <h2 class="store-title">${s.title}</h2>
-        <div class="info-item">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 5.5 12 5.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
-          <span>${s.address}</span>
-        </div>
-        <div class="info-item">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-          <span>${s.hours}</span>
-        </div>
-        <div class="info-item">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-          <span>${s.phone}</span>
-        </div>
+  <div class="map-section"><div class="map-container"><div id="map"></div></div></div>
+  <div class="info-section">
+    <img src="${s.image}" alt="${s.title}" class="store-image" loading="lazy">
+    <div class="store-info">
+      <h2 class="store-title">${s.title}</h2>
+      <div class="info-item">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 5.5 12 5.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+        <span>${s.address}</span>
       </div>
-      <div class="actions">
-        <a href="#" class="btn btn-primary" onclick="openDirections('${s.address}')" rel="noopener">Itinéraire</a>
-        <a href="tel:${s.phone.replace(/\s/g,'')}" class="btn btn-secondary">Appeler</a>
+      <div class="info-item">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        <span>${s.hours}</span>
       </div>
-    </div>`;
+      <div class="info-item">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        <span>${s.phone}</span>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="#" class="btn btn-primary" onclick="openDirections('${s.address}')" rel="noopener">Itinéraire</a>
+      <a href="tel:${s.phone.replace(/\s/g,'')}" class="btn btn-secondary">Appeler</a>
+    </div>
+  </div>`;
     }
 
     function initMap(lat, lng, title, address){
         if(currentMap){ currentMap.remove(); }
-        // ---- CARTE CLAIRE (fond blanc) ----
         currentMap = L.map('map',{ zoomControl:true, scrollWheelZoom:true }).setView([lat,lng],15);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
             { attribution:'© OpenStreetMap • © CARTO', subdomains:'abcd', maxZoom:19 }).addTo(currentMap);
@@ -1051,14 +851,14 @@ unset($_SESSION['flash_success']);
         const area = document.getElementById('contentArea');
         area.innerHTML = createStoreContent(key);
         const s = storesData[key];
-        setTimeout(()=> initMap(s.coordinates[0], s.coordinates[1], s.title, s.address), 100);
+        setTimeout(()=> initMap(s.coordinates[0], s.coordinates[1], s.title, s.address), 120);
     }
     document.addEventListener('click', (e)=>{
         const btn = e.target.closest('#stores .nav-tab');
         if(!btn) return;
         selectStore(btn.getAttribute('data-store'));
     });
-    document.addEventListener('DOMContentLoaded', ()=> setTimeout(()=> selectStore('villiers1'), 120));
+    document.addEventListener('DOMContentLoaded', ()=> setTimeout(()=> selectStore('villiers1'), 140));
 
     /* Footer year */
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -1110,6 +910,7 @@ unset($_SESSION['flash_success']);
             }
         }
     })();
+
     /* Newsletter (démo) */
     (function(){
         const f = document.getElementById('newsletterForm');
@@ -1122,19 +923,15 @@ unset($_SESSION['flash_success']);
             f.reset();
         });
     })();
-</script>
-<script>
+
+    /* Nav active */
     document.querySelectorAll('header .nav-links a').forEach(a=>{
         const clean = (u)=>u.split('#')[0].replace(/\/+$/,'');
         if (clean(a.href) === clean(location.href)) a.classList.add('is-active');
     });
-</script>
-<script>
-    (() => {
-        const $ = (s,el=document)=>el.querySelector(s);
-        const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
 
-        /* 1) Barre de progression scroll */
+    /* UI extras: progress, smooth anchors, cursor, magnet, ripple, marquee speed */
+    (() => {
         const progress = $('#progress');
         const onProg = () => {
             const h = document.documentElement;
@@ -1143,7 +940,6 @@ unset($_SESSION['flash_success']);
         };
         onProg(); addEventListener('scroll', onProg, {passive:true});
 
-        /* 2) Smooth scroll pour les ancres internes */
         document.addEventListener('click', (e) => {
             const a = e.target.closest('a[href^="#"]');
             if(!a) return;
@@ -1152,7 +948,6 @@ unset($_SESSION['flash_success']);
             if(tgt){ e.preventDefault(); tgt.scrollIntoView({behavior:'smooth', block:'start'}); }
         });
 
-        /* 3) Curseur personnalisé + Magnet sur .magnet */
         const cDot = $('#cDot'), cRing = $('#cRing');
         let mx=innerWidth/2, my=innerHeight/2, rx=mx, ry=my;
         addEventListener('mousemove', (e)=>{ mx=e.clientX; my=e.clientY; cDot.style.left=mx+'px'; cDot.style.top=my+'px'; });
@@ -1170,7 +965,6 @@ unset($_SESSION['flash_success']);
             btn.addEventListener('mouseleave', ()=>{ btn.style.transform='translate(0,0)'; cRing.style.width='36px'; cRing.style.height='36px'; });
         });
 
-        /* 4) Ripple au clic (global) */
         addEventListener('click', (e)=>{
             const r=document.createElement('span'); r.className='click-ripple';
             r.style.left=e.clientX+'px'; r.style.top=e.clientY+'px';
@@ -1180,60 +974,50 @@ unset($_SESSION['flash_success']);
             setTimeout(()=>r.remove(),520);
         }, {passive:true});
 
-        /* 5) Shimmer toggle sur la marquee (haut) */
         const mqInner = $('.marquee__inner');
         if(mqInner){
             mqInner.addEventListener('mouseenter', ()=> mqInner.style.animationDuration = '12s');
             mqInner.addEventListener('mouseleave', ()=> mqInner.style.animationDuration = '22s');
         }
+    })();
 
-        /* 6) Scramble sur chaque titre de section quand visible */
-        const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-        const scrambleIn = (el)=>{
-            const orig = el.dataset.orig || el.textContent;
-            el.dataset.orig = orig;
-            let p = 0;
-            const timer = setInterval(()=>{
-                p++;
-                el.textContent = orig.split('').map((ch,i)=> i<p ? ch : letters[Math.random()*letters.length|0]).join('');
-                if(p >= orig.length){ clearInterval(timer); el.textContent = orig; }
-            }, 30);
-        };
-        const ob2 = new IntersectionObserver(es=>{
-            es.forEach(e=>{ if(e.isIntersecting){ scrambleIn(e.target); ob2.unobserve(e.target);} });
-        }, {threshold:.6});
-        $$('.section-hd h2').forEach(h=>ob2.observe(h));
-
-        /* 7) “Nos magasins” : soulignement glissant sous l’onglet actif */
-        const tabs = $('#stores .nav-tabs');
-        if(tabs){
-            const ul = document.createElement('div'); ul.className='tabs-underline'; tabs.appendChild(ul);
-            const move = ()=>{
-                const active = tabs.querySelector('.nav-tab.active') || tabs.querySelector('.nav-tab');
-                if(!active) return;
-                const a = active.getBoundingClientRect(); const t = tabs.getBoundingClientRect();
-                ul.style.width = a.width + 'px';
-                ul.style.transform = `translateX(${a.left - t.left}px)`;
-            };
-            move(); addEventListener('resize', move);
-            document.addEventListener('click', (e)=>{ if(e.target.closest('#stores .nav-tab')) setTimeout(move,10); });
-        }
-
-        /* 8) Confettis quand on valide la newsletter */
-        const fx = document.createElement('canvas');
-        fx.id='fx'; fx.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9998';
-        </script>
-
-<script>
+    /* === AOS mini: animations d'entrée pour stores, contact, footer === */
     (() => {
-        const $ = (s,el=document)=>el.querySelector(s);
-        const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
-  …
-  const fx = document.createElement('canvas');
-        fx.id='fx';
-        fx.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9998';
-        // document.body.appendChild(fx); // si tu comptes l'utiliser
+        const observer = new IntersectionObserver((entries)=>{
+            entries.forEach(e=>{
+                if(e.isIntersecting){
+                    e.target.classList.add('in');
+                    observer.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        const add = (sel, anim, stagger=0) => {
+            document.querySelectorAll(sel).forEach((el, i)=>{
+                el.classList.add('aos');
+                el.dataset.anim = anim;
+                if (stagger) el.style.setProperty('--aos-delay', `${i*stagger}ms`);
+                observer.observe(el);
+            });
+        };
+
+        /* STORES */
+        add('#stores .section-hd', 'rise');
+        add('#stores .nav-tabs .nav-tab', 'pop', 60);
+        add('#stores .content-area', 'scale');
+
+        /* CONTACT */
+        add('#contact .section-hd', 'rise');
+        add('#contact .contact-panel', 'rise', 120);
+
+        /* FOOTER */
+        add('footer.pi-footer .brand', 'scale');
+        add('footer.pi-footer .headline', 'sweep');
+        add('footer.pi-footer .social li', 'pop', 50);
+        add('footer.pi-footer .footer-nav a', 'rise', 30);
+        add('footer.pi-footer .copyright', 'rise', 200);
     })();
 </script>
+
 </body>
 </html>
