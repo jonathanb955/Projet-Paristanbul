@@ -1,11 +1,13 @@
 <?php
-
+// =====================================
+// Connexion PDO
+// =====================================
 $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// ============================
+// =====================================
 // FILTRES & PAGINATION
-// ============================
+// =====================================
 $search = $_GET['search'] ?? '';
 $poste  = $_GET['tri-par-poste'] ?? '';
 $ville  = $_GET['tri-par-magasin'] ?? '';
@@ -14,12 +16,19 @@ $limit  = 3;
 $page   = max(1, intval($_GET['page'] ?? 1));
 $offset = ($page - 1) * $limit;
 
-// ========== 1. Compter le total pour la pagination ==========
+// =====================================
+// COMPTE TOTAL DES OFFRES
+// =====================================
 $sqlCount = "SELECT COUNT(*) FROM offres_emplois WHERE 1=1";
 $params = [];
 
 if (!empty($search)) {
-    $sqlCount .= " AND (titre_poste LIKE :search OR secteur_activite LIKE :search OR detail_poste LIKE :search)";
+    $sqlCount .= " AND (
+        LOWER(titre_poste) LIKE LOWER(:search)
+        OR LOWER(secteur_activite) LIKE LOWER(:search)
+        OR LOWER(detail_poste) LIKE LOWER(:search)
+        OR LOWER(ville) LIKE LOWER(:search)
+    )";
     $params[':search'] = '%' . $search . '%';
 }
 if (!empty($poste)) {
@@ -34,13 +43,20 @@ if (!empty($ville)) {
 $stmt = $pdo->prepare($sqlCount);
 $stmt->execute($params);
 $total = $stmt->fetchColumn();
-$totalPages = ceil($total / $limit);
+$totalPages = max(1, ceil($total / $limit));
 
-// ========== 2. Récupérer les résultats paginés =============
+// =====================================
+// REQUÊTE PRINCIPALE AVEC LIMIT/OFFSET
+// =====================================
 $sql = "SELECT * FROM offres_emplois WHERE 1=1";
 
 if (!empty($search)) {
-    $sql .= " AND (titre_poste LIKE :search OR secteur_activite LIKE :search OR detail_poste LIKE :search)";
+    $sql .= " AND (
+        LOWER(titre_poste) LIKE LOWER(:search)
+        OR LOWER(secteur_activite) LIKE LOWER(:search)
+        OR LOWER(detail_poste) LIKE LOWER(:search)
+        OR LOWER(ville) LIKE LOWER(:search)
+    )";
 }
 if (!empty($poste)) {
     $sql .= " AND titre_poste = :poste";
@@ -51,16 +67,10 @@ if (!empty($ville)) {
 
 $sql .= " ORDER BY id_offre DESC LIMIT :limit OFFSET :offset";
 
-$params[':limit'] = $limit;
-$params[':offset'] = $offset;
-
 $stmt = $pdo->prepare($sql);
-
-// Il faut binder limit/offset en tant qu'entiers
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 
-// Les autres paramètres (search, poste, ville)
 if (!empty($search)) {
     $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
 }
@@ -73,8 +83,47 @@ if (!empty($ville)) {
 
 $stmt->execute();
 $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
 
+// =====================================
+// VILLES DISTINCTES POUR LE FILTRE
+// =====================================
+$stmtVilles = $pdo->query("SELECT  ville_magasin FROM magasins WHERE ville_magasin IS NOT NULL AND ville_magasin <> '' ORDER BY ville_magasin ASC");
+$villes = $stmtVilles->fetchAll(PDO::FETCH_COLUMN);
+
+// =====================================
+// FORMULAIRE AJOUT OFFRE
+// =====================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['titre_poste'])) {
+    $secteur_activite = trim($_POST['secteur_activite'] ?? '');
+    $titre_poste      = trim($_POST['titre_poste'] ?? '');
+    $ville_poste      = trim($_POST['ville'] ?? '');
+    $departement      = trim($_POST['departement'] ?? '');
+    $type_contrat     = trim($_POST['type_contrat'] ?? '');
+    $detail_poste     = trim($_POST['detail_poste'] ?? '');
+
+    if ($secteur_activite && $titre_poste && $ville_poste && $departement && $type_contrat && $detail_poste) {
+        $sqlInsert = $pdo->prepare("
+            INSERT INTO offres_emplois 
+            (secteur_activite, titre_poste, ville, departement, type_contrat, detail_poste)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        $sqlInsert->execute([$secteur_activite, $titre_poste, $ville_poste, $departement, $type_contrat, $detail_poste]);
+        header("Location: " . strtok($_SERVER['REQUEST_URI'], '?'));
+        exit;
+    } else {
+        echo "<p style='color:red;'>Veuillez remplir tous les champs du formulaire.</p>";
+    }
+}
+
+$departements = ['95', '94', '93', '92', '91', '78', '77', '60'];
+
+// =====================================
+// Conserver les filtres dans pagination
+// =====================================
+$queryParams = $_GET;
+unset($queryParams['page']);
+$queryString = http_build_query($queryParams);
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -82,26 +131,23 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Paristanbul — Admin • Offres d'emplois</title>
-    <link rel="stylesheet" href=../../assets/css/admin.css />
-    <link rel="stylesheet" href=../../assets/css/gestionOffreAdmin.css />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/admin.css" />
+    <link rel="stylesheet" href="../../assets/css/gestionOffreAdmin.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
 <body>
 <aside class="sidebar">
     <div class="brand">
         <a href="../../vue/index.php"><img src="../../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" /></a>
-    </div>    <nav class="menu">
+    </div>
+    <nav class="menu">
         <div class="menu-title">Navigation site</div>
         <a class="menu-item" href="../../vue/pageAdmin.php"><i class="bi bi-speedometer2"></i><span>Tableau de bord</span></a>
         <a class="menu-item" href="../../vue/Admin/nosMagasinsAdmin.php"><i class="bi bi-shop"></i><span>Nos magasins</span></a>
         <div class="menu-title">Contenus</div>
 
-        <a class="menu-item" href="../../vue/Admin/promoAdmin.php"><i class="bi bi-megaphone"></i><span>Promotions</span></a>
-        <div class="menu-title">Administration</div>
         <a class="menu-item" href="candidatureAdmin.php"><i class="bi bi-briefcase"></i><span>Candidatures</span></a>
-
         <a class="menu-item" href="../../vue/Admin/gestionUserAdmin.php"><i class="bi bi-people"></i><span>Utilisateurs</span></a>
-
     </nav>
     <div class="sidebar-footer">
         <a class="btn-outline" href="#"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
@@ -117,7 +163,6 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <i class="bi bi-archive"></i> Archiver lues
                 </button>
             </form>
-
             <form method="post" action="../../src/traitement/export_candidatures.php" style="display:inline;">
                 <button type="submit" name="export_csv" class="btn">
                     <i class="bi bi-download"></i> Export CSV
@@ -126,16 +171,14 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </header>
 
-
+    <!-- ======================= FILTRES ======================= -->
     <section class="filters">
-        <form class="filters-bar" action="" method="get">
-            <!-- Recherche -->
+        <form class="filters-bar" method="get">
             <div class="field">
                 <i class="bi bi-search"></i>
-                <input type="search" name="search" placeholder="Rechercher (nom, ville, code postal) …">
+                <input type="search" name="search" placeholder="Rechercher (poste, ville…)" value="<?= htmlspecialchars($search) ?>">
             </div>
 
-            <!-- Poste -->
             <div class="field select"><i class="bi bi-briefcase"></i>
                 <select name="tri-par-poste">
                     <option value="">Poste (tous)</option>
@@ -143,214 +186,137 @@ $lignesOffres = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <option value="Préparateur de commande" <?= $poste === "Préparateur de commande" ? 'selected' : '' ?>>Préparateur de commande</option>
                     <option value="Comptable" <?= $poste === "Comptable" ? 'selected' : '' ?>>Comptable</option>
                     <option value="Manutentionnaire" <?= $poste === "Manutentionnaire" ? 'selected' : '' ?>>Manutentionnaire</option>
+                    <option value="Chauffeur" <?= $poste === "Chauffeur" ? 'selected' : '' ?>>Chauffeur</option>
+
                 </select>
             </div>
 
-            <?php
-            // Connexion PDO
-            $pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
-
-            // Récupérer les villes distinctes depuis la table offres_emplois
-            $stmtVilles = $pdo->query("SELECT DISTINCT ville_magasin FROM magasins ORDER BY ville_magasin ASC");
-            $villes = $stmtVilles->fetchAll(PDO::FETCH_COLUMN);
-            ?>
-            <!-- Ville -->
             <div class="field select"><i class="bi bi-geo-alt"></i>
                 <select name="tri-par-magasin">
-                    <option value="">Magasin (tous)</option>
+                    <option value="">Ville (toutes)</option>
                     <?php foreach ($villes as $v) : ?>
                         <option value="<?= htmlspecialchars($v) ?>" <?= $ville === $v ? 'selected' : '' ?>><?= htmlspecialchars($v) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
+
             <button class="btn"><i class="bi bi-funnel"></i> Filtrer</button>
         </form>
     </section>
 
+    <!-- ======================= TABLEAU ======================= -->
     <section class="layout">
         <div class="card">
             <div class="card-head">
                 <h2>Liste des offres d'emplois</h2>
-
             </div>
 
             <div class="table-wrap">
-                <table class="table" id="candidaturesTable">
+                <table class="table" id="offresTable">
                     <thead>
                     <tr>
-                        <th>Poste</th><th>Secteur d'activité</th><th>Contrat</th><th>Magasin</th><th style="width:240px"></th>
+                        <th>Poste</th>
+                        <th>Secteur</th>
+                        <th>Contrat</th>
+                        <th>Ville</th>
+                        <th style="width:240px"></th>
                     </tr>
                     </thead>
                     <tbody>
-
-                    <?php foreach ($lignesOffres as $offre) : ?>
-
-                        <tr>
-                            <td><strong><?= htmlspecialchars($offre['titre_poste']) ?></strong></td>
-                            <td><?= htmlspecialchars($offre['secteur_activite']) ?></td>
-                            <td><?= htmlspecialchars($offre['type_contrat']) ?></td>
-                            <td><?= htmlspecialchars($offre['ville']) ?></td>
-
-
-
-                                               <td class="row-actions">
-                                <!-- Modifier -->
-                            <form action="../../src/traitement/update_offresAdmin.php" method="post" style="display:inline;" onsubmit="return confirm('Confirmer la suppression de cette offre ?');">
-                              <input type="hidden" name="id" value="<?= $offre['id_offre'] ?>">
-                              <input type="hidden" name="action" value="supprimer">
-                              <button type="submit" class="btn btn-sm btn-danger">
-                              <i class="bi bi-trash"></i> Supprimer
-                            </button>
-                            </form>
-
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+                    <?php if (empty($lignesOffres)): ?>
+                        <tr><td colspan="5" class="text-center">Aucune offre trouvée.</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($lignesOffres as $offre): ?>
+                            <tr>
+                                <td><strong><?= htmlspecialchars($offre['titre_poste']) ?></strong></td>
+                                <td><?= htmlspecialchars($offre['secteur_activite']) ?></td>
+                                <td><?= htmlspecialchars($offre['type_contrat']) ?></td>
+                                <td><?= htmlspecialchars($offre['ville']) ?></td>
+                                <td class="row-actions">
+                                    <form action="../../src/traitement/update_offresAdmin.php" method="POST" onsubmit="return confirm('Supprimer cette offre ?');" style="display:inline;">
+                                        <input type="hidden" name="id_offre" value="<?= $offre['id_offre'] ?>">
+                                        <button type="submit" name="delete_offre" class="btn ghost btn-sm" title="Supprimer">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                     </tbody>
                 </table>
-            </div>
-            <div class="table-foot">
-                <span><?= $page ?> / <?= $totalPages ?></span>
-                <div class="pager">
-                    <?php if ($page > 1): ?>
-                        <a class="btn ghost" href="?page=<?= $page - 1 ?>">‹</a>
-                    <?php endif; ?>
-                    <?php if ($page < $totalPages): ?>
-                        <a class="btn ghost" href="?page=<?= $page + 1 ?>">›</a>
-                    <?php endif; ?>
+
+                <div class="table-foot">
+                    <span><?= $page ?> / <?= $totalPages ?></span>
+                    <div class="pager">
+                        <?php if ($page > 1): ?>
+                            <a class="btn ghost" href="?page=<?= $page - 1 ?><?= $queryString ? '&' . $queryString : '' ?>">‹</a>
+                        <?php endif; ?>
+                        <?php if ($page < $totalPages): ?>
+                            <a class="btn ghost" href="?page=<?= $page + 1 ?><?= $queryString ? '&' . $queryString : '' ?>">›</a>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const rows = document.querySelectorAll("#table tbody tr");
-                    console.log("Total lignes trouvées :", rows.length);
-                    const rowsPerPage = 3;
-                    let currentPage = 1;
-                    const totalPages = Math.ceil(rows.length / rowsPerPage);
+        </div>
 
-                    const pageInfo = document.getElementById("pageInfo");
-                    const prevBtn = document.getElementById("prevPage");
-                    const nextBtn = document.getElementById("nextPage");
+        <!-- ======================= FORMULAIRE AJOUT ======================= -->
+        <div class="card">
+            <div class="card-head">
+                <h2>Ajouter une offre</h2>
+            </div>
+            <form method="POST" class="form" id="add-offer-form">
+                <div class="form-control">
+                    <label>Secteur d'activité</label>
+                    <input type="text" name="secteur_activite" required>
+                </div>
 
-                    function showPage(page) {
-                        rows.forEach((row, i) => {
-                            row.style.display = (i >= (page - 1) * rowsPerPage && i < page * rowsPerPage) ? "" : "none";
-                        });
-                        pageInfo.textContent = `${page} / ${totalPages}`;
-                        prevBtn.disabled = page === 1;
-                        nextBtn.disabled = page === totalPages;
-                    }
+                <div class="form-control">
+                    <label>Titre du poste</label>
+                    <input type="text" name="titre_poste" required>
+                </div>
 
-                    prevBtn.addEventListener("click", () => {
-                        if (currentPage > 1) {
-                            currentPage--;
-                            showPage(currentPage);
-                        }
-                    });
+                <div class="form-control">
+                    <label>Ville</label>
+                    <select name="ville" required>
+                        <option value="">Choisissez une ville</option>
+                        <?php foreach ($villes as $v): ?>
+                            <option value="<?= htmlspecialchars($v) ?>"><?= htmlspecialchars($v) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-                    nextBtn.addEventListener("click", () => {
-                        if (currentPage < totalPages) {
-                            currentPage++;
-                            showPage(currentPage);
-                        }
-                    });
+                <div class="form-control">
+                    <label>Département</label>
+                    <select name="departement" required>
+                        <option value="">Choisissez un département</option>
+                        <?php foreach ($departements as $dep): ?>
+                            <option value="<?= htmlspecialchars($dep) ?>"><?= htmlspecialchars($dep) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-                    // Initialiser
-                    showPage(currentPage);
-                });
-            </script>
-            <br>
-            <br>
-            <?php
-            $dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
-            $bdd = new PDO($dsn, 'root', '');
+                <div class="form-control">
+                    <label>Type de contrat</label>
+                    <select name="type_contrat" required>
+                        <option value="">Choisissez un type de contrat</option>
+                        <option value="CDD">CDD</option>
+                        <option value="CDI">CDI</option>
+                        <option value="Contrat de professionnalisation">Contrat de professionnalisation</option>
+                        <option value="Stage">Stage</option>
+                        <option value="Apprentissage">Apprentissage</option>
+                    </select>
+                </div>
 
-            // formulaire a été soumis
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $secteur_activite = $_POST['secteur_activite'];
-                $titre_poste      = $_POST['titre_poste'];
-                $ville            = $_POST['ville'];
-                $departement      = $_POST['departement'];
-                $type_contrat     = $_POST['type_contrat'];
-                $detail_poste     = $_POST['detail_poste'];
+                <div class="form-control">
+                    <label>Détail du poste</label>
+                    <textarea name="detail_poste" rows="3" required></textarea>
+                </div>
 
-                $sql = $bdd->prepare("
-        INSERT INTO offres_emplois 
-        (secteur_activite, titre_poste, ville, departement, type_contrat, detail_poste)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ");
-                $sql->execute([$secteur_activite, $titre_poste, $ville, $departement, $type_contrat, $detail_poste]);
-
-                echo "<p style='color:green;'>Offre d'emploi enregistrée avec succès !</p>";
-            }
-
-            ?>
-            <!-- Panneau Offre -->
-            <aside class="sidepanel card">
-                <div class="card-head"><h2>Créer une offre d'emploi</h2></div>
-                <form class="form" action="gestionOffreAdmin.php" method="post">
-                    <!-- Secteur d'activité -->
-                    <label>
-                        <span>Secteur d'activité</span>
-                        <input type="text" name="secteur_activite" placeholder="Ex : Commerce, Restauration" required>
-                    </label>
-
-                    <!-- Titre du poste -->
-                    <label>
-                        <span>Titre du poste</span>
-                        <input type="text" name="titre_poste" placeholder="Ex : Caissier(ère)" required>
-                    </label>
-
-                    <?php
-                    $dsn = 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8';
-                    $bdd = new PDO($dsn, 'root', '');
-                    $sqlMagasin = $bdd->prepare("SELECT * FROM magasins ");
-                    $sqlMagasin->execute();
-                    $lignesMagasins = $sqlMagasin->fetchAll();
-                    ?>
-                    <!-- Ville -->
-                    <label>
-                        <span>Villes</span>
-                        <select name="ville" required>
-                            <?php foreach($lignesMagasins as $magasin): ?>
-                                <option value="<?= $magasin['ville_magasin'] ?>"><?= $magasin['ville_magasin'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-
-                    </label>
-
-                    <!-- Département -->
-                    <label>
-                        <span>Département</span>
-                        <input type="text" name="departement" placeholder="Ex : 95" required>
-                    </label>
-
-                    <!-- Type de contrat -->
-                    <label>
-                        <span>Type de contrat</span>
-                        <select name="type_contrat" required>
-                            <option value="CDD">CDD</option>
-                            <option value="CDI">CDI</option>
-                            <option value="Stage">Stage</option>
-                            <option value="Alternance">Alternance</option>
-                        </select>
-                    </label>
-
-                    <!-- Détails du poste -->
-                    <label>
-                        <span>Détails du poste</span>
-                        <textarea name="detail_poste" rows="4" placeholder="Description du poste..." required></textarea>
-                    </label>
-
-                    <div class="form-actions">
-                        <button type="reset" class="btn ghost">Annuler</button>
-                        <button type="submit" class="btn"><i class="bi bi-send"></i> Enregistrer</button>
-                    </div>
-                </form>
-            </aside>
+                <button type="submit" class="btn">Ajouter l'offre</button>
+            </form>
+        </div>
     </section>
-
-    <footer class="footer"><small>© 2025 — Back-office Paristanbul • Candidatures</small></footer>
 </main>
 </body>
 </html>
