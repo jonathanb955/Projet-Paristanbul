@@ -1633,6 +1633,25 @@ unset($_SESSION['flash_success']);
     })();
 </script>
 
+<script>
+    /* Strip défilant : duplication pour boucle parfaite */
+    (function () {
+        const track = document.getElementById('trackStrip');
+        if (!track) return;
+
+        // Duplique une fois tous les enfants pour avoir 2 sets identiques
+        const clones = [...track.children].map(n => {
+            const c = n.cloneNode(true);
+            c.setAttribute('aria-hidden', 'true');
+            return c;
+        });
+        clones.forEach(c => track.appendChild(c));
+
+        // Optionnel : boost perf & évite micro-sauts
+        track.style.willChange = 'transform';
+        track.style.backfaceVisibility = 'hidden';
+    })();
+</script>
 
 
 </body>
