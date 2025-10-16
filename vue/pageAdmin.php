@@ -58,14 +58,15 @@ $lignesMagasins = $sqlMagasin->fetchAll();
 
     <nav class="menu">
         <div class="menu-title">Navigation site</div>
-        <a class="menu-item active" href="../vue/pageAdmin.php"><i class="bi bi-speedometer2"></i><span>Tableau de bord</span></a>
-        <a class="menu-item" href="../vue/Admin/nosMagasinsAdmin.php"><i class="bi bi-shop"></i><span>Nos magasins</span></a>
+        <a class="menu-item" href="pageAdmin.php"><i class="bi bi-speedometer2"></i><span>Tableau de bord</span></a>
+        <a class="menu-item active" href="Admin/nosMagasinsAdmin.php"><i class="bi bi-shop"></i><span>Nos magasins</span></a>
 
         <div class="menu-title">Administration</div>
-        <a class="menu-item" href="../vue/Admin/gestionOffreAdmin.php"><i class="bi bi-briefcase"></i><span>Offres</span></a>
-        <a class="menu-item" href="../vue/Admin/candidatureAdmin.php"><i class="bi bi-briefcase"></i><span>Candidatures</span></a>
-        <a class="menu-item" href="../vue/Admin/gestionUserAdmin.php"><i class="bi bi-people"></i><span>Utilisateurs</span></a>
+        <a class="menu-item" href="Admin/gestionOffreAdmin.php"><i class="bi bi-briefcase"></i><span>Offres</span></a>
+        <a class="menu-item" href="Admin/candidatureAdmin.php"><i class="bi bi-file-earmark-text"></i><span>Candidatures</span></a>
+        <a class="menu-item" href="Admin/gestionUserAdmin.php"><i class="bi bi-people"></i><span>Utilisateurs</span></a>
     </nav>
+
 
     <div class="sidebar-footer">
         <a class="btn-outline" href="#"><i class="bi bi-box-arrow-right"></i> Se déconnecter</a>

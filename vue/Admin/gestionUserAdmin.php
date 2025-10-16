@@ -18,7 +18,7 @@
         <a class="menu-item" href="../../vue/pageAdmin.php"><i class="bi bi-speedometer2"></i><span>Tableau de bord</span></a>
         <a class="menu-item" href="../../vue/Admin/nosMagasinsAdmin.php"><i class="bi bi-shop"></i><span>Nos magasins</span></a>
 
-       
+
         <div class="menu-title">Administration</div>
         <a class="menu-item" href="gestionOffreAdmin.php"><i class="bi bi-briefcase"></i><span>Offres</span></a>
         <a class="menu-item" href="../../vue/Admin/candidatureAdmin.php"><i class="bi bi-briefcase"></i><span>Candidatures</span></a>
@@ -28,6 +28,7 @@
         <a class="btn-outline" href="#"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
     </div>
 </aside>
+
 
 <main class="main">
     <header class="topbar">
@@ -52,6 +53,8 @@
             <button class="btn"><i class="bi bi-funnel"></i> Filtrer</button>
         </form>
     </section>
+
+
 
     <?php
     require_once '../../src/bdd/Bdd.php';
@@ -187,6 +190,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Panneau création/édition -->
         <aside class="sidepanel card">

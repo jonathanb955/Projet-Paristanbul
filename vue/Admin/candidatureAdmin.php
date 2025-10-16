@@ -93,7 +93,7 @@ if (!empty($statut)) {
     $params[':statut'] = $statut;
 }
 
-$sql .= " ORDER BY c.date_candidature DESC LIMIT :limit OFFSET :offset";
+$sql .= " ORDER BY c.id ASC LIMIT :limit OFFSET :offset";
 
 $stmt = $pdo->prepare($sql);
 

@@ -1,4 +1,16 @@
 <?php
+session_start();
+if (!empty($_SESSION['success_message'])) {
+    echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success_message']) . '</div>';
+    unset($_SESSION['success_message']);
+}
+if (!empty($_SESSION['error_message'])) {
+    echo '<div class="alert alert-danger">' . htmlspecialchars($_SESSION['error_message']) . '</div>';
+    unset($_SESSION['error_message']);
+}
+?>
+
+<?php
 // =====================================
 // Connexion PDO
 // =====================================
@@ -65,7 +77,7 @@ if (!empty($ville)) {
     $sql .= " AND ville = :ville";
 }
 
-$sql .= " ORDER BY id_offre DESC LIMIT :limit OFFSET :offset";
+$sql .= " ORDER BY id_offre asc LIMIT :limit OFFSET :offset";
 
 $stmt = $pdo->prepare($sql);
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -135,6 +147,8 @@ $queryString = http_build_query($queryParams);
     <link rel="stylesheet" href="../../assets/css/gestionOffreAdmin.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
+
+
 <body>
 <aside class="sidebar">
     <div class="brand">
@@ -259,46 +273,168 @@ $queryString = http_build_query($queryParams);
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const form = document.getElementById('add-offer-form');
+
+                // Règles de validation
+                const rules = {
+                    secteur_activite: { min: 2, max: 50 },
+                    titre_poste: { min: 2, max: 50 },
+                    detail_poste: { min: 10, max: 100 }
+                };
+
+                // Fonction de validation individuelle
+                function validateField(field) {
+                    const value = field.value.trim();
+                    const errorSpan = field.parentElement.querySelector('.error');
+                    const name = field.name;
+                    let message = '';
+
+                    if (field.required && value === '') {
+                        message = 'Ce champ est obligatoire.';
+                    } else if (rules[name]) {
+                        const { min, max } = rules[name];
+                        if (value.length < min) message = `Minimum ${min} caractères.`;
+                        if (value.length > max) message = `Maximum ${max} caractères.`;
+                    }
+
+                    // Gestion du message d’erreur
+                    if (message) {
+                        errorSpan.textContent = message;
+                        field.classList.add('invalid');
+                    } else {
+                        errorSpan.textContent = '';
+                        field.classList.remove('invalid');
+                    }
+
+                    return message === '';
+                }
+
+                // Gestion des compteurs de caractères
+                document.querySelectorAll('[maxlength]').forEach(field => {
+                    const limit = field.getAttribute('maxlength');
+                    const info = field.parentElement.querySelector('.char-limit');
+                    field.addEventListener('input', () => {
+                        const remaining = limit - field.value.length;
+                        info.textContent = `${remaining} caractères restants`;
+                        if (remaining <= 50) {
+                            info.style.color = '#e67e22';
+                        } else {
+                            info.style.color = '';
+                        }
+                        validateField(field); // validation live
+                    });
+                });
+
+                // Validation à chaque saisie / changement
+                form.querySelectorAll('input, textarea, select').forEach(field => {
+                    field.addEventListener('input', () => validateField(field));
+                    field.addEventListener('change', () => validateField(field));
+                });
+
+                // Validation globale avant soumission
+                form.addEventListener('submit', e => {
+                    let allValid = true;
+                    form.querySelectorAll('input, textarea, select').forEach(field => {
+                        if (!validateField(field)) allValid = false;
+                    });
+                    if (!allValid) {
+                        e.preventDefault();
+                        alert('Veuillez corriger les erreurs avant de soumettre le formulaire.');
+                    }
+                });
+            });
+        </script>
+        <style>
+            .form-control {
+                position: relative;
+                margin-bottom: 1rem;
+            }
+
+            .form-control .error {
+                color: #e74c3c;
+                font-size: 0.85rem;
+                display: block;
+                margin-top: 4px;
+            }
+
+            input.invalid, textarea.invalid, select.invalid {
+                border: 1px solid #e74c3c !important;
+                background-color: #fff6f6;
+            }
+
+        </style>
+        <!-- ======================= FORMULAIRE AJOUT ======================= -->
+        <style>
+            .form-control {
+                position: relative;
+                margin-bottom: 1rem;
+            }
+
+            .form-control .error {
+                color: #e74c3c;
+                font-size: 0.85rem;
+                display: block;
+                margin-top: 4px;
+            }
+
+            input.invalid, textarea.invalid, select.invalid {
+                border: 1px solid #e74c3c !important;
+                background-color: #fff6f6;
+            }
+
+            .char-limit {
+                font-size: 0.8rem;
+                color: #888;
+            }
+        </style>
 
         <!-- ======================= FORMULAIRE AJOUT ======================= -->
         <div class="card">
             <div class="card-head">
                 <h2>Ajouter une offre</h2>
             </div>
-            <form method="POST" class="form" id="add-offer-form">
+            <form method="POST" class="form" id="add-offer-form" novalidate>
                 <div class="form-control">
                     <label>Secteur d'activité</label>
-                    <input type="text" name="secteur_activite" required>
+                    <input type="text" name="secteur_activite" id="secteur_activite" maxlength="30" required>
+                    <small class="char-limit">30 caractères max</small>
+                    <span class="error"></span>
                 </div>
 
                 <div class="form-control">
                     <label>Titre du poste</label>
-                    <input type="text" name="titre_poste" required>
+                    <input type="text" name="titre_poste" id="titre_poste" maxlength="30" required>
+                    <small class="char-limit">30 caractères max</small>
+                    <span class="error"></span>
                 </div>
 
                 <div class="form-control">
                     <label>Ville</label>
-                    <select name="ville" required>
+                    <select name="ville" id="ville" required>
                         <option value="">Choisissez une ville</option>
                         <?php foreach ($villes as $v): ?>
                             <option value="<?= htmlspecialchars($v) ?>"><?= htmlspecialchars($v) ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <span class="error"></span>
                 </div>
 
                 <div class="form-control">
                     <label>Département</label>
-                    <select name="departement" required>
+                    <select name="departement" id="departement" required>
                         <option value="">Choisissez un département</option>
                         <?php foreach ($departements as $dep): ?>
                             <option value="<?= htmlspecialchars($dep) ?>"><?= htmlspecialchars($dep) ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <span class="error"></span>
                 </div>
 
                 <div class="form-control">
                     <label>Type de contrat</label>
-                    <select name="type_contrat" required>
+                    <select name="type_contrat" id="type_contrat" required>
                         <option value="">Choisissez un type de contrat</option>
                         <option value="CDD">CDD</option>
                         <option value="CDI">CDI</option>
@@ -306,16 +442,112 @@ $queryString = http_build_query($queryParams);
                         <option value="Stage">Stage</option>
                         <option value="Apprentissage">Apprentissage</option>
                     </select>
+                    <span class="error"></span>
                 </div>
 
                 <div class="form-control">
                     <label>Détail du poste</label>
-                    <textarea name="detail_poste" rows="3" required></textarea>
+                    <textarea name="detail_poste" id="detail_poste" rows="4" maxlength="50" required></textarea>
+                    <small class="char-limit">50 caractères max</small>
+                    <span class="error"></span>
                 </div>
 
                 <button type="submit" class="btn">Ajouter l'offre</button>
             </form>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const form = document.getElementById('add-offer-form');
+
+                // Règles de validation
+                const rules = {
+                    secteur_activite: { min: 2, max: 30 },
+                    titre_poste: { min: 2, max: 30 },
+                    detail_poste: { min: 10, max: 50 }
+                };
+
+                // Fonction de validation individuelle
+                function validateField(field) {
+                    const value = field.value.trim();
+                    const errorSpan = field.parentElement.querySelector('.error');
+                    const name = field.name;
+                    let message = '';
+
+                    if (field.required && value === '') {
+                        message = 'Ce champ est obligatoire.';
+                    } else if (rules[name]) {
+                        const { min, max } = rules[name];
+                        if (value.length < min) message = `Minimum ${min} caractères.`;
+                        else if (value.length > max) message = `Maximum ${max} caractères.`;
+                    }
+
+                    // Gestion du message d’erreur
+                    if (message) {
+                        errorSpan.textContent = message;
+                        field.classList.add('invalid');
+                    } else {
+                        errorSpan.textContent = '';
+                        field.classList.remove('invalid');
+                    }
+
+                    return message === '';
+                }
+
+                // Gestion des compteurs de caractères
+                document.querySelectorAll('[maxlength]').forEach(field => {
+                    const limit = field.getAttribute('maxlength');
+                    const info = field.parentElement.querySelector('.char-limit');
+                    field.addEventListener('input', () => {
+                        const remaining = limit - field.value.length;
+                        info.textContent = `${remaining} caractères restants`;
+                        info.style.color = remaining <= 20 ? '#e67e22' : '';
+                        validateField(field); // validation live
+                    });
+                });
+
+                // Validation à chaque saisie / changement
+                form.querySelectorAll('input, textarea, select').forEach(field => {
+                    field.addEventListener('input', () => validateField(field));
+                    field.addEventListener('change', () => validateField(field));
+                });
+
+                // Validation globale avant soumission
+                form.addEventListener('submit', e => {
+                    let allValid = true;
+                    form.querySelectorAll('input, textarea, select').forEach(field => {
+                        if (!validateField(field)) allValid = false;
+                    });
+                    if (!allValid) {
+                        e.preventDefault();
+                        alert('Veuillez corriger les erreurs avant de soumettre le formulaire.');
+                    }
+                });
+            });
+        </script>
+
+        <!-- Design form -->
+        <style>
+            textarea, input, select {
+                color: #222 !important;          /* texte noir lisible */
+                background-color: #fff !important; /* fond blanc */
+                border: 1px solid #ccc !important;
+            }
+
+            textarea::placeholder,
+            input::placeholder {
+                color: #888;
+            }
+
+
+            textarea:focus, input:focus, select:focus {
+                outline: none;
+                border-color: #e74c3c;
+                box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+            }
+
+        </style>
+
     </section>
 </main>
 </body>

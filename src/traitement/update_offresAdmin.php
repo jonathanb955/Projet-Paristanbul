@@ -1,22 +1,37 @@
 <?php
 use bdd\Bdd;
-
 require '../bdd/Bdd.php'; // Connexion PDO
 
 $bdd = new Bdd();
 $pdo = $bdd->getBdd();
 
-$id = intval($_POST['id'] ?? 0);
-$action = $_POST['action'] ?? null;
+// Désactiver tout affichage avant la redirection
+if (ob_get_level()) ob_clean();
 
-// Vérifie si action == "supprimer"
-if ($id && $action === 'supprimer') {
-    $stmt = $pdo->prepare("DELETE FROM offres_emplois WHERE id_offre = ?");
-    $stmt->execute([$id]);
-    //
-    echo "<p style='color:green;'>Offre d'emploi supprimée avec succès !</p>";
+if (isset($_POST['delete_offre'])) {
+    $idOffre = intval($_POST['id_offre'] ?? 0);
+
+    if ($idOffre > 0) {
+        try {
+            // Suppression de l’offre
+            $stmt = $pdo->prepare("DELETE FROM offres_emplois WHERE id_offre = ?");
+            $stmt->execute([$idOffre]);
+
+            // (Optionnel) supprimer les candidatures associées
+            $stmt2 = $pdo->prepare("DELETE FROM candidatures WHERE ref_offre = ?");
+            $stmt2->execute([$idOffre]);
+
+        } catch (Exception $e) {
+            // Pour test : afficher l'erreur temporairement
+            echo "Erreur SQL : " . $e->getMessage();
+            exit;
+        }
+    } else {
+        echo "ID d'offre invalide.";
+        exit;
+    }
 }
 
-// Redirection vers la page des offres
+// 🔁 Redirection après suppression (chemin relatif à partir de ce script)
 header("Location: ../../vue/Admin/gestionOffreAdmin.php");
 exit;
