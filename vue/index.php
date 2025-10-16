@@ -967,7 +967,7 @@ unset($_SESSION['flash_success']);
         <div class="container">
             <div class="section-hd reveal">
                 <h2>Catalogue interactif</h2>
-                <div class="sub">Couverture seule centrée → puis double-page</div>
+                <div class="sub"></div>
             </div>
 
             <div class="catalog-app">
@@ -1010,7 +1010,7 @@ unset($_SESSION['flash_success']);
         <div class="container">
             <div class="section-hd reveal">
                 <h2>Nos rayons</h2>
-                <div class="sub">Défilement infini — mini-zoom au survol — clics inactifs</div>
+                <div class="sub"></div>
             </div>
 
             <div class="carousel reveal">
@@ -1298,15 +1298,20 @@ unset($_SESSION['flash_success']);
     const onScrollParallax=()=>{ const y=window.scrollY||document.documentElement.scrollTop; parallaxNodes.forEach(n=>{ const sp=parseFloat(n.dataset.speed||'0.05'); n.style.transform=`translateY(${y*sp}px)`; });};
     onScrollParallax(); addEventListener('scroll', onScrollParallax, {passive:true});
 
+
     /* ===== Catalogue ===== */
     (function(){
-        const TOTAL_PAGES = 5;
+        const TOTAL_PAGES = 7;
         const PATH = '/Projet-paristanbul/assets/pages';
         const FILENAME = i => String(i).padStart(2,'0') + '.jpg';
+
+        // force le rechargement des fichiers (évite l’ancienne version en cache)
+        const BUST = `?v=${Date.now()}`;
+
         const MOBILE_BREAKPOINT = 768;
         const MIN_W = 480, MAX_W = 1040;
 
-        const pages = Array.from({length: TOTAL_PAGES}, (_,k) => `${PATH}/${FILENAME(k+1)}`);
+        const pages = Array.from({length: TOTAL_PAGES}, (_,k) => `${PATH}/${FILENAME(k+1)}${BUST}`);
         pages.forEach(src => { const i = new Image(); i.src = src; });
 
         let pageFlip, pageAspect = 0.707, pageW = 600, scale = 1, baseScale = 1;
@@ -1380,7 +1385,10 @@ unset($_SESSION['flash_success']);
         $('#fitBtn').onclick  = ()=>{ scale = baseScale; coverMaskAndCenter(); };
 
         let rt;
-        window.addEventListener('resize', ()=>{ clearTimeout(rt); rt = setTimeout(()=>{ const current = pageFlip ? pageFlip.getCurrentPageIndex() : 0; initFlip(current); }, 150); });
+        window.addEventListener('resize', ()=>{
+            clearTimeout(rt);
+            rt = setTimeout(()=>{ const current = pageFlip ? pageFlip.getCurrentPageIndex() : 0; initFlip(current); }, 150);
+        });
 
         if(document.readyState!=='loading') initFlip(0); else window.addEventListener('load', ()=> initFlip(0));
     })();
