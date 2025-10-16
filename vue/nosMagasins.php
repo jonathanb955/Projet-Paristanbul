@@ -72,21 +72,28 @@ $coords = [
         'vert-saint-denis'=> [48.5707,   2.6296],
 ];
 
-/* --- helpers --- */
-function slugify($s) {
-    $s = iconv('UTF-8', 'ASCII//TRANSLIT', $s);
-    $s = strtolower(preg_replace('~[^\pL\d]+~u','-',$s));
-    return trim($s,'-');
+/* --- helpers --- *//* --- helpers --- */
+if (!function_exists('slugify')) {
+    function slugify($s) {
+        $s = iconv('UTF-8', 'ASCII//TRANSLIT', $s);
+        $s = strtolower(preg_replace('~[^\pL\d]+~u','-',$s));
+        return trim($s,'-');
+    }
 }
-function utf8_clean_array(&$arr) {
-    array_walk_recursive($arr, function (&$v) {
-        if (is_string($v)) {
-            $v = preg_replace('/[^\PC\s]/u', '', $v);
-            if (!mb_check_encoding($v, 'UTF-8')) {
-                $v = mb_convert_encoding($v, 'UTF-8', 'UTF-8, ISO-8859-1, ISO-8859-15, Windows-1252');
+
+if (!function_exists('utf8_clean_array')) {
+    function utf8_clean_array(&$arr) {
+        array_walk_recursive($arr, function (&$v) {
+            if (is_string($v)) {
+                $v = preg_replace('/[^\PC\s]/u', '', $v);
+                if (!mb_check_encoding($v, 'UTF-8')) {
+                    $v = mb_convert_encoding(
+                            $v, 'UTF-8', 'UTF-8, ISO-8859-1, ISO-8859-15, Windows-1252'
+                    );
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 /* --- build $magasins --- */
@@ -161,6 +168,7 @@ if ($magasinsJson === false) {
     $magasinsJson = '[]';
 }
 ?>
+
 <!doctype html>
 <html lang="fr">
 <head>
@@ -168,498 +176,182 @@ if ($magasinsJson === false) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nos Magasins - Paristanbul</title>
 
-    <link rel="stylesheet" href="../assets/css/index.css">
-    <link rel="stylesheet" href="../assets/css/nosMagasins.css">
+    <!-- libs -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Leaflet + MarkerCluster + Bootstrap Icons -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <!-- MarkerCluster pour Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <style>
-        /* Soulignement dégradé au survol/actif — comme sur "Notre histoire" */
-        :root{ --pi-blue:#2E4C97; --pi-red:#D6452E; } /* si pas déjà définies */
-
-        .navbar .navbar-nav .nav-link{
-            position: relative;
-            font-weight: 700;
-            opacity: .92;
-            padding-bottom: .35rem;          /* petit espace pour la ligne */
-        }
-        .navbar .navbar-nav .nav-link:hover,
-        .navbar .navbar-nav .nav-link:focus{
-            opacity: 1;
-        }
-
-        /* la ligne animée */
-        .navbar .navbar-nav .nav-link::after{
-            content:"";
-            position:absolute;
-            left:50%;
-            bottom:-6px;                     /* ajuste si besoin */
-            width:0;
-            height:2px;
-            background:linear-gradient(90deg, var(--pi-blue), var(--pi-red));
-            transition:width .25s, left .25s;
-        }
-
-        /* au survol ou quand le lien a .active */
-        .navbar .navbar-nav .nav-link:hover::after,
-        .navbar .navbar-nav .nav-link.active::after{
-            width:100%;
-            left:0;
-        }
-        /* Forcer couleur claire sur la nav */
-        .navbar .nav-link { color: #e6e9f2 !important; font-weight: 600; opacity: .9; }
-        .navbar .nav-link:hover, .navbar .nav-link:focus { color: #fff !important; opacity: 1; }
-        .navbar .nav-link.active { color: #e21b3c !important; font-weight: 700; }
-
         :root{
-            --ink:#E6E9F2; --muted:#9aa3b2; --card:#0F1524; --card-2:#141b2b;
-            --pi-red:#e21b3c; --pi-green:#27ae60; --pi-blue:#2E4C97; --shadow:0 10px 30px rgba(0,0,0,.25);
+            --pi-blue:#2E4C97; --pi-red:#D6452E;
+            --ink:#e6e9f2; --muted:#c9d4ea;
+            --hair:rgba(255,255,255,.10); --hair-strong:rgba(255,255,255,.18);
         }
-        body.pi-theme{ background:#0b1120; color:var(--ink); }
-        a{ text-decoration:none }
+        html,body{height:100%}
+        body{font-family:"Plus Jakarta Sans",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b1120;color:var(--ink)}
 
-        .navbar{ backdrop-filter: blur(6px); background:rgba(10,14,25,.4); border-bottom:1px solid rgba(255,255,255,.06) }
-        .navbar .btn-dark{ background:var(--pi-red); border:none }
-
-        .hero{
-            position:relative; overflow:hidden; border-bottom:1px solid rgba(255,255,255,.06);
+        /* ==== fond sombre + orbes douces ==== */
+        #page-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;
             background:
-                    radial-gradient(1200px 600px at 20% -10%, rgba(255,0,76,.25), transparent 60%),
-                    radial-gradient(1400px 800px at 120% 10%, rgba(46,76,151,.25), transparent 60%),
-                    linear-gradient(180deg,#0d1426 0%, #0b1120 100%);
+                    radial-gradient(1000px 500px at 10% 10%, rgba(46,76,151,.20), transparent 60%),
+                    radial-gradient(900px 600px at 90% 10%, rgba(226,27,60,.14), transparent 55%),
+                    linear-gradient(180deg,#0b1326,#0a0f1f 70%);
         }
-        .hero .container{ padding:72px 0 }
-        .hero h1{ font-weight:800; letter-spacing:.5px; }
-        .hero p.lead{ color:var(--muted) }
+        .pi-orbs{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+        .pi-orbs .orb{position:absolute;width:48vmax;height:48vmax;border-radius:9999px;filter:blur(80px);opacity:.75;mix-blend-mode:screen}
+        .pi-orbs .blue{background:rgba(46,76,151,.18)} .pi-orbs .red{background:rgba(226,27,60,.16)}
+        .pi-orbs .a{top:-10vmax;left:-6vmax;animation:orbA 36s linear infinite}
+        .pi-orbs .b{top:-8vmax;right:-10vmax;animation:orbB 42s linear infinite}
+        .pi-orbs .c{bottom:-12vmax;left:15vw;width:42vmax;height:42vmax;animation:orbC 40s linear infinite}
+        .pi-orbs .d{bottom:-14vmax;right:10vw;width:50vmax;height:50vmax;animation:orbD 46s linear infinite}
+        @keyframes orbA{50%{transform:translate3d(4vw,2vh,0) scale(1.05)}}
+        @keyframes orbB{50%{transform:translate3d(-3vw,3vh,0) scale(1.03)}}
+        @keyframes orbC{50%{transform:translate3d(2vw,-2vh,0) scale(1.06)}}
+        @keyframes orbD{50%{transform:translate3d(-2vw,-3vh,0) scale(1.04)}}
 
-        .kpis .card{
-            background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-            border:1px solid rgba(255,255,255,.08); border-radius:16px; box-shadow:var(--shadow);
-        }
-        .kpi-number{ font-size:2rem; font-weight:800 }
-
-        #locator{ padding:22px; background:var(--card-2); border:1px solid #1e2a44; border-radius:16px; }
-        #map{ height:520px; border-radius:16px; border:1px solid #1e2a44; }
-        .leaflet-container{ background:#0F1524; }
-        .leaflet-control-zoom a{ background:#151e31; color:#fff; border:none; box-shadow:0 4px 14px rgba(0,0,0,.25) }
-        .leaflet-bar a:hover{ background:#1b2436 }
-        .leaflet-popup-content-wrapper,.leaflet-popup-tip{ background:#141b2b; color:#E6E9F2; border:none }
-
-        .store-card{ background:var(--card); border:1px solid #1e2a44; border-radius:16px; transition: transform .18s ease, box-shadow .18s ease }
-        .store-card:hover{ transform: translateY(-3px); box-shadow: 0 14px 40px rgba(0,0,0,.35) }
-        .store-img{ height:164px; background:#0f1524; border-radius:12px; overflow:hidden }
-        .store-img img{ width:100%; height:100%; object-fit:cover }
-        .badge-pill{ border-radius:999px; padding:.35rem .6rem; font-weight:600 }
-        .badge-purple{ background:#7b5cff; color:#fff }
-        .badge-blue{ background:#2E4C97; color:#fff }
-        .badge-green{ background:#2ecc71; color:#0b1f10 }
-        .badge-amber{ background:#f1c40f; color:#2d2300 }
-
-        .btn-outline{ border:2px solid rgba(255,255,255,.55); color:var(--ink); padding:.55rem .9rem; border-radius:12px; background:transparent; font-weight:700 }
-        .btn-outline.dark{ background:var(--pi-red); border-color:var(--pi-red); color:#fff }
-
-        .skeleton{ position:relative; overflow:hidden; background:#10172a; border-radius:12px; min-height:164px }
-        .skeleton::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
-            animation:shimmer 1.4s infinite; }
-        @keyframes shimmer{ 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
-
-        .highlight-marker{ filter: drop-shadow(0 0 8px rgba(226,27,60,.9)); }
-
-        @media (min-width:992px){
-            .sticky-map{ position:sticky; top:16px }
-        }
-    </style>
-
-    <!-- ===== Overrides SEAMLESS pour effacer toutes les "boîtes" visibles ===== -->
-    <style id="seamless-overrides">
-        /* Unifie les surfaces */
-        :root{ --card:#0b1120; --card-2:#0b1120; }
-        body.pi-theme{ background:#0b1120 !important; }
-
-        /* Navbar & Hero fondus */
-        .navbar{ background:transparent !important; border:none !important; box-shadow:none !important; }
-        .hero{
-            border:none !important;
-            padding-bottom:32px !important;
-            background:#0b1120 !important; /* coupe le dégradé pour supprimer la marche */
-        }
-
-        /* Zone liste + carte */
-        #locator{ background:transparent !important; border:none !important; box-shadow:none !important; padding:0 !important; margin-top:-10px !important; }
-
-        /* Leaflet plat */
-        #map{ border:none !important; box-shadow:none !important; border-radius:16px !important; }
-        .leaflet-container{ background:#0b1120 !important; }
-        .leaflet-popup-content-wrapper,.leaflet-popup-tip{ background:#0b1120 !important; border:none !important; box-shadow:none !important; }
-        .leaflet-control-zoom a{ background:#121a2a !important; border:none !important; box-shadow:none !important; }
-
-        /* Cartes magasin ultra light */
-        .store-card{ background:transparent !important; border:none !important; box-shadow:none !important; }
-        .store-img{ background:#101626 !important; border:none !important; border-radius:16px !important; }
-
-        /* KPI lissés */
-        .kpis .card{ background:transparent !important; border:none !important; box-shadow:none !important; }
-
-        /* Boutons/inputs unifiés */
-        .btn-outline, .btn.btn-outline-light, .btn.btn-outline-secondary{
-            background:transparent !important; border-color:rgba(255,255,255,.18) !important;
-        }
-        .btn-outline:hover, .btn.btn-outline-light:hover, .btn.btn-outline-secondary:hover{
-            background:rgba(255,255,255,.06) !important;
-        }
-        .input-group .input-group-text{ background:#121a2a !important; border-color:#121a2a !important; }
-        #searchInput.form-control, #sortSelect{ background:#121a2a !important; border-color:#121a2a !important; color:#e6e9f2 !important; }
-
-        /* Skeletons plus neutres */
-        .skeleton{ background:#101626 !important; box-shadow:none !important; }
-        .skeleton::after{ opacity:.5 !important; }
-
-        /* Badges état */
-        .store-card .badge.bg-success{ background:#2ecc71 !important; box-shadow:none !important; }
-        .store-card .badge.bg-secondary{ background:#2E4C97 !important; }
-    </style><style id="hairlines">
-        :root{
-            --hair: rgba(255,255,255,.08);  /* ligne très légère */
-            --hair-strong: rgba(255,255,255,.14);
-        }
-
-        /* 1) NAVBAR : trait fin en bas, comme sur l’index */
-        .navbar{
-            background:transparent !important;
-            border:none !important;
-            box-shadow: none !important;
-            position:relative;
-        }
-        .navbar::after{
-            content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
-            background: linear-gradient(90deg, transparent, var(--hair), transparent);
-            pointer-events:none;
-        }
-
-        /* 2) CARTES MAGASINS : pas de “boîte” — juste un filet 1px arrondi */
-        .store-card{
-            background:transparent !important;
-            border:1px solid var(--hair) !important;
-            border-radius:16px !important;
-            box-shadow:none !important;
-            transition:border-color .18s ease, transform .18s ease;
-        }
-        .store-card:hover{
-            border-color: var(--hair-strong) !important;
-            transform: translateY(-2px);
-        }
-        /* image inchangée */
-        .store-img{ border-radius:12px; overflow:hidden; position:relative; }
-
-        /* 3) MAP : filet fin autour de la carte seulement */
-        #map{
-            border:1px solid var(--hair) !important;
-            border-radius:16px !important;
-            box-shadow:none !important;
-        }
-
-        /* 4) BARRES OUTILS (recherche / filtres) : contour discret */
-        .input-group .input-group-text,
-        #searchInput.form-control,
-        #sortSelect,
-        .btn.btn-outline-light,
-        .btn.btn-outline-secondary{
-            border:1px solid var(--hair) !important;
-            background:rgba(255,255,255,.02) !important;
-        }
-        .btn.btn-outline-light:hover,
-        .btn.btn-outline-secondary:hover{
-            border-color:var(--hair-strong) !important;
-            background:rgba(255,255,255,.05) !important;
-        }
-
-        /* 5) KPI : petites “dalles” fines sans gros fond */
-        .kpis .card{
-            background:transparent !important;
-            border:1px solid var(--hair) !important;
-            box-shadow:none !important;
-            border-radius:16px !important;
-        }
-
-        /* 6) Séparateurs horizontaux très fins entre groupes (optionnel) */
-        .section-hairline{
-            position:relative;
-            padding-top:24px;
-            margin-top:8px;
-        }
-        .section-hairline::before{
-            content:""; position:absolute; left:0; right:0; top:0; height:1px;
-            background: linear-gradient(90deg, transparent, var(--hair), transparent);
-        }
-
-        /* 7) Pastille Ouvert/Fermé en overlay (si tu as activé le patch précédent) */
-        .store-status{
-            position:absolute; top:10px; left:10px; z-index:2;
-            border-radius:999px; padding:.35rem .6rem; font-weight:700; font-size:.8rem;
-            box-shadow:0 4px 18px rgba(0,0,0,.28);
-        }
-        .store-status.open{ background:#2ecc71; color:#0b1f10; }
-        .store-status.closed{ background:#2E4C97; color:#fff; }
-
-        /* 8) Petits raffinements */
-        .leaflet-control-zoom a{ border:1px solid var(--hair) !important; }
-        .badge-pill{ border:1px solid var(--hair); }
-    </style>
-    <style id="dark-animated-bg">
-        :root{
-            /* Ajuste l’intensité ici si besoin */
-            --bg-base: #080d18;      /* plus sombre que #0b1120 */
-            --bg-ink:  #e6e9f2;
-            --blob-a: rgba(226,27,60,.10);   /* rouge PI très léger */
-            --blob-b: rgba(46,76,151,.12);   /* bleu PI très léger */
-            --blob-c: rgba(39,174,96,.08);   /* vert PI très léger */
-        }
-
-        /* Fond global plus sombre */
-        body.pi-theme{
-            background: var(--bg-base) !important;
-            color: var(--bg-ink);
-        }
-
-        /* Couche animée très discrète derrière tout */
-        body.pi-theme::before{
-            content:"";
-            position: fixed;
-            inset: -20vmax;               /* dépasse l’écran pour éviter les bords visibles */
-            z-index: -1;                  /* derrière tout */
-            pointer-events: none;
-            filter: blur(60px);           /* halo doux */
-            opacity: .75;                 /* force globale de l’animation */
-            background:
-                    radial-gradient(35vmax 35vmax at 15% 10%, var(--blob-a), transparent 60%),
-                    radial-gradient(45vmax 45vmax at 85% 20%, var(--blob-b), transparent 65%),
-                    radial-gradient(40vmax 40vmax at 50% 95%, var(--blob-c), transparent 60%);
-            animation: paristanbul-float 28s linear infinite;
-            transform: translateZ(0);     /* hint GPU */
-        }
-
-        /* Variation lente de positions pour un effet vivant */
-        @keyframes paristanbul-float{
-            0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
-            50%  { transform: translate3d(-2%, 1%, 0) rotate(6deg)  scale(1.03); }
-            100% { transform: translate3d(0, 0, 0) rotate(0deg)    scale(1); }
-        }
-
-        /* Pas d’animation si l’utilisateur préfère réduire les mouvements */
-        @media (prefers-reduced-motion: reduce){
-            body.pi-theme::before{ animation: none; opacity: .55; }
-        }
-
-        /* Renforce un chouïa le contraste des hairlines si tu as collé le patch précédent */
-        :root{
-            --hair: rgba(255,255,255,.10);
-            --hair-strong: rgba(255,255,255,.18);
-        }
-
-        /* Léger assombrissement du hero pour qu’il “fonde” avec le fond */
-        .hero{
-            background: linear-gradient(180deg, rgba(0,0,0,.18), transparent 30%) !important;
-        }
-
-        /* Petites touches pour garder une bonne lisibilité */
-        .store-img{ background:#0b1324 !important; }
-        .leaflet-container{ background:#0b1324 !important; }
-    </style>
-    <style id="pi-orbs-css">
-        :root{
-            /* fond plus sombre + hairlines un poil plus visibles */
-            --bg-base:#010309;
-            --hair:rgba(255,255,255,.12);
-            --hair-strong:rgba(255,255,255,.20);
-            /* orbes (basse opacité, très “glass”) */
-            --orb-blue:rgba(46,76,151,.18);
-            --orb-red: rgba(226,27,60,.16);
-        }
-
-        /* fond global encore plus dark */
-        body.pi-theme{ background:var(--bg-base) !important; }
-
-        /* calque des orbes : pleine page, derrière tout */
-        .pi-orbs{
-            position:fixed; inset:0; z-index:-1; pointer-events:none;
-            overflow:hidden;
-        }
-        .pi-orbs .orb{
-            position:absolute; width:48vmax; height:48vmax; border-radius:9999px;
-            filter: blur(80px);
-            opacity:.75;                       /* plus de transparence => baisse si besoin */
-            will-change: transform;
-            mix-blend-mode: screen;            /* rendu doux sur fond sombre */
-        }
-        .pi-orbs .orb-blue{ background:var(--orb-blue); }
-        .pi-orbs .orb-red { background:var(--orb-red);  }
-
-        /* positions de départ (coins / centre bas) */
-        .pi-orbs .a{ top:-10vmax; left:-6vmax;  animation:orb-drift-a 36s linear infinite; }
-        .pi-orbs .b{ top:-8vmax; right:-10vmax; animation:orb-drift-b 42s linear infinite; }
-        .pi-orbs .c{ bottom:-12vmax; left:15vw; animation:orb-drift-c 40s linear infinite; width:42vmax; height:42vmax; }
-        .pi-orbs .d{ bottom:-14vmax; right:10vw; animation:orb-drift-d 46s linear infinite; width:50vmax; height:50vmax; }
-
-        /* animations (lentes, subtiles) */
-        @keyframes orb-drift-a{
-            0%   { transform:translate3d(0,0,0) scale(1); }
-            50%  { transform:translate3d(4vw,2vh,0) scale(1.05); }
-            100% { transform:translate3d(0,0,0) scale(1); }
-        }
-        @keyframes orb-drift-b{
-            0%   { transform:translate3d(0,0,0) scale(1); }
-            50%  { transform:translate3d(-3vw,3vh,0) scale(1.03); }
-            100% { transform:translate3d(0,0,0) scale(1); }
-        }
-        @keyframes orb-drift-c{
-            0%   { transform:translate3d(0,0,0) scale(1); }
-            50%  { transform:translate3d(2vw,-2vh,0) scale(1.06); }
-            100% { transform:translate3d(0,0,0) scale(1); }
-        }
-        @keyframes orb-drift-d{
-            0%   { transform:translate3d(0,0,0) scale(1); }
-            50%  { transform:translate3d(-2vw,-3vh,0) scale(1.04); }
-            100% { transform:translate3d(0,0,0) scale(1); }
-        }
-
-        /* réduit encore le fond des sections pour le “plus sombre & transparent” */
-        .hero{ background:linear-gradient(180deg, rgba(0,0,0,.28), transparent 35%) !important; }
-        #locator, .kpis .card, .store-card, #map{
-            background:transparent !important;
-            /* hairlines conservées par tes règles existantes */
-        }
-
-        /* accessibilité : pas d’animation si motion réduit */
-        @media (prefers-reduced-motion: reduce){
-            .pi-orbs .orb{ animation:none; opacity:.55; }
-        }
-    </style>
-    <style id="pi-animated-word">
-        /* Dégradé rouge ⇄ bleu animé sur le texte (compatifble Safari) */
-        .pi-word-anim{
-            --c1:#e21b3c;   /* rouge PI */
-            --c2:#2E4C97;   /* bleu PI */
-            background-image: linear-gradient(90deg, var(--c1), var(--c2), var(--c1));
-            background-size: 200% 100%;
-            background-position: 0% 50%;
-
-            -webkit-background-clip: text;  /* Safari/iOS */
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-
-            display:inline-block;            /* pour animer le background proprement */
-            animation: piWordShift 6s ease-in-out infinite alternate;
-        }
-        .pi-word-anim.glow{
-            /* halo très léger pour le contraste */
-            text-shadow: 0 0 12px rgba(226,27,60,.15), 0 0 14px rgba(46,76,151,.12);
-        }
-        @keyframes piWordShift{
-            0%   { background-position:   0% 50%; filter:saturate(110%); }
-            50%  { background-position: 100% 50%; filter:saturate(130%); }
-            100% { background-position:   0% 50%; filter:saturate(110%); }
-        }
-        @media (prefers-reduced-motion: reduce){
-            .pi-word-anim{ animation:none; }
-        }
-    </style>
-    <style id="pi-marquee-cities">
+        /* ==== bandeau villes (marquee) ==== */
         .pi-marquee{position:sticky;top:0;z-index:60;overflow:hidden;
-            border-bottom:1px solid rgba(255,255,255,.08);background:transparent}
+            border-bottom:1px solid var(--hair);background:transparent}
         .pi-marquee__inner{display:flex;gap:40px;padding:10px 0;white-space:nowrap;
             animation:piMarquee 22s linear infinite}
         .pi-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;
             border-radius:999px;background:linear-gradient(145deg,#101733,#111621);
-            border:1px solid #1a2340;font-size:.92rem}
+            border:1px solid #1a2340;font-size:.92rem;color:#cfe0ff}
         .pi-pill .pi-dot{width:8px;height:8px;border-radius:50%;
             background:conic-gradient(from 90deg,#e21b3c,#2E4C97)}
         @keyframes piMarquee{from{transform:translateX(0)} to{transform:translateX(-50%)}}
         @media (prefers-reduced-motion:reduce){ .pi-marquee__inner{animation:none} }
-        /* bannière (déjà présente) */
-        .pi-marquee{
-            position: sticky; top: 0; z-index: 60; overflow: hidden;
-            border-bottom:1px solid rgba(255,255,255,.08);
-            background: transparent;
 
-            /* transition pour un slide propre */
-            transition: transform .25s ease, opacity .25s ease;
+        /* ==== header (mêmes tailles que la home) ==== */
+        header.pi-simple{ color:#e6e9f2; }
+        header.pi-simple .pi-topbar{
+            max-width:1200px; margin:0 auto; padding:24px 0;
+            display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:16px;
+            border-bottom:1px solid var(--hair);
         }
+        header.pi-simple .pi-brand{ display:flex; flex-direction:column; align-items:center; }
+        header.pi-simple .pi-brand img{ height:72px; }
+        header.pi-simple .pi-tagline{ display:flex; align-items:center; gap:14px; font-size:13px; color:var(--muted); }
+        header.pi-simple .pi-tagline .rule{ width:92px; height:1px; background:var(--hair); }
+        header.pi-simple .pi-social{ display:flex; gap:16px; }
+        header.pi-simple .pi-social a{ color:#c9d4ea; font-size:18px; }
+        header.pi-simple .join{ margin-top:6px; font-size:13px; color:#c9d4ea; }
+        header.pi-simple .pi-right{ display:flex; justify-content:flex-end; align-items:center; gap:10px; font-weight:800; }
+        header.pi-simple .pi-right .phone{ color:#e6e9f2; text-decoration:none; }
 
-        /* état masqué */
-        .pi-marquee.is-hidden{
-            transform: translateY(-100%);
-            opacity: 0;
-            pointer-events: none;
+        header.pi-simple .pi-navrow{
+            max-width:1200px; margin:0 auto; padding:10px 0;
+            border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);
+        }
+        header.pi-simple .pi-menu{
+            display:flex; justify-content:center; gap:28px; list-style:none; margin:0; padding:0;
+        }
+        header.pi-simple .pi-menu a{
+            position:relative; padding-bottom:6px;
+            font-weight:800; font-size:14px; letter-spacing:.06em; text-transform:uppercase;
+            color:#c9d4ea; text-decoration:none; transition:color .2s ease;
+        }
+        header.pi-simple .pi-menu a:hover,
+        header.pi-simple .pi-menu a.is-active{ color:#fff; }
+        header.pi-simple .pi-menu a::after{
+            content:""; position:absolute; left:50%; bottom:-6px; width:0; height:2px;
+            background:linear-gradient(90deg,#2E4C97,#D6452E);
+            transition:width .25s,left .25s;
+        }
+        header.pi-simple .pi-menu a:hover::after,
+        header.pi-simple .pi-menu a.is-active::after{ width:100%; left:0; }
+
+        @media (max-width:991.98px){
+            header.pi-simple .pi-topbar{ grid-template-columns:1fr auto; row-gap:10px; }
+            header.pi-simple .pi-right{ justify-self:start; }
+            header.pi-simple .pi-menu{ flex-wrap:wrap; gap:18px 20px; }
         }
     </style>
-
 </head>
-<body class="pi-theme">
+<body>
+<!-- fond + orbes -->
+<div id="page-bg" aria-hidden="true"></div>
 <div class="pi-orbs" aria-hidden="true">
-    <span class="orb orb-blue a"></span>
-    <span class="orb orb-red  b"></span>
-    <span class="orb orb-blue c"></span>
-    <span class="orb orb-red  d"></span>
+    <span class="orb blue a"></span>
+    <span class="orb red  b"></span>
+    <span class="orb blue c"></span>
+    <span class="orb red  d"></span>
 </div>
+
+<!-- bandeau villes -->
 <div class="pi-marquee" aria-hidden="true">
     <div class="pi-marquee__inner">
-        <!-- 4 premiers -->
         <span class="pi-pill"><span class="pi-dot"></span> Bondy</span>
         <span class="pi-pill"><span class="pi-dot"></span> Drancy</span>
         <span class="pi-pill"><span class="pi-dot"></span> Villemomble</span>
         <span class="pi-pill"><span class="pi-dot"></span> Vert-Saint-Denis</span>
         <span class="pi-pill"><span class="pi-dot"></span> Villiers-le-Bel</span>
-        <span class="pi-pill"><span class="pi-dot"></span> Nogent-Sur-Oise</span>
-        <!-- 4 suivants (on répète pour la boucle continue) -->
+        <span class="pi-pill"><span class="pi-dot"></span> Nogent-sur-Oise</span>
+        <!-- duplication pour défilement continu -->
         <span class="pi-pill"><span class="pi-dot"></span> Bondy</span>
         <span class="pi-pill"><span class="pi-dot"></span> Drancy</span>
         <span class="pi-pill"><span class="pi-dot"></span> Villemomble</span>
         <span class="pi-pill"><span class="pi-dot"></span> Vert-Saint-Denis</span>
         <span class="pi-pill"><span class="pi-dot"></span> Villiers-le-Bel</span>
-        <span class="pi-pill"><span class="pi-dot"></span> Nogent-Sur-Oise</span>
+        <span class="pi-pill"><span class="pi-dot"></span> Nogent-sur-Oise</span>
     </div>
 </div>
-<!-- le reste de ta page -->
 
-<header>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <!-- Logo -->
-            <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
-                <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" style="height:48px">
+<!-- header -->
+<header class="pi-simple">
+    <div class="container pi-topbar">
+        <!-- gauche -->
+        <div class="left-col">
+            <nav class="pi-social" aria-label="Réseaux sociaux">
+                <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/paristanbul_supermarche/?hl=fr" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@supermarche_paristanbul" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                <a href="https://www.youtube.com/channel/UCsjy3bdpFzBwM7MF923gKvA" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            </nav>
+            <div class="join">Rejoignez nous</div>
+        </div>
+
+        <!-- centre -->
+        <div class="pi-brand">
+            <a href="index.php" class="navbar-brand">
+                <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul">
             </a>
-
-            <!-- Burger mobile -->
-            <button class="navbar-toggler text-white border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="bi bi-list" style="font-size:1.6rem"></i>
-            </button>
-
-            <!-- Nav centrée + boutons à droite -->
-            <div class="collapse navbar-collapse" id="navMain">
-                <ul class="navbar-nav mx-lg-auto my-3 my-lg-0 gap-lg-2">
-                    <li class="nav-item"><a class="nav-link px-3" href="index.php">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="postuler.php">Postuler</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="quiSommesNous.html">Notre histoire</a></li>
-                </ul>
-
-                <div class="d-flex gap-2 ms-lg-0 ms-auto">
-                    <a href="pageInscription.php" class="btn btn-light">Inscription</a>
-                    <a href="pageConnexion.php" class="btn btn-dark">Connexion</a>
-                </div>
+            <div class="pi-tagline">
+                <span class="rule" aria-hidden="true"></span>
+                <span>Since 1993</span>
+                <span class="rule" aria-hidden="true"></span>
             </div>
         </div>
-    </nav>
+
+        <!-- droite -->
+        <div class="pi-right">
+            <i class="fa-solid fa-phone"></i>
+            <a class="phone" href="tel:+33749826133">07 49 82 61 33</a>
+        </div>
+    </div>
+
+    <div class="container pi-navrow">
+        <ul class="pi-menu" aria-label="Navigation principale">
+            <li><a href="index.php">Accueil</a></li>
+            <li><a href="quiSommesNous.html">Notre Histoire</a></li>
+            <li><a class="is-active" href="nosMagasins.php">Nos Magasins</a></li>
+            <li><a href="index.php#catalog">Catalogue</a></li>
+            <li><a href="index.php#contact">Contact</a></li>
+            <li><a href="postuler.php">Postuler</a></li>
+            <li><a href="pageConnexion.php"><i class="fa-regular fa-user"></i> Se connecter</a></li>
+        </ul>
+    </div>
 </header>
 
+<!-- ===== HERO (début) ===== -->
 <section class="hero">
     <div class="container">
         <div class="row align-items-center g-4">
@@ -738,11 +430,47 @@ if ($magasinsJson === false) {
         </div>
     </div>
 </main>
+<footer class="pi-footer">
+    <div class="foot-wrap">
+        <a href="index.php"><img class="foot-brand" src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul"></a>
 
-<footer class="container my-5 text-center text-muted">
-    © <?= date('Y') ?> Paristanbul — Tous droits réservés
+        <ul class="foot-social" aria-label="Réseaux sociaux">
+            <li><a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR"><i class="fa-brands fa-facebook-f"></i></a></li>
+            <li><a href="https://www.instagram.com/paristanbul_supermarche/?hl=fr"><i class="fa-brands fa-instagram"></i></a></li>
+            <li><a href="https://www.tiktok.com/@supermarche_paristanbul"><i class="fa-brands fa-tiktok"></i></a></li>
+            <li><a href="https://www.youtube.com/channel/UCsjy3bdpFzBwM7MF923gKvA"><i class="fa-brands fa-youtube"></i></a></li>
+        </ul>
+
+        <nav class="foot-nav" aria-label="Footer">
+            <a href="index.php">Accueil</a>
+            <a href="nosMagasins.php">Nos magasins</a>
+            <a href="index.php#catalog">Catalogue</a>
+            <a href="quiSommesNous.html">À propos</a>
+            <a href="postuler.php">Postuler</a>
+            <a href="index.php#contact">Contact</a>
+        </nav>
+
+        <p class="copyright">© <span id="year"></span> Paristanbul — Tous droits réservés.</p>
+    </div>
 </footer>
+<style>
+    /* mêmes dimensions que l’index */
+    header.pi-simple .pi-brand img{height:72px}
+    header.pi-simple .pi-topbar{padding:24px 0}
 
+    /* pas de soulignement animé sous les liens du menu */
+    header.pi-simple .pi-menu a::after{content:none}
+
+    /* style des icônes réseaux comme l’index */
+    header.pi-simple .pi-social a{color:#c9d4ea; font-size:18px}
+</style>
+<style>
+    #map { height: 420px; border-radius: 12px; overflow: hidden; }
+    .sticky-map { position: sticky; top: 16px; }
+</style>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
     /* ===== Données PHP -> JS ===== */
     const magasins = (() => { try { return <?php echo ($magasinsJson ?: '[]'); ?>; } catch(_) { return []; } })();
@@ -1046,5 +774,6 @@ if ($magasinsJson === false) {
         window.addEventListener('scroll', onScroll, { passive: true });
     })();
 </script>
+
 </body>
 </html>

@@ -381,7 +381,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         <ul class="menu" aria-label="Navigation principale">
             <li><a href="index.php">Accueil</a></li>
             <li><a href="quiSommesNous.html">Notre Histoire</a></li>
-            <li><a href="nosMagasins.php">Nos Magasins</a></li>
+            <li><a href="index.php#stores">Nos Magasins</a></li>
             <li><a href="index.php#catalog">Catalogue</a></li>
             <li><a href="index.php#contact">Contact</a></li>
             <li><a href="postuler.php" class="is-active">Postuler</a></li>
@@ -676,7 +676,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
         <nav class="footer-nav" aria-label="Navigation pied de page">
             <a href="index.php">Accueil</a>
-            <a href="nosMagasins.php">Nos magasins</a>
+            <a href="index.php#stores">Nos magasins</a>
             <a href="index.php#catalog">Catalogue</a>
             <a href="quiSommesNous.html">À propos</a>
             <a href="postuler.php">Postuler</a>

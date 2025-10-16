@@ -954,7 +954,7 @@ unset($_SESSION['flash_success']);
             <li><a href="index.php">Accueil</a></li>
             <li><a href="quiSommesNous.html">Notre Histoire</a></li>
             <li><a href="#catalog">Catalogue</a></li>
-            <li><a href="nosMagasins.php">Nos Magasins</a></li>
+            <li><a href="#stores">Nos Magasins</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="postuler.php">Postuler</a></li>
 
@@ -1269,7 +1269,7 @@ unset($_SESSION['flash_success']);
 
         <nav class="footer-nav" aria-label="Navigation pied de page">
             <a href="index.php">Accueil</a>
-            <a href="nosMagasins.php">Nos magasins</a>
+            <a href="index.php#stores">Nos magasins</a>
             <a href="#catalog">Catalogue</a>
             <a href="quiSommesNous.html">À propos</a>
             <a href="postuler.php">Postuler</a>
