@@ -24,7 +24,7 @@ try {
     // Clé API (gardée telle quelle)
     $API_KEY = getenv('BREVO_API_KEY') ?: '';
     if ($API_KEY === '') {
-        $API_KEY = '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';
+        $API_KEY = '';
     }
 
     // ID de la liste
