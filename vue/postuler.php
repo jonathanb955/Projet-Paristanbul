@@ -1,24 +1,22 @@
 <?php
 /**************************************
- * POSTULER — Paristanbul (dark theme)
- * Unique file: UI + PHP handler
+ * POSTULER — Paristanbul (header/footer identiques à la Home)
  **************************************/
 
 // ---------- CONFIG UPLOAD ----------
 $MAX_FILE_SIZE_MB = 5; // limite 5 Mo
 $ALLOWED_EXT = ['pdf','doc','docx'];
 $ALLOWED_MIME = [
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 ];
-// ---------- UTIL: Connexion BDD multi-essais (Mac MAMP 8889/3306, mdp root ou vide) ----------
+
+// ---------- UTIL: Connexion BDD multi-essais ----------
 function db_connect(): PDO {
     $attempts = [
-        // MAMP par défaut
-            ['host'=>'127.0.0.1', 'port'=>8889, 'user'=>'root', 'pass'=>'root'],
-        // MySQL 3306 sans mdp
-            ['host'=>'127.0.0.1', 'port'=>3306, 'user'=>'root', 'pass'=>''],
+            ['host'=>'127.0.0.1', 'port'=>8889, 'user'=>'root', 'pass'=>'root'],  // MAMP
+            ['host'=>'127.0.0.1', 'port'=>3306, 'user'=>'root', 'pass'=>''],      // MySQL
     ];
     $last = null;
     foreach ($attempts as $a) {
@@ -34,11 +32,9 @@ function db_connect(): PDO {
                     ]
             );
             return $pdo;
-        } catch (Throwable $e) {
-            $last = $e;
-        }
+        } catch (Throwable $e) { $last = $e; }
     }
-    throw new Exception("Impossible de se connecter à MySQL (essayé ports 8889/3306, mdp root ou vide). Dernière erreur: " . ($last? $last->getMessage(): 'n/a'));
+    throw new Exception("Impossible de se connecter à MySQL. Dernière erreur: " . ($last? $last->getMessage(): 'n/a'));
 }
 
 // ---------- FEEDBACK UI ----------
@@ -49,10 +45,9 @@ $uploaded_cv_public = null;
 // ---------- HANDLE POST ----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Connexion BDD
         $bdd = new PDO('mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8', 'root', '', [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
 
         // Champs
@@ -69,19 +64,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ref_offre        = !empty($_POST['ref_offre']) ? (int)$_POST['ref_offre'] : (!empty($_GET['id']) ? (int)$_GET['id'] : null);
         $date_candidature = date("Y-m-d H:i:s");
 
-        // Validations simples
-        if ($nom === '' || $prenom === '' || $email === '') {
-            throw new Exception("Merci de renseigner au minimum prénom, nom et email.");
-        }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("L'email n'est pas valide.");
-        }
+        if ($nom === '' || $prenom === '' || $email === '') throw new Exception("Merci de renseigner au minimum prénom, nom et email.");
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))      throw new Exception("L'email n'est pas valide.");
 
         // Upload CV
         $upload_dir = __DIR__ . "/telechargement/candidatures/";
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
+        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
 
         $nettoyer_nom    = preg_replace("/[^a-zA-Z0-9]/", "_", strtolower($nom));
         $nettoyer_prenom = preg_replace("/[^a-zA-Z0-9]/", "_", strtolower($prenom));
@@ -94,24 +82,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cvType    = mime_content_type($cvTmp) ?: '';
             $extension = strtolower(pathinfo($cvName, PATHINFO_EXTENSION));
 
-            if (!in_array($extension, $ALLOWED_EXT, true)) {
-                throw new Exception("Extension de fichier non autorisée (pdf, doc, docx).");
-            }
-            if (!in_array($cvType, $ALLOWED_MIME, true)) {
-                throw new Exception("Type de fichier non autorisé.");
-            }
-            if ($cvSize > $MAX_FILE_SIZE_MB * 1024 * 1024) {
-                throw new Exception("Fichier trop volumineux (max {$MAX_FILE_SIZE_MB} Mo).");
-            }
+            if (!in_array($extension, $ALLOWED_EXT, true)) throw new Exception("Extension de fichier non autorisée (pdf, doc, docx).");
+            if (!in_array($cvType, $ALLOWED_MIME, true))   throw new Exception("Type de fichier non autorisé.");
+            if ($cvSize > $MAX_FILE_SIZE_MB * 1024 * 1024) throw new Exception("Fichier trop volumineux (max {$MAX_FILE_SIZE_MB} Mo).");
 
             $hash  = substr(md5(uniqid('', true)), 0, 10);
             $fname = "cv_{$nettoyer_nom}_{$nettoyer_prenom}_{$hash}.{$extension}";
             $dest  = $upload_dir . $fname;
 
-            if (!move_uploaded_file($cvTmp, $dest)) {
-                throw new Exception("Échec lors de l'upload du CV.");
-            }
-            // Chemin public
+            if (!move_uploaded_file($cvTmp, $dest)) throw new Exception("Échec lors de l'upload du CV.");
+
             $lien_cv = "telechargement/candidatures/" . $fname;
             $uploaded_cv_public = $lien_cv;
         } else {
@@ -125,15 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              experiences, lettre_motivation, ref_offre, date_candidature, statut, lien_cv)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
-
         $ok = $sql->execute([
-            $nom, $prenom, $email, $date_naissance, $langues, $adresse, $telephone, $permis,
-            $experiences, $lettre_motivation, $ref_offre, $date_candidature, "Nouveau", $lien_cv
+                $nom, $prenom, $email, $date_naissance, $langues, $adresse, $telephone, $permis,
+                $experiences, $lettre_motivation, $ref_offre, $date_candidature, "Nouveau", $lien_cv
         ]);
-
-        if (!$ok) {
-            throw new Exception("Une erreur est survenue lors de l'enregistrement.");
-        }
+        if (!$ok) throw new Exception("Une erreur est survenue lors de l'enregistrement.");
 
         $form_status = 'success';
         $form_message = "Candidature envoyée avec succès. Nous revenons vers vous sous 15 jours.";
@@ -143,857 +119,584 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Pour pré-remplir ref_offre si on arrive avec ?id=...
+// Pré-remplir ref_offre
 $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Paristanbul — Recrutement</title>
+    <meta name="description" content="Rejoignez Paristanbul : offres d'emploi et candidature spontanée." />
 
-    <!-- Bootstrap & Icons -->
+    <!-- Fonts + Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Bootstrap (pour ta grille/form) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Design sombre moderne + Animations -->
     <style>
-        /* Soulignement dégradé au survol/actif — comme sur "Notre histoire" */
-        :root{ --pi-blue:#2E4C97; --pi-red:#D6452E; } /* si pas déjà définies */
-
-        .navbar .navbar-nav .nav-link{
-            position: relative;
-            font-weight: 700;
-            opacity: .92;
-            padding-bottom: .35rem;          /* petit espace pour la ligne */
-        }
-        .navbar .navbar-nav .nav-link:hover,
-        .navbar .navbar-nav .nav-link:focus{
-            opacity: 1;
-        }
-
-        /* la ligne animée */
-        .navbar .navbar-nav .nav-link::after{
-            content:"";
-            position:absolute;
-            left:50%;
-            bottom:-6px;                     /* ajuste si besoin */
-            width:0;
-            height:2px;
-            background:linear-gradient(90deg, var(--pi-blue), var(--pi-red));
-            transition:width .25s, left .25s;
-        }
-
-        /* au survol ou quand le lien a .active */
-        .navbar .navbar-nav .nav-link:hover::after,
-        .navbar .navbar-nav .nav-link.active::after{
-            width:100%;
-            left:0;
-        }
         :root{
-            --black:#0A0A0A;
-            --black-2:#0D0F13;
-            --navy:#0B1B34;
-            --navy-2:#132946;
-            --red:#A91D2B; /* rouge foncé */
-            --red-2:#8D1824;
-            --text:#EAF0F7;
-            --muted:#9AA4B2;
-            --card:#111418;
-            --card-2:#141922;
-            --border:rgba(255,255,255,.08);
-            --ring:rgba(169,29,43,.35);
-            --grad-hero: radial-gradient(1200px 600px at 15% -10%, rgba(169,29,43,.18), transparent 60%),
-            radial-gradient(900px 500px at 110% -20%, rgba(11,27,52,.55), transparent 60%),
-            linear-gradient(180deg, #0A0A0A 0%, #0B0F18 100%);
-            --ease:cubic-bezier(.22,.61,.36,1);
+            /* Palette globale (identique index) */
+            --black:#0a0c10; --blue:#0b3b8a; --red:#7b0f20;
+            --text:#ffffff; --muted:#c9d4ea; --panel:#0f1320; --ring:#2c59ff55;
+            --pi-blue:#2E4C97; --pi-red:#D6452E;
+            --bg-1:#0B1326; --bg-2:#0A0F1F;
+            --page-bg:
+                    radial-gradient(1000px 500px at 10% 10%, rgba(46,76,151,.25), transparent 60%),
+                    radial-gradient(900px 600px at 90% 10%, rgba(214,69,46,.18), transparent 55%),
+                    linear-gradient(180deg, var(--bg-1), var(--bg-2) 70%);
         }
-
         *{box-sizing:border-box}
-        html,body{background:var(--black); color:var(--text); scroll-behavior:smooth}
+        html,body{height:100%}
+        body{
+            margin:0; font-family:"Plus Jakarta Sans",system-ui,Segoe UI,Roboto,Arial;
+            color:var(--text); background:transparent;
+        }
         a{color:inherit;text-decoration:none}
-        img{max-width:100%;height:auto}
+        .container{max-width:1200px;margin:0 auto;padding:0 20px}
 
-        /* Top scroll progress */
-        #scrollProgress{
-            position:fixed; inset:0 auto auto 0; height:3px; width:0;
-            background:linear-gradient(90deg, var(--red-2), var(--red));
-            z-index:99999; box-shadow:0 0 12px rgba(169,29,43,.45);
-            transition:width .2s linear;
+        /* === FOND UNIQUE (comme index) === */
+        #page-bg{ position:fixed; inset:0; z-index:-2; pointer-events:none; background:var(--page-bg); }
+        .pi-orbs{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+        .pi-orbs .orb{ position:absolute; width:48vmax; height:48vmax; border-radius:9999px; filter:blur(80px); opacity:.75; mix-blend-mode:screen; }
+        .pi-orbs .blue{ background:rgba(46,76,151,.18) } .pi-orbs .red{ background:rgba(226,27,60,.16) }
+        .pi-orbs .a{ top:-10vmax; left:-6vmax;  animation:orbA 36s linear infinite }
+        .pi-orbs .b{ top:-8vmax;  right:-10vmax; animation:orbB 42s linear infinite }
+        .pi-orbs .c{ bottom:-12vmax; left:15vw;  animation:orbC 40s linear infinite; width:42vmax;height:42vmax }
+        .pi-orbs .d{ bottom:-14vmax; right:10vw; animation:orbD 46s linear infinite; width:50vmax;height:50vmax }
+        @keyframes orbA{50%{transform:translate3d(4vw,2vh,0) scale(1.05)}}
+        @keyframes orbB{50%{transform:translate3d(-3vw,3vh,0) scale(1.03)}}
+        @keyframes orbC{50%{transform:translate3d(2vw,-2vh,0) scale(1.06)}}
+        @keyframes orbD{50%{transform:translate3d(-2vw,-3vh,0) scale(1.04)}}
+
+        /* ====== HEADER SIMPLE (.pi-simple) ====== */
+        .marquee{position:relative; overflow:hidden; border-top:1px solid #151a2a; border-bottom:1px solid #151a2a;
+            background: linear-gradient(180deg, rgba(15,21,37,.94), rgba(13,19,33,.88));}
+        .marquee__inner{display:flex; gap:40px; padding:10px 0; white-space:nowrap; animation:marquee 22s linear infinite}
+        .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px;
+            background:linear-gradient(145deg,#121a34,#0f162a); border:1px solid #1b2744; font-size:.92rem}
+        .pill .dot{width:8px;height:8px;border-radius:50%;background:conic-gradient(from 90deg,var(--red),var(--blue))}
+        @keyframes marquee{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+
+        header.pi-simple{ background:transparent !important; }
+        .pi-simple .topbar{ display:grid; grid-template-columns:1fr minmax(200px, 1fr) 1fr; align-items:center; gap:16px; padding-block: clamp(18px, 3.5vh, 40px); }
+        .pi-simple .left-col{display:flex}
+        .pi-simple .social-group{display:flex; flex-direction:column; align-items:center; width:max-content}
+        .pi-simple .social{display:flex; align-items:center; gap:16px; color:var(--muted)}
+        .pi-simple .social a{font-size:18px; color:var(--muted)}
+        .pi-simple .social a:hover{color:#fff}
+        .pi-simple .join{font-size:13px; color:var(--muted); font-weight:800; margin-top:6px; text-align:center}
+        .pi-simple .brand{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px}
+        .pi-simple .brand img{height: clamp(60px, 9vw, 72px)}
+        .pi-simple .tagline{display:flex; align-items:center; gap:14px; color:var(--muted); font-size: clamp(13px, 1.3vw, 16px); line-height:1}
+        .pi-simple .tagline .rule{width: clamp(58px, 9vw, 92px); height:1px; background:rgba(255,255,255,.06)}
+        .pi-simple .right-col{display:flex; justify-content:flex-end; align-items:center; gap:10px; font-weight:800}
+        .pi-simple .right-col i{color:#c9d4ea}
+        .pi-simple .phone{font-size: clamp(14px, 1.2vw, 18px); color:#e7ecf5}
+        .pi-simple .divider{border:0; border-top:1px solid #141a26; margin:0}
+        .pi-simple .navrow{padding:12px 0; position: relative;}
+        .pi-simple .menu{display:flex; justify-content:center; gap:28px; list-style:none; margin:0; padding:0}
+        .pi-simple .menu a{ font-weight:800; font-size:14px; color:#c9d4ea; letter-spacing:.06em; text-transform:uppercase; }
+        .pi-simple .menu a:hover, .pi-simple .menu a.is-active{color:#ffffff}
+
+        /* Bouton login (nav uniquement) */
+        .pi-simple .menu .btn-login{
+            display:inline-flex; align-items:center; gap:8px;
+            padding:10px 14px; border-radius:12px; border:1px solid #223055;
+            background:linear-gradient(145deg,#122043,#0e1731); color:#e7ecf5; font-weight:800; text-transform:uppercase;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 8px 18px rgba(0,0,0,.28);
+            transition:transform .08s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+        }
+        .pi-simple .menu .btn-login:hover{ background:linear-gradient(145deg,#1a2b57,#102244); border-color:#2a3d73; box-shadow:0 12px 26px rgba(0,0,0,.35); }
+        .pi-simple .menu .btn-login:active{ transform:translateY(1px); }
+
+        @media (max-width:720px){
+            .pi-simple .topbar{ grid-template-columns:1fr; text-align:center }
+            .pi-simple .left-col{justify-content:center}
+            .pi-simple .menu{flex-wrap:wrap; gap:18px}
+            .pi-simple .menu .btn-login span{ display:none; }
+            .pi-simple .menu .btn-login{ padding:10px; }
         }
 
-        /* Navbar */
-        .navbar-dark{
-            background: linear-gradient(180deg, rgba(0,0,0,.85), rgba(0,0,0,.65));
-            border-bottom:1px solid var(--border);
-            backdrop-filter: blur(4px);
+        /* FOOTER (identique index) */
+        footer.pi-footer{ position:relative; isolation:isolate; }
+        footer.pi-footer::before{
+            content:""; position:absolute; z-index:-1; top:0; bottom:0; left:50%; right:50%;
+            margin-left:-50vw; margin-right:-50vw;
+            background:
+                    radial-gradient(900px 500px at 10% -10%, rgba(46,76,151,.12), transparent 60%),
+                    radial-gradient(900px 500px at 90% -10%, rgba(214,69,46,.10), transparent 55%),
+                    linear-gradient(180deg, #0f1525, #0c1223);
+            border-top:1px solid #141a2b; box-shadow: inset 0 12px 40px rgba(0,0,0,.35);
         }
-        .navbar-dark .nav-link{ color:var(--muted); font-weight:500; letter-spacing:.2px; }
-        .navbar-dark .nav-link.active,
-        .navbar-dark .nav-link:hover{color:var(--text)}
-        .navbar-brand img{height:46px}
+        .pi-footer .wrap{ max-width:1100px; margin:0 auto; text-align:center; padding:24px 20px 10px; }
+        .pi-footer .brand{ height:72px; width:auto; object-fit:contain; display:block; margin:0 auto 18px; }
+        .pi-footer .headline{ display:flex; align-items:center; justify-content:center; gap:22px; margin:6px auto 18px; }
+        .pi-footer .headline h2{ margin:0; font-weight:800; letter-spacing:.12em; color:var(--pi-red); font-size:24px; }
+        .pi-footer .headline .line{ height:4px; width:260px; border-radius:2px; background:var(--pi-red); transform-origin:center; }
+        .pi-footer .social{ list-style:none; display:flex; justify-content:center; gap:14px; padding:0; margin:14px 0 20px; }
+        .pi-footer .social a{ width:42px; height:42px; display:grid; place-items:center; background:#101733; color:#cfe0ff; border-radius:50%; border:1px solid #1e2740; font-size:18px; transition:.2s; }
+        .pi-footer .social a:hover{ background: linear-gradient(145deg, var(--pi-blue), var(--pi-red)); border-color:#2a3659; color:#fff; transform:translateY(-2px); }
+        .pi-footer .footer-nav{ display:flex; flex-wrap:wrap; justify-content:center; gap:26px 30px; padding:12px 0 8px; margin:0 auto 12px; }
+        .pi-footer .footer-nav a{ text-decoration:none; color:#e9f1ff; font-weight:800; font-size:14px; letter-spacing:.04em; text-transform:uppercase; }
+        .pi-footer .footer-nav a:hover{ color:var(--pi-red) }
+        .pi-footer .copyright{ margin:6px 0 0; font-size:12px; color:var(--muted); user-select:none; }
 
-        /* === Nav centrée (centre absolu, desktop) === */
-        @media (min-width: 992px){ /* >= lg */
-            .navbar .container{
-                position: relative;
-                display: flex;
-                align-items: center;
-            }
-            .navbar-collapse{
-                display: flex !important;
-                align-items: center;
-                flex: 1 1 auto;          /* occupe l'espace central */
-            }
-            /* Le bloc des liens au vrai centre du container */
-            .navbar-nav{
-                position: absolute;
-                left: 50%; top: 50%;
-                transform: translate(-50%, -50%);
-                margin: 0 !important;
-                gap: 1.25rem;
-            }
-            /* Boutons poussés à droite */
-            .navbar .actions{
-                margin-left: auto;
-            }
-        }
-        /* Mobile/tablette : tout centré dans le menu déroulant */
-        @media (max-width: 991.98px){
-            #nav .navbar-nav{ align-items: center; }
-            .navbar .actions{ justify-content: center; margin-top: .5rem; }
-        }
-
-        /* Buttons */
-        .btn-red{
-            --bs-btn-bg:var(--red);
-            --bs-btn-border-color:var(--red);
-            --bs-btn-hover-bg:var(--red-2);
-            --bs-btn-hover-border-color:var(--red-2);
-            --bs-btn-color:#fff;
-            box-shadow:0 0 0 0 rgba(169,29,43,0);
-            transition: box-shadow .25s ease, transform .2s ease;
-            position:relative; overflow:hidden;
-        }
-        .btn-red:hover{ transform: translateY(-1px); box-shadow:0 6px 24px -8px var(--ring); }
-        /* Ripple */
-        .btn-red .ripple{
-            position:absolute; border-radius:50%; transform:scale(0); opacity:.6;
-            background:#fff; mix-blend-mode:overlay; pointer-events:none;
-            animation:ripple .6s ease-out forwards;
-        }
-        @keyframes ripple{ to{ transform:scale(16); opacity:0;} }
-
-        .btn-ghost{
-            background:transparent; border:1px solid var(--border); color:#fff; position:relative; overflow:hidden;
-            transition: border-color .25s var(--ease), background .25s var(--ease), transform .2s ease;
-        }
-        .btn-ghost:hover{border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.04); transform:translateY(-1px)}
-
-        /* Magnetic buttons (visual) */
-        .magnet{ will-change: transform; transition: transform .12s ease }
-
-        /* Hero + Parallax layers */
-        .hero{ background: var(--grad-hero); position:relative; overflow:hidden; }
-        .hero .shape{
-            position:absolute; border-radius:50%;
-            filter: blur(40px); opacity:.18; pointer-events:none; will-change: transform;
-        }
-        .shape.s1{width:320px;height:320px;background:#1b66ff; top:-80px;left:-80px; }
-        .shape.s2{width:420px;height:420px;background:#b31b2b; top:-120px;right:-120px; }
-        .shape.s3{width:260px;height:260px;background:#19c37d; bottom:-100px; left:25%; opacity:.12; filter:blur(48px); }
-
-        .hero-parallax{ will-change: transform; }
-
-        /* Sections */
+        /* --- Styles spécifiques page Recrutement (condensés) --- */
+        .hero{ padding:64px 0 24px; }
+        .badge-soft{ background: rgba(214,69,46,.12); color:#ffd7dc; border:1px solid rgba(214,69,46,.25); font-weight:700; padding:.35rem .6rem; border-radius:999px; }
+        .pi-word-anim{ --c1:#e21b3c; --c2:#2E4C97; background-image:linear-gradient(90deg,var(--c1),var(--c2),var(--c1)); background-size:200% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:piWord 6s ease-in-out infinite alternate; }
+        @keyframes piWord{ 0%{background-position:0% 50%} 100%{background-position:100% 50%} }
         .section{padding:72px 0}
-        .section-title{
-            font-weight:800; letter-spacing:.3px; margin-bottom:16px;
-            background:linear-gradient(90deg,#fff,#9cc3ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-        }
-        .section-sub{color:var(--muted)}
-
-        /* Cards (tilt-ready) */
-        .card-dark{
-            position:relative;
-            background: linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
-            border:1px solid var(--border);
-            border-radius:18px;
-            transition: transform .18s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
-            will-change: transform;
-        }
-        .card-dark:hover{
-            transform: translateY(-4px);
-            box-shadow: 0 18px 50px -20px rgba(0,0,0,.6), 0 8px 24px -12px var(--ring);
-            border-color: rgba(255,255,255,.12);
-        }
-
-        /* Tilt 3D */
-        .tilt{
-            transform-style: preserve-3d;
-        }
-        .tilt::after{
-            content:"";
-            position:absolute; inset:-1px; border-radius:inherit; pointer-events:none;
-            background: radial-gradient(240px 200px at var(--mx,50%) var(--my,50%), rgba(255,255,255,.08), transparent 60%);
-            opacity:0; transition:opacity .2s var(--ease);
-        }
-        .tilt.hovered::after{ opacity:1 }
-
-        /* Badge pill */
-        .badge-soft{
-            background: rgba(169,29,43,.12); color:#ffd7dc;
-            border:1px solid rgba(169,29,43,.25);
-            font-weight:600;
-        }
-
-        /* Icon bubble */
-        .icon-bubble{
-            width:54px;height:54px; display:grid; place-items:center;
-            border-radius:14px;
-            background:linear-gradient(180deg, rgba(169,29,43,.16), rgba(169,29,43,.05));
-            border:1px solid var(--border);
-            transition: transform .25s var(--ease);
-        }
-        .card-dark:hover .icon-bubble{ transform: translateY(-2px) }
-
-        /* Offers grid */
-        .offer .head{
-            background: linear-gradient(180deg, #10131a, #0d1117);
-            border-bottom:1px solid var(--border);
-        }
-
-        /* Form */
-        .form-control, .form-select{
-            background:#0e131a; border:1px solid var(--border); color:var(--text);
-            transition: border-color .2s var(--ease), box-shadow .2s var(--ease), transform .15s var(--ease);
-        }
-        .form-control:focus, .form-select:focus{
-            border-color:rgba(169,29,43,.6); box-shadow:0 0 0 .25rem rgba(169,29,43,.15); color:#fff;
-            transform: translateY(-1px);
-        }
-        .is-valid-quick{
-            box-shadow:0 0 0 .2rem rgba(60,200,120,.15)!important; border-color:rgba(60,200,120,.45)!important;
-        }
-
-        .small-muted{color:var(--muted); font-size:.9rem}
-
-        /* FAQ */
-        .faq .faq-item{
-            border:1px solid var(--border); border-radius:14px; background:#0e1218; overflow:hidden;
-            transition: border-color .25s var(--ease), box-shadow .25s var(--ease);
-        }
-        .faq .faq-item.active{ border-color: rgba(255,255,255,.16); box-shadow:0 10px 26px -18px rgba(0,0,0,.5) }
-        .faq .faq-q{width:100%; background:transparent; border:0; color:#fff; text-align:left; padding:16px 18px; font-weight:700; display:flex; align-items:center; justify-content:space-between}
-        .faq .faq-q .chev{ transition: transform .25s var(--ease); }
-        .faq .faq-item.active .faq-q .chev{ transform: rotate(180deg) }
-        .faq .faq-a{ height:0; overflow:hidden; padding:0 18px; color:var(--muted); transition: height .3s var(--ease), padding .3s var(--ease) }
+        .section-title{ font-weight:800; letter-spacing:.3px; margin-bottom:10px; background:linear-gradient(90deg,#fff,#9cc3ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .section-sub{color:#9aa4b2}
+        .card-dark{ background: linear-gradient(180deg, #111418, #141922); border:1px solid rgba(255,255,255,.08); border-radius:18px; transition:.25s; }
+        .card-dark:hover{ transform: translateY(-4px); box-shadow: 0 18px 50px -20px rgba(0,0,0,.6); }
+        .faq .faq-item{ border:1px solid rgba(255,255,255,.10); border-radius:14px; background:#0e1218; }
+        .faq .faq-q{width:100%; background:transparent; border:0; color:#fff; text-align:left; padding:16px 18px; font-weight:800; display:flex; align-items:center; justify-content:space-between}
+        .faq .faq-a{ height:0; overflow:hidden; padding:0 18px; color:#cfe0ffbb; transition: height .28s ease, padding .28s ease }
         .faq .faq-item.active .faq-a{ padding:0 18px 18px 18px }
-
-        /* CTA bottom */
-        .cta{ background: linear-gradient(90deg, var(--red-2), var(--red)); border-top:1px solid var(--border); }
-
-        /* Utilities */
-        .rounded-2xl{border-radius:20px}
-        .shadow-ring{box-shadow: 0 8px 26px -18px var(--ring)}
-        hr.div{border-color:var(--border); opacity:1}
-
-        /* Scroll reveal */
-        .reveal{opacity:0; transform: translateY(24px); transition: opacity .6s var(--ease), transform .6s var(--ease); will-change: opacity, transform}
-        .reveal[data-reveal="fade"]{ transform:none }
-        .reveal.show{ opacity:1; transform:none }
-        .reveal.delay-1{ transition-delay:.08s }
-        .reveal.delay-2{ transition-delay:.16s }
-        .reveal.delay-3{ transition-delay:.24s }
-        .reveal.delay-4{ transition-delay:.32s }
-
-        /* Slide in for alerts */
-        .slide-in-top{ animation:slideInTop .55s var(--ease) both }
-        @keyframes slideInTop{ from{ transform: translateY(-10px); opacity:0 } to{ transform:none; opacity:1 } }
-
-        /* Reduced motion */
-        @media (prefers-reduced-motion: reduce){
-            .shape.s1,.shape.s2,.shape.s3{ will-change:auto }
-            .reveal,.btn-red,.btn-ghost,.card-dark,.icon-bubble,.tilt{ transition:none }
-            .faq .faq-a{ transition:none }
-
+        .cta{ background: linear-gradient(90deg, #8b1a1a, #a32929); border-top:1px solid rgba(255,255,255,.08); }
+        .btn-red{ background:#A32929; border:1px solid #A32929; color:#fff; font-weight:800; }
+        .btn-red:hover{ background:#8B1A1A; border-color:#8B1A1A; }
+        .btn-ghost{ background:transparent; border:1px solid rgba(255,255,255,.14); color:#fff; font-weight:800; }
+        .btn-ghost:hover{ border-color:#2a3d73; background:#0f1b3b; }
+        .small-muted{ color:#9aa4b2 }
+        /* Bandeau */
+        .marquee{
+            position:relative; overflow:hidden;
+            border-top:1px solid #151a2a; border-bottom:1px solid #151a2a;
+            background:linear-gradient(180deg, rgba(15,21,37,.94), rgba(13,19,33,.88));
         }
-        /* Force le fond sombre en TOUTES circonstances (focus, click, anim, etc.) */
-        .form-control,
-        .form-select{
-            background:#0e131a !important;
-            color:#eaf0f7 !important;
-            border-color:var(--border);
-            /* on évite toute transition du background pour supprimer le flash */
-            transition: border-color .2s var(--ease), box-shadow .2s var(--ease), transform .15s var(--ease) !important;
-            /* hack infaillible: peindre l'intérieur en sombre */
-            box-shadow: inset 0 0 0 1000px #0e131a !important;
-            appearance:none; -webkit-appearance:none;
-            background-image:none !important;
+        .marquee__track{
+            display:flex; width:max-content; /* s’ajuste à son contenu */
+            will-change:transform;
+            animation:marquee-roll 28s linear infinite;
+        }
+        .marquee:hover .marquee__track{ animation-play-state:paused; } /* pause au survol */
+
+        .marquee__group{ display:flex; gap:40px; padding:10px 0; }
+        .pill{
+            display:inline-flex; align-items:center; gap:8px; padding:6px 12px;
+            border-radius:999px; background:linear-gradient(145deg,#121a34,#0f162a);
+            border:1px solid #1b2744; font-size:.92rem; color:#cfe0ff;
+            white-space:nowrap;
+        }
+        .pill .dot{ width:8px; height:8px; border-radius:50%;
+            background:conic-gradient(from 90deg,#D6452E,#2E4C97);
         }
 
-        .form-control:focus,
-        .form-select:focus{
-            background:#0e131a !important;
-            color:#fff !important;
-            border-color: rgba(169,29,43,.6) !important;
-            /* on garde l'anneau rouge mais sans flash blanc */
-            box-shadow: inset 0 0 0 1000px #0e131a, 0 0 0 .25rem rgba(169,29,43,.15) !important;
-            outline: none !important;
-            transform: translateY(-1px);
+        /* Défilement sans coupure :
+           On translate de 50% car on a deux groupes identiques à la suite. */
+        @keyframes marquee-roll{
+            from{ transform:translateX(0) }
+            to  { transform:translateX(-50%) }
         }
 
-        /* Chrome/Edge : when autofill tries to colorize */
-        input:-webkit-autofill,
-        input:-webkit-autofill:focus,
-        textarea:-webkit-autofill,
-        select:-webkit-autofill{
-            -webkit-text-fill-color:#fff !important;
-            box-shadow: inset 0 0 0 1000px #0e131a !important;
-            transition: background-color 9999s ease-out 0s !important;
+        /* Accessibilité */
+        @media (prefers-reduced-motion:reduce){
+            .marquee__track{ animation:none }
         }
-
-        /* iOS/Android tap highlight */
-        * { -webkit-tap-highlight-color: transparent; }
-
-        /* Optionnel : dites explicitement “dark” aux contrôles natifs (date, etc.) */
-        form { color-scheme: dark; }
-
-    </style>
-    <style id="pi-orbs-and-hairlines">
-        :root{
-            --bg-base:#010309;
-            --ink:#E6E9F2;
-            --hair:rgba(255,255,255,.12);
-            --hair-strong:rgba(255,255,255,.20);
-
-            --orb-blue:rgba(46,76,151,.18);
-            --orb-red: rgba(226,27,60,.16);
-        }
-        body{ background:var(--bg-base)!important; color:var(--ink) }
-        /* nav translucide + filet fin */
-        .navbar{ background:transparent!important; border:none!important; box-shadow:none!important; position:sticky; top:0 }
-        .navbar::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
-            background:linear-gradient(90deg,transparent,var(--hair),transparent) }
-
-        /* sections & cartes : pas de grosses boîtes, juste un filet 1px */
-        .card-dark, .faq .faq-item, .cta{
-            background:transparent!important; border:1px solid var(--hair)!important; box-shadow:none!important; border-radius:16px
-        }
-        .card-dark:hover, .faq .faq-item.active, .cta:hover{ border-color:var(--hair-strong)!important }
-
-        /* hero qui fond dans le fond */
-        .hero{ background:linear-gradient(180deg, rgba(0,0,0,.28), transparent 35%)!important }
-        .section-title{ background:linear-gradient(90deg,#fff,#9cc3ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent }
-
-        /* calque d’orbes animé derrière tout */
-        .pi-orbs{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden }
-        .pi-orbs .orb{ position:absolute; width:48vmax; height:48vmax; border-radius:9999px;
-            filter:blur(80px); opacity:.75; mix-blend-mode:screen; will-change:transform }
-        .pi-orbs .blue{background:var(--orb-blue)} .pi-orbs .red{background:var(--orb-red)}
-        .pi-orbs .a{ top:-10vmax; left:-6vmax;  animation:orbA 36s linear infinite }
-        .pi-orbs .b{ top:-8vmax; right:-10vmax; animation:orbB 42s linear infinite }
-        .pi-orbs .c{ bottom:-12vmax; left:15vw;  animation:orbC 40s linear infinite; width:42vmax;height:42vmax }
-        .pi-orbs .d{ bottom:-14vmax; right:10vw; animation:orbD 46s linear infinite; width:50vmax;height:50vmax }
-        @keyframes orbA{50%{transform:translate3d(4vw,2vh,0) scale(1.05)}}
-        @keyframes orbB{50%{transform:translate3d(-3vw,3vh,0) scale(1.03)}}
-        @keyframes orbC{50%{transform:translate3d(2vw,-2vh,0) scale(1.06)}}
-        @keyframes orbD{50%{transform:translate3d(-2vw,-3vh,0) scale(1.04)}}
-
-        @media (prefers-reduced-motion:reduce){ .pi-orbs .orb{ animation:none; opacity:.55 } }
-    </style>
-    <style id="pi-animated-word">
-        .pi-word-anim{
-            --c1:#e21b3c; --c2:#2E4C97;
-            background-image:linear-gradient(90deg,var(--c1),var(--c2),var(--c1));
-            background-size:200% 100%; background-position:0% 50%;
-            -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
-            display:inline-block; animation:piWord 6s ease-in-out infinite alternate;
-        }
-        .pi-word-anim.glow{ text-shadow:0 0 12px rgba(226,27,60,.15), 0 0 14px rgba(46,76,151,.12) }
-        @keyframes piWord{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-        @media (prefers-reduced-motion:reduce){ .pi-word-anim{ animation:none } }
-    </style>
-    <style id="pi-fix-postuler">
-        /* 1) Orbes au bon plan */
-        body{ position:relative; background:#010309 !important; }
-        .pi-orbs{ position:fixed; inset:0; z-index:0; pointer-events:none; }
-        /* tout le contenu passe AU-DESSUS des orbes */
-        body > *:not(.pi-orbs){ position:relative; z-index:1; }
-
-        /* 2) Hero & nav fondus */
-        .hero{ background:linear-gradient(180deg, rgba(0,0,0,.28), transparent 35%)!important; }
-        .navbar{ background:transparent!important; border:none!important; box-shadow:none!important; }
-        .navbar::after{
-            content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
-            background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
-        }
-
-        /* 3) Plus de boîtes : hairlines only */
-        .card-dark, .faq .faq-item, .cta{
-            background:transparent !important;
-            border:1px solid rgba(255,255,255,.12) !important;
-            box-shadow:none !important; border-radius:16px;
-        }
-        .offer .head{ background:transparent !important; border-bottom:1px solid rgba(255,255,255,.12) !important; }
-        /* colonne “infos RH” du formulaire (elle a un style inline → forcer) */
-        #candidature .col-md-4{ background:transparent !important; border:1px solid rgba(255,255,255,.12) !important; }
-
-        /* champs & sélecteurs restent dark même en focus/autofill */
-        .form-control, .form-select{
-            background:#0e131a !important; color:#eaf0f7 !important;
-            border-color:rgba(255,255,255,.12) !important;
-            box-shadow: inset 0 0 0 1000px #0e131a !important;
-        }
-
-        /* 4) Orbes (si pas déjà collé) */
-        .pi-orbs .orb{ position:absolute; width:48vmax; height:48vmax; border-radius:9999px;
-            filter:blur(80px); opacity:.75; mix-blend-mode:screen; }
-        .pi-orbs .blue{ background:rgba(46,76,151,.18) }
-        .pi-orbs .red { background:rgba(226,27,60,.16) }
-        .pi-orbs .a{ top:-10vmax; left:-6vmax;  animation:orbA 36s linear infinite }
-        .pi-orbs .b{ top:-8vmax; right:-10vmax; animation:orbB 42s linear infinite }
-        .pi-orbs .c{ bottom:-12vmax; left:15vw;  animation:orbC 40s linear infinite; width:42vmax;height:42vmax }
-        .pi-orbs .d{ bottom:-14vmax; right:10vw; animation:orbD 46s linear infinite; width:50vmax;height:50vmax }
-        @keyframes orbA{50%{transform:translate3d(4vw,2vh,0) scale(1.05)}}
-        @keyframes orbB{50%{transform:translate3d(-3vw,3vh,0) scale(1.03)}}
-        @keyframes orbC{50%{transform:translate3d(2vw,-2vh,0) scale(1.06)}}
-        @keyframes orbD{50%{transform:translate3d(-2vw,-3vh,0) scale(1.04)}}
-        @media (prefers-reduced-motion:reduce){ .pi-orbs .orb{ animation:none; opacity:.55 } }
     </style>
 </head>
 <body>
+
+<!-- FOND GLOBAL -->
+<div id="page-bg" aria-hidden="true"></div>
 <div class="pi-orbs" aria-hidden="true">
     <span class="orb blue a"></span>
     <span class="orb red  b"></span>
     <span class="orb blue c"></span>
     <span class="orb red  d"></span>
 </div>
+    <!-- BANDEAU défilant continu -->
+    <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+            <div class="marquee__group">
+                <span class="pill"><span class="dot"></span>Préparateur de commande</span>
+                <span class="pill"><span class="dot"></span> Manutentionnaire</span>
+                <span class="pill"><span class="dot"></span> Logistique</span>
+                <span class="pill"><span class="dot"></span> Caissier</span>
+                <span class="pill"><span class="dot"></span> Manutentionnaire</span>
+                <span class="pill"><span class="dot"></span> Préparateur de commande</span>
+                <span class="pill"><span class="dot"></span> Caissier</span>
+                <span class="pill"><span class="dot"></span> Logistique</span>
+            </div>
 
-<div id="scrollProgress" aria-hidden="true"></div>
-
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top reveal" data-reveal="fade">
-    <div class="container py-2">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
-            <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" />
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Basculer la navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div id="nav" class="collapse navbar-collapse">
-            <!-- UL sans ms-auto/me-3 pour permettre le centrage absolu -->
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="index.php">Accueil</a></li>
-                <li class="nav-item"><a class="nav-link" href="nosMagasins.php">Nos magasins</a></li>
-                <li class="nav-item"><a class="nav-link" href="quiSommesNous.html">Notre histoire</a></li>
-            </ul>
-            <!-- Ajout de la classe actions -->
-            <div class="actions d-flex gap-2">
-                <a href="pageInscription.php" class="btn btn-ghost btn-sm px-3 magnet">Inscription</a>
-                <a href="pageConnexion.php" class="btn btn-red btn-sm px-3 magnet">Connexion</a>
+            <!-- DUPLICAT exact pour boucle sans coupure -->
+            <div class="marquee__group" aria-hidden="true">
+                <span class="pill"><span class="dot"></span> Préparateur de commande</span>
+                <span class="pill"><span class="dot"></span> Manutentionnaire</span>
+                <span class="pill"><span class="dot"></span> Logistique</span>
+                <span class="pill"><span class="dot"></span> Caissier</span>
+                <span class="pill"><span class="dot"></span> Manutentionnaire</span>
+                <span class="pill"><span class="dot"></span> Préparateur de commande</span>
+                <span class="pill"><span class="dot"></span> Caissier</span>
+                <span class="pill"><span class="dot"></span> Logistique</span>
             </div>
         </div>
     </div>
-</nav>
 
-<!-- HERO -->
-<header class="hero py-5">
 
-    <div class="container text-center py-4 reveal hero-parallax" data-reveal="fade">
-        <span class="badge badge-soft mb-3">Carrières Paristanbul</span>
-        <h1 class="display-5 fw-extrabold mb-3">
-            Rejoignez la <span class="pi-word-anim glow">famille</span>
-        </h1>        <p class="lead text-white-50 mb-4">Un commerce plus <strong>responsable</strong>, plus <strong>innovant</strong> et surtout plus <strong>humain</strong>.</p>
-        <div class="d-flex justify-content-center gap-2 flex-wrap">
-            <a href="#offres" class="btn btn-red btn-lg px-4 magnet">Voir nos offres</a>
-            <a href="#candidature" class="btn btn-ghost btn-lg px-4 magnet">Candidature spontanée</a>
+<!-- HEADER .pi-simple (home) -->
+<header class="pi-simple">
+    <div class="container topbar">
+        <div class="left-col">
+            <div class="social-group">
+                <nav class="social" aria-label="Réseaux sociaux">
+                    <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/paristanbul_supermarche/?hl=fr" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@supermarche_paristanbul" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.youtube.com/channel/UCsjy3bdpFzBwM7MF923gKvA" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </nav>
+                <div class="join">Rejoignez nous</div>
+            </div>
+        </div>
+
+        <div class="brand">
+            <a href="index.php" class="navbar-brand">
+                <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul">
+            </a>
+            <div class="tagline">
+                <span class="rule" aria-hidden="true"></span>
+                <span>Since 1993</span>
+                <span class="rule" aria-hidden="true"></span>
+            </div>
+        </div>
+
+        <div class="right-col">
+            <i class="fa-solid fa-phone"></i>
+            <a class="phone" href="tel:+33749826133">07 49 82 61 33</a>
         </div>
     </div>
+
+    <hr class="divider">
+
+    <div class="container navrow">
+        <ul class="menu" aria-label="Navigation principale">
+            <li><a href="index.php">Accueil</a></li>
+            <li><a href="quiSommesNous.html">Notre Histoire</a></li>
+            <li><a href="nosMagasins.php">Nos Magasins</a></li>
+            <li><a href="index.php#catalog">Catalogue</a></li>
+            <li><a href="index.php#contact">Contact</a></li>
+            <li><a href="postuler.php" class="is-active">Postuler</a></li>
+            <!-- Bouton login dans la nav -->
+            <li><a class="btn-login" href="pageConnexion.php"><i class="fa-regular fa-user"></i><span> Se connecter</span></a></li>
+        </ul>
+    </div>
+
+    <hr class="divider">
 </header>
 
-<!-- FEEDBACK FORM -->
-<?php if ($form_status): ?>
-    <div class="container mt-4">
-        <div class="alert <?php echo $form_status==='success' ? 'alert-success' : 'alert-danger'; ?> rounded-2xl shadow-ring slide-in-top" role="alert">
-            <?php echo htmlspecialchars($form_message); ?>
-            <?php if ($uploaded_cv_public && $form_status==='success'): ?>
-                <br><small class="text-muted">CV enregistré : <a class="link-light" href="<?php echo htmlspecialchars($uploaded_cv_public); ?>" target="_blank" rel="noopener">ouvrir</a></small>
-            <?php endif; ?>
-        </div>
-    </div>
-<?php endif; ?>
-
-<!-- POURQUOI NOUS REJOINDRE -->
-<section class="section">
-    <div class="container">
-        <div class="text-center mb-5 reveal" data-reveal="fade">
-            <h2 class="section-title">Pourquoi nous rejoindre ?</h2>
-            <p class="section-sub">Nous investissons sur le long terme dans les parcours, les compétences et le bien-être de nos équipes.</p>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card-dark p-4 h-100 reveal tilt">
-                    <div class="icon-bubble mb-3"><i class="bi bi-bar-chart-fill"></i></div>
-                    <h5 class="fw-bold mb-2">Évolution professionnelle</h5>
-                    <p class="text-white-50 mb-0">Promotion interne, parcours personnalisés et formations continues pour grandir avec nous.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card-dark p-4 h-100 reveal delay-1 tilt">
-                    <div class="icon-bubble mb-3"><i class="bi bi-clock"></i></div>
-                    <h5 class="fw-bold mb-2">Équilibre vie pro/perso</h5>
-                    <p class="text-white-50 mb-0">Organisation flexible lorsque les postes s’y prêtent, avantages concrets au quotidien.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card-dark p-4 h-100 reveal delay-2 tilt">
-                    <div class="icon-bubble mb-3"><i class="bi bi-bag-heart-fill"></i></div>
-                    <h5 class="fw-bold mb-2">Engagement & impact</h5>
-                    <p class="text-white-50 mb-0">Des initiatives locales et responsables pour un commerce utile et durable.</p>
-                </div>
+<!-- ===== MAIN : Recrutement ===== -->
+<main>
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container text-center py-5">
+            <span class="badge badge-soft mb-3">Carrières Paristanbul</span>
+            <h1 class="display-5 fw-bold mb-3">Rejoignez la <span class="pi-word-anim">famille</span></h1>
+            <p class="lead" style="color:#e3eaff">Un commerce plus <strong>responsable</strong>, plus <strong>innovant</strong> et surtout plus <strong>humain</strong>.</p>
+            <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+                <a href="#offres" class="btn btn-red btn-lg px-4">Voir nos offres</a>
+                <a href="#candidature" class="btn btn-ghost btn-lg px-4">Candidature spontanée</a>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- AVANTAGES & FORMATION -->
-<section class="section pt-0">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="card-dark p-4 h-100 reveal tilt">
-                    <h4 class="fw-bold mb-3">Nos avantages</h4>
-                    <ul class="list-unstyled small mb-0">
-                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2 text-danger"></i>Remise collaborateurs 15%</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2 text-danger"></i>Participation & intéressement</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2 text-danger"></i>Mutuelle avantageuse</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2 text-danger"></i>Tickets restaurant</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2 text-danger"></i>Comité d’entreprise actif</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card-dark p-4 h-100 reveal delay-1 tilt">
-                    <h4 class="fw-bold mb-3">Formation & développement</h4>
-                    <ul class="list-unstyled small mb-0">
-                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2 text-danger"></i>Catalogue +200 formations</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2 text-danger"></i>Mentorat & certification</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2 text-danger"></i>Mobilité interne encouragée</li>
-                        <li class="mb-2"><i class="bi bi-check-circle-fill me-2 text-danger"></i>Accompagnement personnalisé</li>
-                    </ul>
-                </div>
+    <!-- FEEDBACK FORM -->
+    <?php if ($form_status): ?>
+        <div class="container mt-4">
+            <div class="alert <?php echo $form_status==='success' ? 'alert-success' : 'alert-danger'; ?> rounded-3" role="alert">
+                <?php echo htmlspecialchars($form_message); ?>
+                <?php if ($uploaded_cv_public && $form_status==='success'): ?>
+                    <br><small class="text-muted">CV enregistré : <a class="link-light" href="<?php echo htmlspecialchars($uploaded_cv_public); ?>" target="_blank" rel="noopener">ouvrir</a></small>
+                <?php endif; ?>
             </div>
         </div>
-    </div>
-</section>
+    <?php endif; ?>
 
-<!-- TÉMOIGNAGES -->
-<section class="section">
-    <div class="container">
-        <div class="text-center mb-4 reveal" data-reveal="fade">
-            <h2 class="section-title">Ils travaillent chez Paristanbul</h2>
-            <p class="section-sub">Des parcours différents, la même envie de bien faire.</p>
-        </div>
+    <!-- POURQUOI NOUS REJOINDRE -->
+    <section class="section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Pourquoi nous rejoindre ?</h2>
+                <p class="section-sub">Nous investissons sur le long terme dans les parcours, les compétences et le bien-être de nos équipes.</p>
+            </div>
 
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card-dark h-100 reveal tilt">
-                    <div class="head p-4 text-center">
-                        <i class="bi bi-person-circle fs-1 text-danger"></i>
-                    </div>
-                    <div class="p-4">
-                        <h6 class="fw-bold mb-1">Sophie Martin</h6>
-                        <p class="small-muted mb-3">Directrice de magasin</p>
-                        <p class="small text-white-50 mb-0">“Entrée comme caissière il y a 12 ans, j’ai pu évoluer sur plusieurs postes. Aujourd’hui je dirige une équipe de 50 personnes.”</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card-dark h-100 reveal delay-1 tilt">
-                    <div class="head p-4 text-center">
-                        <i class="bi bi-person-circle fs-1 text-danger"></i>
-                    </div>
-                    <div class="p-4">
-                        <h6 class="fw-bold mb-1">Thomas Dubois</h6>
-                        <p class="small-muted mb-3">Resp. Développement durable</p>
-                        <p class="small text-white-50 mb-0">“Mes idées sont écoutées et mises en œuvre. Nous avons déjà réduit nos déchets de 30%.”</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card-dark h-100 reveal delay-2 tilt">
-                    <div class="head p-4 text-center">
-                        <i class="bi bi-person-circle fs-1 text-danger"></i>
-                    </div>
-                    <div class="p-4">
-                        <h6 class="fw-bold mb-1">Karim Benali</h6>
-                        <p class="small-muted mb-3">Chef boucher</p>
-                        <p class="small text-white-50 mb-0">“Formé régulièrement, j’accompagne désormais les apprentis et travaille avec nos partenaires locaux.”</p>
-                    </div>
-                </div>
+            <div class="row g-4">
+                <div class="col-md-4"><div class="card-dark p-4 h-100">
+                        <div class="mb-3" style="width:54px;height:54px;display:grid;place-items:center;border-radius:14px;background:rgba(214,69,46,.14);border:1px solid rgba(255,255,255,.08)"><i class="fa-solid fa-chart-line"></i></div>
+                        <h5 class="fw-bold mb-2">Évolution professionnelle</h5><p class="text-white-50 mb-0">Promotion interne, parcours personnalisés et formations continues.</p>
+                    </div></div>
+                <div class="col-md-4"><div class="card-dark p-4 h-100">
+                        <div class="mb-3" style="width:54px;height:54px;display:grid;place-items:center;border-radius:14px;background:rgba(214,69,46,.14);border:1px solid rgba(255,255,255,.08)"><i class="fa-regular fa-clock"></i></div>
+                        <h5 class="fw-bold mb-2">Équilibre vie pro/perso</h5><p class="text-white-50 mb-0">Organisation flexible lorsque les postes s’y prêtent.</p>
+                    </div></div>
+                <div class="col-md-4"><div class="card-dark p-4 h-100">
+                        <div class="mb-3" style="width:54px;height:54px;display:grid;place-items:center;border-radius:14px;background:rgba(214,69,46,.14);border:1px solid rgba(255,255,255,.08)"><i class="fa-solid fa-hand-holding-heart"></i></div>
+                        <h5 class="fw-bold mb-2">Engagement & impact</h5><p class="text-white-50 mb-0">Des initiatives locales et responsables pour un commerce utile.</p>
+                    </div></div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- OFFRES -->
-<section id="offres" class="section pt-0">
-    <div class="container">
-        <div class="text-center mb-4 reveal" data-reveal="fade">
-            <h2 class="section-title">Nos offres d’emploi</h2>
-            <p class="section-sub">Découvrez nos opportunités actuelles.</p>
-        </div>
-
-        <div class="row g-4">
-            <?php
-            try {
-                $pdo = db_connect();
-                $req = $pdo->prepare("SELECT * FROM offres_emplois ORDER BY id_offre DESC;");
-                $req->execute();
-
-                if ($req->rowCount() > 0) {
-                    $i = 0;
-                    while ($o = $req->fetch()) {
-                        $secteur_activite = htmlspecialchars($o['secteur_activite'] ?? '');
-                        $titre_poste      = htmlspecialchars($o['titre_poste'] ?? '');
-                        $ville            = htmlspecialchars($o['ville'] ?? '');
-                        $departement      = htmlspecialchars($o['departement'] ?? '');
-                        $type_contrat     = htmlspecialchars($o['type_contrat'] ?? '');
-                        $detail_poste     = htmlspecialchars($o['detail_poste'] ?? '');
-                        $id_offre         = (int)($o['id_offre'] ?? 0);
-
-                        $delayClass = 'delay-' . min(2, $i % 3);
-                        echo '<div class="col-md-4">';
-                        echo '  <div class="card-dark offer h-100 reveal '.$delayClass.' tilt">';
-                        echo '    <div class="head p-3">';
-                        echo '      <span class="badge badge-soft me-2">'.$secteur_activite.'</span>';
-                        echo '      <small class="text-white-50">'.$ville.' ('.$departement.') · '.$type_contrat.'</small>';
-                        echo '    </div>';
-                        echo '    <div class="p-4">';
-                        echo '      <h5 class="fw-bold mb-2">'.$titre_poste.'</h5>';
-                        echo '      <p class="small text-white-50">'.$detail_poste.'</p>';
-                        echo '      <a href="offre.php?id='.$id_offre.'#candidature" class="btn btn-red w-100 magnet">Postuler</a>';
-                        echo '    </div>';
-                        echo '  </div>';
-                        echo '</div>';
-                        $i++;
-                    }
-                } else {
-                    echo '<div class="col-12"><div class="card-dark p-4 text-center reveal" data-reveal="fade">Aucune offre actuellement.</div></div>';
-                }
-            } catch (Exception $e) {
-                echo '<div class="col-12"><div class="alert alert-danger rounded-2xl reveal" data-reveal="fade">Erreur de chargement des offres.</div></div>';
-            }
-            ?>
-
-        </div>
-
-        <div class="text-center mt-4 reveal" data-reveal="fade">
-            <a href="#candidature" class="btn btn-ghost px-4 magnet">Candidature spontanée</a>
-        </div>
-    </div>
-</section>
-
-<!-- CANDIDATURE SPONTANÉE -->
-<section id="candidature" class="section">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-9">
-                <div class="row g-0 rounded-2xl overflow-hidden reveal">
-                    <!-- Infos RH -->
-                    <div class="col-md-4 p-4" style="background: linear-gradient(180deg, #1a0d10, #140d0f); border:1px solid var(--border)">
-                        <span class="badge badge-soft mb-3">Candidature spontanée</span>
-                        <h4 class="fw-bold">Parlez-nous de vous</h4>
-                        <p class="small text-white-50">Vous ne trouvez pas d’offre qui vous correspond ? Envoyez-nous votre profil.</p>
-                        <hr class="div my-3">
-                        <p class="mb-1 fw-semibold">Nos engagements</p>
-                        <ul class="small text-white-50 ps-3">
-                            <li>Réponse sous 15 jours</li>
-                            <li>Conservation encadrée de votre CV</li>
-                            <li>Processus équitable et inclusif</li>
+    <!-- AVANTAGES & FORMATION -->
+    <section class="section pt-0">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6"><div class="card-dark p-4 h-100">
+                        <h4 class="fw-bold mb-3">Nos avantages</h4>
+                        <ul class="list-unstyled small mb-0">
+                            <li class="mb-2">Remise collaborateurs 15%</li>
+                            <li class="mb-2">Participation & intéressement</li>
+                            <li class="mb-2">Mutuelle avantageuse</li>
+                            <li class="mb-2">Tickets restaurant</li>
+                            <li class="mb-2">Comité d’entreprise actif</li>
                         </ul>
-                        <hr class="div my-3">
-                        <p class="small mb-1">Besoin d’aide ?</p>
-                        <a href="mailto:recrutement@paristanbul.fr" class="link-light small">recrutement@paristanbul.fr</a>
-                    </div>
+                    </div></div>
+                <div class="col-md-6"><div class="card-dark p-4 h-100">
+                        <h4 class="fw-bold mb-3">Formation & développement</h4>
+                        <ul class="list-unstyled small mb-0">
+                            <li class="mb-2">Catalogue +200 formations</li>
+                            <li class="mb-2">Mentorat & certification</li>
+                            <li class="mb-2">Mobilité interne encouragée</li>
+                            <li class="mb-2">Accompagnement personnalisé</li>
+                        </ul>
+                    </div></div>
+            </div>
+        </div>
+    </section>
 
-                    <!-- Form -->
-                    <div class="col-md-8 p-4 card-dark tilt" style="border-left:0">
-                        <form action="https://formsubmit.co/paristanbul.recrutement@gmail.com" method="post" enctype="multipart/form-data" novalidate class="reveal">
-                            <input type="hidden" name="ref_offre" value="<?php echo htmlspecialchars($ref_offre_from_get ?? ''); ?>">
+    <!-- OFFRES -->
+    <section id="offres" class="section pt-0">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="section-title">Nos offres d’emploi</h2>
+                <p class="section-sub">Découvrez nos opportunités actuelles.</p>
+            </div>
 
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="prenom" class="form-label">Prénom *</label>
-                                    <input type="text" id="prenom" name="prenom" class="form-control" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="nom" class="form-label">Nom *</label>
-                                    <input type="text" id="nom" name="nom" class="form-control" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="email" class="form-label">Email *</label>
-                                    <input type="email" id="email" name="email" class="form-control" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="telephone" class="form-label">Téléphone</label>
-                                    <input type="tel" id="telephone" name="telephone" class="form-control" placeholder="+33 6 12 34 56 78" pattern="[0-9\s+]{8,20}">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="date_naissance" class="form-label">Date de naissance</label>
-                                    <input type="date" id="date_naissance" name="date_naissance" class="form-control">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="langues" class="form-label">Langues</label>
-                                    <input type="text" id="langues" name="langues" class="form-control" placeholder="Français (C1), Anglais (B2)…">
-                                </div>
-                                <div class="col-12">
-                                    <label for="adresse" class="form-label">Adresse</label>
-                                    <input type="text" id="adresse" name="adresse" class="form-control" placeholder="N° et rue, Ville, Code postal">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="permis" class="form-label">Permis</label>
-                                    <input type="text" id="permis" name="permis" class="form-control" placeholder="B, AM, etc.">
-                                </div>
-                                <div class="col-12">
-                                    <label for="experiences" class="form-label">Expériences</label>
-                                    <textarea id="experiences" name="experiences" rows="3" class="form-control" placeholder="Rôles, missions, compétences clés…"></textarea>
-                                </div>
-                                <div class="col-12">
-                                    <label for="lettre_motivation" class="form-label">Lettre de motivation</label>
-                                    <textarea id="lettre_motivation" name="lettre_motivation" rows="4" class="form-control" placeholder="Présentez-vous et expliquez votre motivation…"></textarea>
-                                </div>
-                                <div class="col-md-8">
-                                    <label for="cv" class="form-label">CV (PDF/DOC/DOCX, max 5 Mo) *</label>
-                                    <input type="file" id="cv" name="cv" class="form-control" accept=".pdf,.doc,.docx" required>
-                                </div>
-                                <div class="col-md-4 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-red w-100 magnet">Envoyer ma candidature</button>
-                                </div>
-                                <div class="col-12 text-end">
-                                    <div class="form-check d-inline-flex align-items-center gap-2">
-                                        <input class="form-check-input" type="checkbox" id="rgpdCheck" required>
-                                        <label class="form-check-label small-muted" for="rgpdCheck">
-                                            J’accepte le traitement de mes données selon la politique de confidentialité *
-                                        </label>
+            <div class="row g-4">
+                <?php
+                try {
+                    $pdo = db_connect();
+                    $req = $pdo->prepare("SELECT * FROM offres_emplois ORDER BY id_offre DESC;");
+                    $req->execute();
+
+                    if ($req->rowCount() > 0) {
+                        while ($o = $req->fetch()) {
+                            $secteur_activite = htmlspecialchars($o['secteur_activite'] ?? '');
+                            $titre_poste      = htmlspecialchars($o['titre_poste'] ?? '');
+                            $ville            = htmlspecialchars($o['ville'] ?? '');
+                            $departement      = htmlspecialchars($o['departement'] ?? '');
+                            $type_contrat     = htmlspecialchars($o['type_contrat'] ?? '');
+                            $detail_poste     = htmlspecialchars($o['detail_poste'] ?? '');
+                            $id_offre         = (int)($o['id_offre'] ?? 0);
+
+                            echo '<div class="col-md-4">';
+                            echo '  <div class="card-dark h-100">';
+                            echo '    <div class="p-3" style="border-bottom:1px solid rgba(255,255,255,.08)">';
+                            echo '      <span class="badge-soft me-2">'.$secteur_activite.'</span>';
+                            echo '      <small class="text-white-50">'.$ville.' ('.$departement.') · '.$type_contrat.'</small>';
+                            echo '    </div>';
+                            echo '    <div class="p-4">';
+                            echo '      <h5 class="fw-bold mb-2">'.$titre_poste.'</h5>';
+                            echo '      <p class="small text-white-50">'.$detail_poste.'</p>';
+                            echo '      <a href="offre.php?id='.$id_offre.'#candidature" class="btn btn-red w-100">Postuler</a>';
+                            echo '    </div>';
+                            echo '  </div>';
+                            echo '</div>';
+                        }
+                    } else {
+                        echo '<div class="col-12"><div class="card-dark p-4 text-center">Aucune offre actuellement.</div></div>';
+                    }
+                } catch (Exception $e) {
+                    echo '<div class="col-12"><div class="alert alert-danger rounded-3">Erreur de chargement des offres.</div></div>';
+                }
+                ?>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="#candidature" class="btn btn-ghost px-4">Candidature spontanée</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CANDIDATURE SPONTANÉE -->
+    <section id="candidature" class="section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="row g-0 rounded-3 overflow-hidden">
+                        <!-- Infos RH -->
+                        <div class="col-md-4 p-4" style="background: linear-gradient(180deg, #1a0d10, #140d0f); border:1px solid rgba(255,255,255,.08)">
+                            <span class="badge-soft mb-3 d-inline-block">Candidature spontanée</span>
+                            <h4 class="fw-bold">Parlez-nous de vous</h4>
+                            <p class="small text-white-50">Vous ne trouvez pas d’offre qui vous correspond ? Envoyez-nous votre profil.</p>
+                            <hr class="my-3" style="border-color:rgba(255,255,255,.1)">
+                            <p class="mb-1 fw-semibold">Nos engagements</p>
+                            <ul class="small text-white-50 ps-3">
+                                <li>Réponse sous 15 jours</li>
+                                <li>Conservation encadrée de votre CV</li>
+                                <li>Processus équitable et inclusif</li>
+                            </ul>
+                            <hr class="my-3" style="border-color:rgba(255,255,255,.1)">
+                            <p class="small mb-1">Besoin d’aide ?</p>
+                            <a href="mailto:recrutement@paristanbul.fr" class="link-light small">recrutement@paristanbul.fr</a>
+                        </div>
+
+                        <!-- Form -->
+                        <div class="col-md-8 p-4 card-dark" style="border-left:0">
+                            <form action="" method="post" enctype="multipart/form-data" novalidate>
+                                <input type="hidden" name="ref_offre" value="<?php echo htmlspecialchars($ref_offre_from_get ?? ''); ?>">
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="prenom" class="form-label">Prénom *</label>
+                                        <input type="text" id="prenom" name="prenom" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="nom" class="form-label">Nom *</label>
+                                        <input type="text" id="nom" name="nom" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email *</label>
+                                        <input type="email" id="email" name="email" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="telephone" class="form-label">Téléphone</label>
+                                        <input type="tel" id="telephone" name="telephone" class="form-control" placeholder="+33 6 12 34 56 78" pattern="[0-9\s+]{8,20}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="date_naissance" class="form-label">Date de naissance</label>
+                                        <input type="date" id="date_naissance" name="date_naissance" class="form-control">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="langues" class="form-label">Langues</label>
+                                        <input type="text" id="langues" name="langues" class="form-control" placeholder="Français (C1), Anglais (B2)…">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="adresse" class="form-label">Adresse</label>
+                                        <input type="text" id="adresse" name="adresse" class="form-control" placeholder="N° et rue, Ville, Code postal">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="permis" class="form-label">Permis</label>
+                                        <input type="text" id="permis" name="permis" class="form-control" placeholder="B, AM, etc.">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="experiences" class="form-label">Expériences</label>
+                                        <textarea id="experiences" name="experiences" rows="3" class="form-control" placeholder="Rôles, missions, compétences clés…"></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="lettre_motivation" class="form-label">Lettre de motivation</label>
+                                        <textarea id="lettre_motivation" name="lettre_motivation" rows="4" class="form-control" placeholder="Présentez-vous et expliquez votre motivation…"></textarea>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label for="cv" class="form-label">CV (PDF/DOC/DOCX, max 5 Mo) *</label>
+                                        <input type="file" id="cv" name="cv" class="form-control" accept=".pdf,.doc,.docx" required>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-red w-100">Envoyer ma candidature</button>
+                                    </div>
+                                    <div class="col-12 text-end">
+                                        <div class="form-check d-inline-flex align-items-center gap-2">
+                                            <input class="form-check-input" type="checkbox" id="rgpdCheck" required>
+                                            <label class="form-check-label small-muted" for="rgpdCheck">
+                                                J’accepte le traitement de mes données selon la politique de confidentialité *
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- FAQ -->
-<section class="section pt-0">
-    <div class="container faq">
-        <div class="row g-3">
-            <div class="col-lg-8">
-                <h3 class="fw-bold mb-3 reveal" data-reveal="fade">Questions fréquentes</h3>
+    <!-- FAQ -->
+    <section class="section pt-0">
+        <div class="container faq">
+            <div class="row g-3">
+                <div class="col-lg-8">
+                    <h3 class="fw-bold mb-3">Questions fréquentes</h3>
 
-                <div class="faq-item mb-2 reveal tilt">
-                    <button class="faq-q">Comment se déroule le processus de recrutement ? <i class="bi bi-chevron-down chev"></i></button>
-                    <div class="faq-a">
-                        <ol class="mb-0 py-3">
-                            <li>Étude de votre candidature</li>
-                            <li>Échange téléphonique</li>
-                            <li>Entretien avec le manager</li>
-                            <li>Éventuels tests ou mises en situation</li>
-                            <li>Proposition et intégration</li>
-                        </ol>
+                    <div class="faq-item mb-2">
+                        <button class="faq-q">Comment se déroule le processus de recrutement ? <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="faq-a"><ol class="mb-0 py-3"><li>Étude de votre candidature</li><li>Échange téléphonique</li><li>Entretien avec le manager</li><li>Tests éventuels</li><li>Proposition & intégration</li></ol></div>
                     </div>
-                </div>
 
-                <div class="faq-item mb-2 reveal tilt">
-                    <button class="faq-q">Proposez-vous des stages et de l’alternance ? <i class="bi bi-chevron-down chev"></i></button>
-                    <div class="faq-a"><p class="mb-0 py-3">Oui, régulièrement selon les besoins des magasins et du siège.</p></div>
-                </div>
+                    <div class="faq-item mb-2">
+                        <button class="faq-q">Proposez-vous des stages et de l’alternance ? <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="faq-a"><p class="mb-0 py-3">Oui, régulièrement selon les besoins des magasins et du siège.</p></div>
+                    </div>
 
-                <div class="faq-item mb-2 reveal tilt">
-                    <button class="faq-q">Quelles sont les perspectives d’évolution ? <i class="bi bi-chevron-down chev"></i></button>
-                    <div class="faq-a"><p class="mb-0 py-3">Promotion interne, mobilité et plan de développement personnalisé.</p></div>
-                </div>
+                    <div class="faq-item mb-2">
+                        <button class="faq-q">Quelles sont les perspectives d’évolution ? <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="faq-a"><p class="mb-0 py-3">Promotion interne, mobilité et plan de développement personnalisé.</p></div>
+                    </div>
 
-                <div class="faq-item reveal tilt">
-                    <button class="faq-q">Quels avantages sociaux proposez-vous ? <i class="bi bi-chevron-down chev"></i></button>
-                    <div class="faq-a"><p class="mb-0 py-3">Tickets restaurant, mutuelle, réductions collaborateurs, CE…</p></div>
+                    <div class="faq-item">
+                        <button class="faq-q">Quels avantages sociaux proposez-vous ? <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="faq-a"><p class="mb-0 py-3">Tickets restaurant, mutuelle, réductions collaborateurs, CE…</p></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- CTA BAS DE PAGE -->
-<section class="cta py-5 text-white text-center reveal" data-reveal="fade">
-    <div class="container">
-        <h4 class="fw-bold mb-2">Prêt·e à nous rejoindre ?</h4>
-        <p class="mb-4">Déposez votre candidature maintenant.</p>
-        <a href="#candidature" class="btn btn-light text-dark fw-semibold rounded-pill px-4 magnet">Candidater</a>
+
+</main>
+
+<!-- FOOTER (home) -->
+<footer class="pi-footer">
+    <div class="wrap">
+        <a href="index.php">
+            <img class="brand" src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul">
+        </a>
+
+        <div class="headline">
+            <span class="line" aria-hidden="true"></span>
+            <h2>REJOIGNEZ-NOUS</h2>
+            <span class="line" aria-hidden="true"></span>
+        </div>
+
+        <ul class="social" aria-label="Réseaux sociaux">
+            <li><a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a></li>
+            <li><a href="https://www.instagram.com/paristanbul_supermarche/?hl=fr" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a></li>
+            <li><a href="https://www.tiktok.com/@supermarche_paristanbul" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a></li>
+            <li><a href="https://www.youtube.com/channel/UCsjy3bdpFzBwM7MF923gKvA" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a></li>
+        </ul>
+
+        <nav class="footer-nav" aria-label="Navigation pied de page">
+            <a href="index.php">Accueil</a>
+            <a href="nosMagasins.php">Nos magasins</a>
+            <a href="index.php#catalog">Catalogue</a>
+            <a href="quiSommesNous.html">À propos</a>
+            <a href="postuler.php">Postuler</a>
+            <a href="index.php#contact">Contact</a>
+        </nav>
+
+        <p class="copyright">© <span id="year"></span> Paristanbul — Tous droits réservés.</p>
     </div>
-</section>
+</footer>
 
 <!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    /* ===== Scroll progress bar ===== */
-    (function(){
-        const bar=document.getElementById('scrollProgress');
-        const onScroll=()=> {
-            const h=document.documentElement;
-            const s=h.scrollTop;
-            const d=h.scrollHeight - h.clientHeight;
-            const p = d ? (s/d)*100 : 0;
-            bar.style.width = p + '%';
-        };
-        document.addEventListener('scroll', onScroll, {passive:true});
-        onScroll();
-    })();
-
-    /* ===== Intersection Observer: reveal ===== */
-    (function(){
-        const els=[...document.querySelectorAll('.reveal')];
-        if(!('IntersectionObserver' in window)){ els.forEach(el=>el.classList.add('show')); return; }
-        const io=new IntersectionObserver((entries)=>{
-            entries.forEach(e=>{
-                if(e.isIntersecting){
-                    e.target.classList.add('show');
-                    io.unobserve(e.target);
-                }
-            });
-        },{threshold:0.12});
-        els.forEach(el=>io.observe(el));
-    })();
-
-    /* ===== Button ripple ===== */
-    document.querySelectorAll('.btn-red, .btn-ghost').forEach(btn=>{
-        btn.addEventListener('click', function(e){
-            const rect=this.getBoundingClientRect();
-            const span=document.createElement('span');
-            const size=Math.max(rect.width, rect.height);
-            span.className='ripple';
-            span.style.width=span.style.height=size+'px';
-            span.style.left=(e.clientX-rect.left - size/2)+'px';
-            span.style.top=(e.clientY-rect.top - size/2)+'px';
-            this.appendChild(span);
-            setTimeout(()=>span.remove(), 650);
-        });
-    });
-
-    /* ===== FAQ smooth height ===== */
-    document.querySelectorAll('.faq .faq-item .faq-q').forEach(btn=>{
+    // FAQ accordéon
+    document.querySelectorAll('.faq .faq-q').forEach(btn=>{
         btn.addEventListener('click', ()=>{
             const item = btn.closest('.faq-item');
             const answer = item.querySelector('.faq-a');
             const open = item.classList.contains('active');
 
-            // close others
             document.querySelectorAll('.faq .faq-item.active').forEach(i=>{
                 if(i!==item){
                     const a=i.querySelector('.faq-a');
@@ -1015,127 +718,8 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         });
     });
 
-    /* ===== Quick valid feedback on inputs ===== */
-    document.querySelectorAll('input[required], textarea[required]').forEach(el=>{
-        el.addEventListener('input', ()=>{
-            if(el.checkValidity()) el.classList.add('is-valid-quick');
-            else el.classList.remove('is-valid-quick');
-        });
-    });
-
-    /* ===== Parallax hero (mousemove + scroll, léger) ===== */
-    (function(){
-        const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        if(prefersReduced || isTouch) return;
-
-        const hero = document.querySelector('.hero');
-        const content = document.querySelector('.hero-parallax');
-        const s1 = document.querySelector('.shape.s1');
-        const s2 = document.querySelector('.shape.s2');
-        const s3 = document.querySelector('.shape.s3');
-
-        let targetX=0, targetY=0, curX=0, curY=0;
-
-        function lerp(a,b,t){ return a+(b-a)*t; }
-
-        hero.addEventListener('mousemove', (e)=>{
-            const r = hero.getBoundingClientRect();
-            const mx = (e.clientX - r.left) / r.width - .5;
-            const my = (e.clientY - r.top) / r.height - .5;
-            targetX = mx; targetY = my;
-        });
-
-        function raf(){
-            curX = lerp(curX, targetX, 0.08);
-            curY = lerp(curY, targetY, 0.08);
-
-            const rot = `translate3d(${curX*8}px, ${curY*8}px, 0)`;
-            if(content) content.style.transform = rot;
-
-            if(s1) s1.style.transform = `translate3d(${curX*-40}px, ${curY*-30}px,0)`;
-            if(s2) s2.style.transform = `translate3d(${curX*50}px, ${curY*36}px,0)`;
-            if(s3) s3.style.transform = `translate3d(${curX*-30}px, ${curY*28}px,0)`;
-
-            requestAnimationFrame(raf);
-        }
-        raf();
-
-        // Parallax light on scroll
-        const onScroll=()=>{
-            const y = window.scrollY || document.documentElement.scrollTop;
-            const t = Math.max(0, 1 - y/600);
-            if(content) content.style.opacity = t.toFixed(3);
-        };
-        document.addEventListener('scroll', onScroll, {passive:true});
-    })();
-
-    /* ===== Tilt 3D cards ===== */
-    (function(){
-        const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        if(prefersReduced) return;
-
-        const MAX = 10; // degrés max
-        const cards = document.querySelectorAll('.tilt');
-
-        cards.forEach(card=>{
-            let entered=false;
-            function onMove(e){
-                const r = card.getBoundingClientRect();
-                const px = (e.clientX - r.left)/r.width;
-                const py = (e.clientY - r.top)/r.height;
-                const rx = (py - 0.5) * -MAX;
-                const ry = (px - 0.5) *  MAX;
-                card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
-                card.style.setProperty('--mx', (px*100).toFixed(2) + '%');
-                card.style.setProperty('--my', (py*100).toFixed(2) + '%');
-            }
-            function onEnter(){ entered=true; card.classList.add('hovered'); }
-            function onLeave(){ entered=false; card.classList.remove('hovered'); card.style.transform=''; }
-
-            const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-            if(!isTouch){
-                card.addEventListener('mousemove', onMove);
-                card.addEventListener('mouseenter', onEnter);
-                card.addEventListener('mouseleave', onLeave);
-            }
-        });
-    })();
-
-    /* ===== Magnetic buttons (subtil) ===== */
-    (function(){
-        const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        if(prefersReduced || isTouch) return;
-
-        const magnets = document.querySelectorAll('.magnet');
-        magnets.forEach(el=>{
-            const strength = 10; // px
-            let tX=0, tY=0, cX=0, cY=0, rafId=null;
-
-            function lerp(a,b,t){ return a+(b-a)*t; }
-            function animate(){
-                cX = lerp(cX, tX, 0.18);
-                cY = lerp(cY, tY, 0.18);
-                el.style.transform = `translate(${cX}px, ${cY}px)`;
-                rafId = requestAnimationFrame(animate);
-            }
-
-            el.addEventListener('mousemove', e=>{
-                const r = el.getBoundingClientRect();
-                const x = (e.clientX - r.left)/r.width - .5;
-                const y = (e.clientY - r.top)/r.height - .5;
-                tX = x * strength; tY = y * strength;
-                if(!rafId) animate();
-            });
-            el.addEventListener('mouseleave', ()=>{
-                tX=0; tY=0;
-                cancelAnimationFrame(rafId); rafId=null;
-                el.style.transform = '';
-            });
-        });
-    })();
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>

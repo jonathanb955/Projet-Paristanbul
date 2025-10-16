@@ -830,6 +830,34 @@ unset($_SESSION['flash_success']);
             background:transparent !important; padding:18px !important; gap:14px !important;
         }
         #stores .store-image{ border:0 !important; border-radius:12px !important; }
+        /* Bouton "Se connecter" dans la nav */
+        .pi-simple .menu .btn-login{
+            display:inline-flex; align-items:center; gap:8px;
+            padding:10px 14px; border-radius:12px;
+            border:1px solid #223055;
+            background:linear-gradient(145deg,#122043,#0e1731);
+            color:#e7ecf5; text-decoration:none;
+            font-weight:800; letter-spacing:.02em; text-transform:uppercase;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 8px 18px rgba(0,0,0,.28);
+            transition:transform .08s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+        }
+        .pi-simple .menu .btn-login i{ font-size:16px; line-height:0; }
+        .pi-simple .menu .btn-login:hover{
+            background:linear-gradient(145deg,#1a2b57,#102244);
+            border-color:#2a3d73;
+            box-shadow:0 12px 26px rgba(0,0,0,.35);
+        }
+        .pi-simple .menu .btn-login:active{ transform:translateY(1px); }
+        .pi-simple .menu .btn-login:focus-visible{ outline:2px solid var(--ring,#2c59ff55); outline-offset:2px; }
+
+        /* Mobile : compacter et masquer le texte si très étroit */
+        @media (max-width:720px){
+            .pi-simple .menu{ gap:18px; }           /* déjà présent mais on resserre un peu */
+        }
+        @media (max-width:420px){
+            .pi-simple .menu .btn-login span{ display:none; }
+            .pi-simple .menu .btn-login{ padding:10px; }
+        }
 
     </style>
 </head>
@@ -929,6 +957,13 @@ unset($_SESSION['flash_success']);
             <li><a href="nosMagasins.php">Nos Magasins</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="postuler.php">Postuler</a></li>
+
+            <!-- Bouton Se connecter (nav uniquement) -->
+            <li>
+                <a class="btn-login" href="pageConnexion.php">
+                    <i class="fa-regular fa-user"></i><span> Se connecter</span>
+                </a>
+            </li>
         </ul>
     </div>
 
