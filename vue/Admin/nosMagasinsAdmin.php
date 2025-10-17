@@ -111,7 +111,7 @@ $villes = $stmtVilles->fetchAll(PDO::FETCH_COLUMN);
     <header class="topbar">
         <h1>Nos Magasins — Administration</h1>
         <div class="top-actions">
-            <a href="ajoutMagasinAdmin.php" class="btn"><i class="bi bi-plus-circle"></i> Ajouter un magasin</a>
+            <a href="ajouterMagasinAdmin.php" class="btn"><i class="bi bi-plus-circle"></i> Ajouter un magasin</a>
         </div>
     </header>
 
@@ -208,6 +208,7 @@ $villes = $stmtVilles->fetchAll(PDO::FETCH_COLUMN);
                 </div>
             </div>
         </div>
+
     </section>
 
     <footer class="footer">
