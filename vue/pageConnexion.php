@@ -31,24 +31,32 @@ if (!empty($_POST['email']) && !empty($_POST['mdp'])) {
         $mail = trim($_POST['email']);
         $mdp  = (string)$_POST['mdp'];
 
-        $stmt = $pdo->prepare("SELECT id_utilisateur, email, mdp, COALESCE(NULLIF(role,''),'user') AS role 
-                               FROM utilisateurs WHERE email = ? LIMIT 1");
+        // 👉 On récupère aussi le prénom (ou nom) si tu l’as en base
+        $stmt = $pdo->prepare("
+            SELECT id_utilisateur, email, mdp,
+                   COALESCE(NULLIF(role,''),'user') AS role,
+                   prenom
+            FROM utilisateurs
+            WHERE email = ?
+            LIMIT 1
+        ");
         $stmt->execute([$mail]);
         $u = $stmt->fetch();
 
         if ($u && password_verify($mdp, $u['mdp'])) {
+            // Sécurise la session avant d’écrire les données
+            session_regenerate_id(true);
+
             $_SESSION['user_id']    = $u['id_utilisateur'];
             $_SESSION['user_email'] = $u['email'];
             $_SESSION['user_role']  = strtolower($u['role']);
-            $_SESSION['flash_success'] = "Connecté(e)";
+            $_SESSION['user_name']  = $u['prenom'] ?: $u['email'];
+            $_SESSION['flash_success'] = 'Connexion réussie 👌';
 
-            if ($_SESSION['user_role'] === 'admin') {
-                header('Location: ' . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/pageAdmin.php');
-                exit;
-            } else {
-                header('Location: ' . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/index.php');
-                exit;
-            }
+            // Redirection propre selon le rôle
+            $dest = ($_SESSION['user_role'] === 'admin') ? 'pageAdmin.php' : 'index.php';
+            header('Location: ' . $dest);
+            exit;
         } else {
             $err = "Identifiants invalides.";
         }

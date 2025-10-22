@@ -2,7 +2,10 @@
 session_start();
 $flash = $_SESSION['flash_success'] ?? null;
 unset($_SESSION['flash_success']);
+$isLoggedIn = !empty($_SESSION['user_id']);
+$username   = $_SESSION['user_name'] ?? 'Client';
 ?>
+
 <!doctype html>
 <html lang="fr">
 <head>
@@ -460,12 +463,22 @@ unset($_SESSION['flash_success']);
         </div>
 
         <!-- Droite : téléphone + bouton login -->
+
         <div class="right-col">
 
-            <a class="btn-login magnet" href="pageConnexion.php" aria-label="Se connecter">
-                <i class="fa-regular fa-user"></i>
-                <span>Se connecter</span>
-            </a>
+            <?php if (!empty($_SESSION['user_id'])): ?>
+                <!-- Connecté : bouton Déconnexion -->
+                <a class="btn-login magnet" href="../deconnexion.php">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Se déconnecter</span>
+                </a>
+            <?php else: ?>
+                <!-- Non connecté : bouton Connexion -->
+                <a class="btn-login magnet" href="pageConnexion.php">
+                    <i class="fa-regular fa-user"></i>
+                    <span>Se connecter</span>
+                </a>
+            <?php endif; ?>
             <div class="phone-row">
                 <i class="fa-solid fa-phone"></i>
                 <a class="phone" href="tel:+33749826133">07 49 82 61 33</a>
