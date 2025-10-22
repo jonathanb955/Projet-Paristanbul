@@ -38,25 +38,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (strlen($mdp) < 8) throw new Exception("Mot de passe trop court (min 8).");
         if ($mdp !== $confirm) throw new Exception("Les mots de passe ne correspondent pas.");
 
-        $pdo->exec("CREATE TABLE IF NOT EXISTS utilisateurs (
-            id_utilisateur INT AUTO_INCREMENT PRIMARY KEY,
-            nom TINYTEXT NOT NULL,
-            prenom TINYTEXT NOT NULL,
-            email VARCHAR(255) NOT NULL UNIQUE,
-            mdp VARCHAR(255) NOT NULL,
-            role TEXT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS utilisateurs ( id_utilisateur INT AUTO_INCREMENT PRIMARY KEY,  nom TINYTEXT NOT NULL, prenom TINYTEXT NOT NULL,  email VARCHAR(255) NOT NULL UNIQUE, mdp VARCHAR(255) NOT NULL, role TEXT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
         $check = $pdo->prepare("SELECT 1 FROM utilisateurs WHERE email=? LIMIT 1");
         $check->execute([$email]);
         if ($check->fetch()) throw new Exception("Cet email est déjà utilisé.");
 
         $hash = password_hash($mdp, PASSWORD_BCRYPT);
-        $ins = $pdo->prepare("INSERT INTO utilisateurs (nom, prenom, email, mdp, role) VALUES (:nom,:prenom,:email,:mdp,:role)");
         $ins->execute([':nom'=>$nom, ':prenom'=>$prenom, ':email'=>$email, ':mdp'=>$hash, ':role'=>$role]);
 
+<<<<<<< HEAD
         header('Location: ' . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/index.php');
+=======
+// Option B : on ne connecte PAS l'utilisateur.
+// (facultatif) garde l’email pour pré-remplir le formulaire de connexion
+        $_SESSION['prefill_email'] = $email;
+
+        $_SESSION['flash_success'] = "Compte créé avec succès. Connectez-vous pour continuer.";
+        header('Location: ' . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/pageConnexion.php');
+>>>>>>> ebf869d (WIP: modifs inscription)
         exit;
     } catch (Exception $e) {
         $form_status = 'error';
