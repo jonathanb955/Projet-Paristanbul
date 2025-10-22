@@ -371,12 +371,6 @@ $username   = $_SESSION['user_name'] ?? 'Client';
         .pi-footer .footer-nav a:hover{ color:var(--pi-red,#D6452E) }
         .pi-footer .copyright{ margin:6px 0 0; font-size:12px; color:var(--muted); user-select:none; }
 
-        /* Progress + cursor */
-        .progress{position:fixed;top:0;left:0;height:3px;width:0; background:linear-gradient(90deg,#3aa0ff,#e11d48);z-index:1000;box-shadow:0 0 12px #3aa0ff88}
-        .cursor-dot,.cursor-ring{position:fixed;pointer-events:none;z-index:10000;left:0;top:0;transform:translate(-50%,-50%)}
-        .cursor-dot{width:6px;height:6px;border-radius:50%;background:#fff}
-        .cursor-ring{width:36px;height:36px;border-radius:50%;border:1px solid #ffffff55;mix-blend-mode:exclusion;transition:width .15s ease,height .15s ease}
-
         /* AOS mini */
         .aos{opacity:0; will-change:transform,opacity,clip-path}
         .aos.in{opacity:1}
@@ -388,6 +382,9 @@ $username   = $_SESSION['user_name'] ?? 'Client';
         [data-anim="scale"].in {animation:aos-scale .55s ease-out both;                animation-delay:var(--aos-delay,0ms)}
         [data-anim="sweep"].in {animation:aos-sweep .70s ease-out both;                animation-delay:var(--aos-delay,0ms)}
         [data-anim="pop"].in   {animation:aos-pop .45s cubic-bezier(.2,.9,.2,1.2) both;animation-delay:var(--aos-delay,0ms)}
+        /* Donne une vraie taille au canvas Leaflet */
+        #stores .map-container { position: relative; }
+        #stores #map { width: 100%; height: 100%; min-height: 420px; }
     </style>
 </head>
 <body>
@@ -418,8 +415,6 @@ $username   = $_SESSION['user_name'] ?? 'Client';
 </div>
 
 <div class="progress" id="progress"></div>
-<div class="cursor-dot" id="cDot"></div>
-<div class="cursor-ring" id="cRing"></div>
 
 <!-- Bandeau -->
 <div class="marquee" aria-hidden="true">
@@ -863,7 +858,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
     /* ====== Catalogue (PageFlip) ====== */
     (function(){
         const TOTAL_PAGES = 7;
-        const PATH = '/Projet-paristanbul/assets/pages';
+        const PATH = '/Projet-Paristanbul/assets/pages';
         const FILENAME = i => String(i).padStart(2,'0') + '.jpg';
         const BUST = `?v=${Date.now()}`;
         const MOBILE_BREAKPOINT = 768;
@@ -1018,13 +1013,62 @@ $username   = $_SESSION['user_name'] ?? 'Client';
 
     /* Stores data + map */
     const storesData = {
-        villiers1: { title:'Paristanbul VILLIERS-LE-BEL', image:'../assets/img/magasins/villiers1.jpg', address:'3 avenue des entrepreneurs, VILLIERS-LE-BEL', hours:'Lundi à Dimanche : 08:30-20:00', phone:'01 39 94 12 34', coordinates:[49.0010, 2.3894] },
-        villiers2: { title:'Paristanbul VILLIERS-LE-BEL 2', image:'../assets/img/magasins/villiers2.jpg', address:'117 Avenue Pierre Semard, VILLIERS-LE-BEL', hours:'Lundi à Dimanche : 08:30-20:00', phone:'01 39 95 12 34', coordinates:[48.9985, 2.4148] },
-        drancy:    { title:'Paristanbul DRANCY', image:'../assets/img/magasins/drancy.jpg', address:'83 avenue Marceau, DRANCY', hours:'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00', phone:'01 48 95 12 34', coordinates:[48.9242, 2.4456] },
-        bondy:     { title:'Paristanbul BONDY', image:'../assets/img/magasins/bondy.jpg', address:'116 Av. Gallieni, BONDY', hours:'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00', phone:'01 48 47 12 34', coordinates:[48.9024, 2.4823] },
-        villemomble:{ title:'Paristanbul VILLEMOMBLE', image:'../assets/img/magasins/villemomble.jpg', address:'68 ALLEE DU PLATEAU, VILLEMOMBLE', hours:'Lundi à Dimanche : 08:00-20:30', phone:'01 45 28 12 34', coordinates:[48.8844, 2.5103] },
-        nogent:    { title:'Paristanbul NOGENT-SUR-OISE', image:'../assets/img/magasins/nogent.jpg', address:'171 Rue Jean Monnet, NOGENT-SUR-OISE', hours:'Lundi à Samedi : 09:30-20:00, Dimanche : 10:00-19:00', phone:'03 44 74 12 34', coordinates:[49.2765, 2.2011] },
-        vertsaintdenis:{ title:'Paristanbul VERT-SAINT-DENIS', image:'../assets/img/magasins/vertsaintdenis.jpg', address:'La Fontaine Ronde, VERT-SAINT-DENIS', hours:'Lundi à Dimanche : 08:30-20:30', phone:'01 64 10 12 34', coordinates:[48.6478, 2.6223] }
+        villiers1: {
+            title: 'Paristanbul VILLIERS-LE-BEL',
+            image: '/Projet-Paristanbul/assets/img/magasins/villiers1.jpg',
+            address: '3 avenue des entrepreneurs, VILLIERS-LE-BEL',
+            hours: 'Lundi à Dimanche : 08:30-20:00',
+            phone: '01 39 94 12 34',
+            coordinates: [49.0010, 2.3894]
+        },
+        villiers2: {
+            title: 'Paristanbul VILLIERS-LE-BEL 2',
+            image: '/Projet-Paristanbul/assets/img/magasins/villiers2.jpg',
+            address: '117 Avenue Pierre Semard, VILLIERS-LE-BEL',
+            hours: 'Lundi à Dimanche : 08:30-20:00',
+            phone: '01 39 95 12 34',
+            coordinates: [48.9985, 2.4148]
+        },
+        drancy: {
+            title: 'Paristanbul DRANCY',
+            image: '/Projet-Paristanbul/assets/img/magasins/drancy.jpg',
+            address: '83 avenue Marceau, DRANCY',
+            hours: 'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00',
+            phone: '01 48 95 12 34',
+            coordinates: [48.9242, 2.4456]
+        },
+        bondy: {
+            title: 'Paristanbul BONDY',
+            image: '/Projet-Paristanbul/assets/img/magasins/bondy.jpg',
+            address: '116 Av. Gallieni, BONDY',
+            hours: 'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00',
+            phone: '01 48 47 12 34',
+            coordinates: [48.9024, 2.4823]
+        },
+        villemomble: {
+            title: 'Paristanbul VILLEMOMBLE',
+            image: '/Projet-Paristanbul/assets/img/magasins/villemomble.jpg',
+            address: '68 ALLEE DU PLATEAU, VILLEMOMBLE',
+            hours: 'Lundi à Dimanche : 08:00-20:30',
+            phone: '01 45 28 12 34',
+            coordinates: [48.8844, 2.5103]
+        },
+        nogent: {
+            title: 'Paristanbul NOGENT-SUR-OISE',
+            image: '/Projet-Paristanbul/assets/img/magasins/nogent.jpg',
+            address: '171 Rue Jean Monnet, NOGENT-SUR-OISE',
+            hours: 'Lundi à Samedi : 09:30-20:00, Dimanche : 10:00-19:00',
+            phone: '03 44 74 12 34',
+            coordinates: [49.2765, 2.2011]
+        },
+        vertsaintdenis: {
+            title: 'Paristanbul VERT-SAINT-DENIS',
+            image: '/Projet-Paristanbul/assets/img/magasins/vertsaintdenis.jpg',
+            address: 'La Fontaine Ronde, VERT-SAINT-DENIS',
+            hours: 'Lundi à Dimanche : 08:30-20:30',
+            phone: '01 64 10 12 34',
+            coordinates: [48.6478, 2.6223]
+        }
     };
     let currentMap = null;
 
@@ -1094,21 +1138,6 @@ $username   = $_SESSION['user_name'] ?? 'Client';
     /* Footer year */
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    /* Progress bar + cursor ring simple */
-    (()=>{
-        const progress = document.getElementById('progress');
-        const onProg = () => {
-            const h = document.documentElement;
-            const sc = h.scrollTop, max = h.scrollHeight - h.clientHeight;
-            progress.style.width = (max ? (sc/max)*100 : 0) + '%';
-        };
-        onProg(); addEventListener('scroll', onProg, {passive:true});
-
-        const cDot = document.getElementById('cDot'), cRing = document.getElementById('cRing');
-        let mx=innerWidth/2, my=innerHeight/2, rx=mx, ry=my;
-        addEventListener('mousemove', (e)=>{ mx=e.clientX; my=e.clientY; cDot.style.left=mx+'px'; cDot.style.top=my+'px'; });
-        (function loop(){ rx += (mx-rx)*0.15; ry += (my-ry)*0.15; cRing.style.left=rx+'px'; cRing.style.top=ry+'px'; requestAnimationFrame(loop); })();
-    })();
 
     /* AOS mini */
     (() => {
