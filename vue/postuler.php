@@ -7,29 +7,29 @@
 $MAX_FILE_SIZE_MB = 5; // limite 5 Mo
 $ALLOWED_EXT = ['pdf','doc','docx'];
 $ALLOWED_MIME = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 ];
 
 // ---------- UTIL: Connexion BDD multi-essais ----------
 function db_connect(): PDO {
     $attempts = [
-            ['host'=>'127.0.0.1', 'port'=>8889, 'user'=>'root', 'pass'=>'root'],  // MAMP
-            ['host'=>'127.0.0.1', 'port'=>3306, 'user'=>'root', 'pass'=>''],      // MySQL
+        ['host'=>'127.0.0.1', 'port'=>8889, 'user'=>'root', 'pass'=>'root'],  // MAMP
+        ['host'=>'127.0.0.1', 'port'=>3306, 'user'=>'root', 'pass'=>''],      // MySQL
     ];
     $last = null;
     foreach ($attempts as $a) {
         try {
             $pdo = new PDO(
-                    "mysql:host={$a['host']};port={$a['port']};dbname=bdd_paristanbul;charset=utf8mb4",
-                    $a['user'],
-                    $a['pass'],
-                    [
-                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                            PDO::ATTR_EMULATE_PREPARES => false,
-                    ]
+                "mysql:host={$a['host']};port={$a['port']};dbname=bdd_paristanbul;charset=utf8mb4",
+                $a['user'],
+                $a['pass'],
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                ]
             );
             return $pdo;
         } catch (Throwable $e) { $last = $e; }
@@ -46,8 +46,8 @@ $uploaded_cv_public = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $bdd = new PDO('mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8', 'root', '', [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
 
         // Champs
@@ -106,8 +106,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $ok = $sql->execute([
-                $nom, $prenom, $email, $date_naissance, $langues, $adresse, $telephone, $permis,
-                $experiences, $lettre_motivation, $ref_offre, $date_candidature, "Nouveau", $lien_cv
+            $nom, $prenom, $email, $date_naissance, $langues, $adresse, $telephone, $permis,
+            $experiences, $lettre_motivation, $ref_offre, $date_candidature, "Nouveau", $lien_cv
         ]);
         if (!$ok) throw new Exception("Une erreur est survenue lors de l'enregistrement.");
 
@@ -195,29 +195,45 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         .pi-simple .brand img{height: clamp(60px, 9vw, 72px)}
         .pi-simple .tagline{display:flex; align-items:center; gap:14px; color:var(--muted); font-size: clamp(13px, 1.3vw, 16px); line-height:1}
         .pi-simple .tagline .rule{width: clamp(58px, 9vw, 92px); height:1px; background:rgba(255,255,255,.06)}
-        .pi-simple .right-col{display:flex; justify-content:flex-end; align-items:center; gap:10px; font-weight:800}
+
+        /* >>> Right column empilée + style bouton déplacé <<< */
+        .pi-simple .right-col{
+            display:flex;
+            flex-direction:column;   /* téléphone (ligne) puis bouton dessous */
+            align-items:flex-end;
+            gap:12px;
+            font-weight:800;
+        }
+        .pi-simple .right-col .phone-line{
+            display:flex; align-items:center; gap:10px;
+        }
         .pi-simple .right-col i{color:#c9d4ea}
         .pi-simple .phone{font-size: clamp(14px, 1.2vw, 18px); color:#e7ecf5}
-        .pi-simple .divider{border:0; border-top:1px solid #141a26; margin:0}
-        .pi-simple .navrow{padding:12px 0; position: relative;}
-        .pi-simple .menu{display:flex; justify-content:center; gap:28px; list-style:none; margin:0; padding:0}
-        .pi-simple .menu a{ font-weight:800; font-size:14px; color:#c9d4ea; letter-spacing:.06em; text-transform:uppercase; }
-        .pi-simple .menu a:hover, .pi-simple .menu a.is-active{color:#ffffff}
 
-        /* Bouton login (nav uniquement) */
-        .pi-simple .menu .btn-login{
+        /* Bouton login — utilisable dans la nav ET dans la colonne droite */
+        .pi-simple .menu .btn-login,
+        .pi-simple .right-col .btn-login{
             display:inline-flex; align-items:center; gap:8px;
             padding:10px 14px; border-radius:12px; border:1px solid #223055;
             background:linear-gradient(145deg,#122043,#0e1731); color:#e7ecf5; font-weight:800; text-transform:uppercase;
             box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 8px 18px rgba(0,0,0,.28);
             transition:transform .08s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
         }
-        .pi-simple .menu .btn-login:hover{ background:linear-gradient(145deg,#1a2b57,#102244); border-color:#2a3d73; box-shadow:0 12px 26px rgba(0,0,0,.35); }
-        .pi-simple .menu .btn-login:active{ transform:translateY(1px); }
+        .pi-simple .menu .btn-login:hover,
+        .pi-simple .right-col .btn-login:hover{ background:linear-gradient(145deg,#1a2b57,#102244); border-color:#2a3d73; box-shadow:0 12px 26px rgba(0,0,0,.35); }
+        .pi-simple .menu .btn-login:active,
+        .pi-simple .right-col .btn-login:active{ transform:translateY(1px); }
+
+        .pi-simple .divider{border:0; border-top:1px solid #141a26; margin:0}
+        .pi-simple .navrow{padding:12px 0; position: relative;}
+        .pi-simple .menu{display:flex; justify-content:center; gap:28px; list-style:none; margin:0; padding:0}
+        .pi-simple .menu a{ font-weight:800; font-size:14px; color:#c9d4ea; letter-spacing:.06em; text-transform:uppercase; }
+        .pi-simple .menu a:hover, .pi-simple .menu a.is-active{color:#ffffff}
 
         @media (max-width:720px){
             .pi-simple .topbar{ grid-template-columns:1fr; text-align:center }
             .pi-simple .left-col{justify-content:center}
+            .pi-simple .right-col{ align-items:center; } /* centré sur mobile */
             .pi-simple .menu{flex-wrap:wrap; gap:18px}
             .pi-simple .menu .btn-login span{ display:none; }
             .pi-simple .menu .btn-login{ padding:10px; }
@@ -245,7 +261,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         .pi-footer .footer-nav{ display:flex; flex-wrap:wrap; justify-content:center; gap:26px 30px; padding:12px 0 8px; margin:0 auto 12px; }
         .pi-footer .footer-nav a{ text-decoration:none; color:#e9f1ff; font-weight:800; font-size:14px; letter-spacing:.04em; text-transform:uppercase; }
         .pi-footer .footer-nav a:hover{ color:var(--pi-red) }
-        .pi-footer .copyright{ margin:6px 0 0; font-size:12px; color:var(--muted); user-select:none; }
+        .pi-footer .copyright{ margin:6px 0 0; font-size:12px; color:#9aa4b2; user-select:none; }
 
         /* --- Styles spécifiques page Recrutement (condensés) --- */
         .hero{ padding:64px 0 24px; }
@@ -314,33 +330,33 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
     <span class="orb blue c"></span>
     <span class="orb red  d"></span>
 </div>
-    <!-- BANDEAU défilant continu -->
-    <div class="marquee" aria-hidden="true">
-        <div class="marquee__track">
-            <div class="marquee__group">
-                <span class="pill"><span class="dot"></span>Préparateur de commande</span>
-                <span class="pill"><span class="dot"></span> Manutentionnaire</span>
-                <span class="pill"><span class="dot"></span> Logistique</span>
-                <span class="pill"><span class="dot"></span> Caissier</span>
-                <span class="pill"><span class="dot"></span> Manutentionnaire</span>
-                <span class="pill"><span class="dot"></span> Préparateur de commande</span>
-                <span class="pill"><span class="dot"></span> Caissier</span>
-                <span class="pill"><span class="dot"></span> Logistique</span>
-            </div>
+<!-- BANDEAU défilant continu -->
+<div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+        <div class="marquee__group">
+            <span class="pill"><span class="dot"></span>Préparateur de commande</span>
+            <span class="pill"><span class="dot"></span> Manutentionnaire</span>
+            <span class="pill"><span class="dot"></span> Logistique</span>
+            <span class="pill"><span class="dot"></span> Caissier</span>
+            <span class="pill"><span class="dot"></span> Manutentionnaire</span>
+            <span class="pill"><span class="dot"></span> Préparateur de commande</span>
+            <span class="pill"><span class="dot"></span> Caissier</span>
+            <span class="pill"><span class="dot"></span> Logistique</span>
+        </div>
 
-            <!-- DUPLICAT exact pour boucle sans coupure -->
-            <div class="marquee__group" aria-hidden="true">
-                <span class="pill"><span class="dot"></span> Préparateur de commande</span>
-                <span class="pill"><span class="dot"></span> Manutentionnaire</span>
-                <span class="pill"><span class="dot"></span> Logistique</span>
-                <span class="pill"><span class="dot"></span> Caissier</span>
-                <span class="pill"><span class="dot"></span> Manutentionnaire</span>
-                <span class="pill"><span class="dot"></span> Préparateur de commande</span>
-                <span class="pill"><span class="dot"></span> Caissier</span>
-                <span class="pill"><span class="dot"></span> Logistique</span>
-            </div>
+        <!-- DUPLICAT exact pour boucle sans coupure -->
+        <div class="marquee__group" aria-hidden="true">
+            <span class="pill"><span class="dot"></span> Préparateur de commande</span>
+            <span class="pill"><span class="dot"></span> Manutentionnaire</span>
+            <span class="pill"><span class="dot"></span> Logistique</span>
+            <span class="pill"><span class="dot"></span> Caissier</span>
+            <span class="pill"><span class="dot"></span> Manutentionnaire</span>
+            <span class="pill"><span class="dot"></span> Préparateur de commande</span>
+            <span class="pill"><span class="dot"></span> Caissier</span>
+            <span class="pill"><span class="dot"></span> Logistique</span>
         </div>
     </div>
+</div>
 
 
 <!-- HEADER .pi-simple (home) -->
@@ -370,8 +386,11 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         </div>
 
         <div class="right-col">
-            <i class="fa-solid fa-phone"></i>
-            <a class="phone" href="tel:+33749826133">07 49 82 61 33</a>
+            <div class="phone-line">
+                <i class="fa-solid fa-phone"></i>
+                <a class="phone" href="tel:+33749826133">07 49 82 61 33</a>
+            </div>
+            <a class="btn-login" href="pageConnexion.php"><i class="fa-regular fa-user"></i><span> Se connecter</span></a>
         </div>
     </div>
 
@@ -385,8 +404,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
             <li><a href="index.php#catalog">Catalogue</a></li>
             <li><a href="index.php#contact">Contact</a></li>
             <li><a href="postuler.php" class="is-active">Postuler</a></li>
-            <!-- Bouton login dans la nav -->
-            <li><a class="btn-login" href="pageConnexion.php"><i class="fa-regular fa-user"></i><span> Se connecter</span></a></li>
+            <!-- Bouton login supprimé de la nav -->
         </ul>
     </div>
 
@@ -623,9 +641,9 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
     <!-- FAQ -->
     <section class="section pt-0">
         <div class="container faq">
-            <div class="row g-3">
-                <div class="col-lg-8">
-                    <h3 class="fw-bold mb-3">Questions fréquentes</h3>
+            <div class="row g-3 justify-content-center">
+                <div class="col-lg-8 mx-auto">
+                    <h3 class="fw-bold mb-3 text-center">Questions fréquentes</h3>
 
                     <div class="faq-item mb-2">
                         <button class="faq-q">Comment se déroule le processus de recrutement ? <i class="fa-solid fa-chevron-down"></i></button>
