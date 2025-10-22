@@ -14,8 +14,32 @@ if (!empty($_SESSION['error_message'])) {
 // =====================================
 // Connexion PDO
 // =====================================
-$pdo = new PDO('mysql:host=localhost;dbname=bdd_paristanbul;charset=utf8', 'root', '');
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+try {
+    $tries = [
+            ['h'=>'127.0.0.1','p'=>8889,'u'=>'root','pw'=>'root'],  // MAMP
+            ['h'=>'127.0.0.1','p'=>3306,'u'=>'root','pw'=>''],      // WAMP
+            ['h'=>'127.0.0.1','p'=>3306,'u'=>'root','pw'=>'root'],  // XAMPP ou autres configs
+    ];
+
+    foreach ($tries as $t) {
+        try {
+            $pdo = new PDO(
+                    "mysql:host={$t['h']};port={$t['p']};dbname=bdd_paristanbul;charset=utf8mb4",
+                    $t['u'],
+                    $t['pw'],
+                    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+            );
+            break; // réussite -> on sort de la boucle
+        } catch (Throwable $e) {
+            $pdo = null;
+        }
+    }
+
+    if (!$pdo) throw new Exception("Impossible de se connecter à MySQL (testé 8889 et 3306).");
+
+} catch (Exception $e) {
+    die("Erreur : " . $e->getMessage());
+}
 
 // =====================================
 // FILTRES & PAGINATION

@@ -1,31 +1,61 @@
 <?php
-
 namespace bdd;
-use \PDO;
+
+use PDO;
+use Throwable;
 
 class Bdd
 {
-    private $bdd;
+    private PDO $bdd;
 
     public function __construct()
     {
-        try {
-            $this->bdd = new PDO( 'mysql:host=localhost;port=3306;dbname=bdd_paristanbul;charset=utf8',
-                'root',
-                '');
+        // Essaie plusieurs configs courantes (MAMP, WAMP/XAMPP)
+        $tries = [
+            // MAMP (macOS) par défaut
+            ['host' => '127.0.0.1', 'port' => 8889, 'user' => 'root', 'pass' => 'root'],
+            // WAMP/XAMPP courants
+            ['host' => '127.0.0.1', 'port' => 3306, 'user' => 'root', 'pass' => ''],
+        ];
 
+        $dbName = 'bdd_paristanbul';
+        $lastErr = null;
 
-            $this->bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        foreach ($tries as $t) {
+            try {
+                $dsn = sprintf(
+                    'mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
+                    $t['host'],
+                    $t['port'],
+                    $dbName
+                );
 
-        } catch (PDOException $e) {
-            die('Erreur de connexion à la base de données : ' . $e->getMessage());
+                $this->bdd = new PDO(
+                    $dsn,
+                    $t['user'],
+                    $t['pass'],
+                    [
+                        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::ATTR_EMULATE_PREPARES   => false,
+                    ]
+                );
+                // Succès → on sort du constructeur
+                return;
+            } catch (Throwable $e) {
+                $lastErr = $e;
+            }
         }
+
+        // Si on arrive ici, aucun essai n'a fonctionné
+        throw new \RuntimeException(
+            "Connexion MySQL impossible (testé ports 8889/3306 avec mdp root/vide). ".
+            ($lastErr ? "Dernière erreur: ".$lastErr->getMessage() : "")
+        );
     }
 
-    public function getBdd()
+    public function getBdd(): PDO
     {
         return $this->bdd;
     }
-
-
 }
