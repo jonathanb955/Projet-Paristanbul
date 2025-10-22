@@ -130,8 +130,7 @@ unset($_SESSION['flash_success']);
         .cta-row{display:flex; gap:12px; margin-top:18px}
         .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:14px; border:1px solid #1f2842; background:linear-gradient(145deg,#151c32,#0f1424); font-weight:700}
         .btn.primary{background:linear-gradient(145deg,#102453,var(--blue)); border-color:#0f2b6a}
-        .video-card{position:relative; border-radius:18px; overflow:hidden; border:1px solid #1a2033; box-shadow:0 20px 60px #070a12; width:35vw; height:35vh; margin:0; padding:0;}
-        .video-card video{display:block; width:100%; height:100%; object-fit:cover; object-position:center}
+
 
         /* Sections */
         section{padding:64px 0; background:transparent !important;}
@@ -858,7 +857,35 @@ unset($_SESSION['flash_success']);
             .pi-simple .menu .btn-login span{ display:none; }
             .pi-simple .menu .btn-login{ padding:10px; }
         }
+        .video-card{
+            position:relative;
+            border-radius:24px;
+            overflow:hidden;
+            box-shadow:0 20px 60px rgba(0,0,0,.35);
+            background:radial-gradient(120% 120% at 80% 10%, #2a0f22 0%, #101725 55%, #0e1220 100%);
+        }
+        /* Étire les 2 colonnes à la même hauteur */
+        .hero-wrap{ align-items: stretch; }
 
+        /* La carte doit occuper toute la hauteur de la ligne */
+        .video-card{ height: 100%; }
+
+        /* L’enveloppe et l’iframe remplissent complètement la carte */
+        .yt-wrap{ position:relative; width:100%; height:100%; /* <- retire l’aspect-ratio ici */ }
+        .yt-wrap iframe{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+        .yt-wrap{
+            position:relative;
+            width:100%;
+            /* ratio 16/9 fluide */
+            aspect-ratio:16/9;
+        }
+
+        .yt-wrap iframe{
+            position:absolute; inset:0;
+            width:100%; height:100%;
+            display:block;
+        }
     </style>
 </head>
 <body>
@@ -985,16 +1012,20 @@ unset($_SESSION['flash_success']);
                     <a href="#stores" class="btn magnet">Voir nos magasins</a>
                 </div>
             </div>
-
-            <div class="reveal" data-parallax data-speed="0.06">
-                <div class="video-card tilt">
-                    <video id="promoVideo" preload="metadata" playsinline muted poster="../assets/img/bondy%20.gif">
-                        <source src="../assets/img/bondy%20.mp4" type="video/mp4" />
-                        Votre navigateur ne supporte pas la vidéo HTML5.
-                    </video>
+            <div class="video-card tilt">
+                <div class="yt-wrap">
+                    <iframe
+                            src="https://www.youtube-nocookie.com/embed/-AeizsAsJHA?autoplay=1&mute=1&controls=0&playsinline=1&loop=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playlist=-AeizsAsJHA"
+                            title="Paristanbul Promo"
+                            frameborder="0"
+                            allow="autoplay; fullscreen; picture-in-picture"
+                            allowfullscreen
+                    ></iframe>
                 </div>
             </div>
-        </div>
+                </div>
+
+
     </section>
 
     <!-- CATALOGUE -->
