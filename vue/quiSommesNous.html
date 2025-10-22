@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Paristanbul — Notre histoire</title>
 
-    <!-- Fonts + Icons -->
+    <!-- Fonts + Icons (inchangés) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -41,7 +41,7 @@
         }
         img{max-width:100%;height:auto;display:block}
         a{color:inherit;text-decoration:none}
-        .container{max-width:1200px;margin:0 auto;padding:0 20px}
+        .container{max-width:1240px;margin:0 auto;padding:0 20px}
 
         /* ===== FOND GLOBAL ===== */
         #page-bg{position:fixed; inset:0; z-index:-2; pointer-events:none; background:var(--page-bg);}
@@ -58,7 +58,7 @@
         @keyframes orbD{ 50%{ transform:translate3d(-2vw,-3vh,0) scale(1.04);} }
         @media (prefers-reduced-motion:reduce){ .pi-orbs .orb{ animation:none; opacity:.55; } }
 
-        /* ===== Scroll progress (repris tel quel) ===== */
+        /* ===== Scroll progress ===== */
         #scrollProgress{
             position:fixed; inset:0 auto auto 0; height:3px; width:0;
             background:linear-gradient(90deg, var(--pi-red), var(--pi-blue));
@@ -118,7 +118,7 @@
             border-top: 1px solid #1d2742; opacity:1;
         }
 
-        /* ===== FOOTER .pi-footer ===== */
+        /* ===== FOOTER ===== */
         footer.pi-footer{ background:transparent !important; border-top: 1px solid #141a2b; color:var(--text) }
         .pi-footer .wrap{ max-width:1100px; margin:0 auto; text-align:center; padding: 28px 20px; }
         .pi-footer .brand{ height:72px; width:auto; object-fit:contain; display:block; margin:0 auto 18px; }
@@ -132,40 +132,67 @@
         .pi-footer .footer-nav{ display:flex; flex-wrap:wrap; justify-content:center; gap:26px 30px; padding:12px 0 8px; margin:0 auto 12px; }
         .pi-footer .footer-nav a{ text-decoration:none; color:#e9f1ff; font-weight:800; font-size:14px; letter-spacing:.04em; text-transform:uppercase; transition:color .2s; }
         .pi-footer .footer-nav a:hover{ color:var(--pi-red) }
-        .pi-footer .copyright{ margin:6px 0 0; font-size:12px; color:var(--muted); user-select:none; }
+        .pi-footer .copyright{ margin:6px 0 0; font-size:12px; color:#muted; user-select:none; }
 
-        /* ===== Styles “Notre histoire” (avec classes reveal/tilt présentes) ===== */
+        /* ===== CONTENU “Notre histoire” ===== */
         .hero{position:relative;isolation:isolate;padding:clamp(48px,6vw,72px) 0;overflow:hidden}
         .story-grid{display:grid;grid-template-columns:minmax(320px,1fr) minmax(320px,1fr);gap:28px;align-items:center}
         @media(max-width:720px){.story-grid{grid-template-columns:1fr}}
+
+        /* — media + shine */
         .media{aspect-ratio:16/9;border-radius:18px;overflow:hidden;position:relative;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .6s cubic-bezier(.2,.8,.2,1),box-shadow .6s}
+        .media::after{content:""; position:absolute; inset:-20% -60% auto auto; width:40%; height:200%; transform:rotate(25deg); background:linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent); opacity:.0; transition:opacity .6s, transform .6s;}
         .media:hover{transform:scale(1.02) rotateZ(.1deg);box-shadow:0 18px 40px rgba(0,0,0,.45)}
+        .media:hover::after{opacity:.9; transform:translateX(-60%) rotate(25deg)}
+
+        /* — headline gradient animé */
+        .hero h1 span{
+            background-image:linear-gradient(90deg,#e21b3c,#2E4C97,#e21b3c);
+            background-size:200% 100%;
+            -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+            animation:ink-move 8s ease-in-out infinite;
+        }
+        @keyframes ink-move{ 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
         .eyebrow{letter-spacing:.18em;text-transform:uppercase;color:#cfd5e6;font-weight:800;font-size:.85rem}
         .chip{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem .75rem;border-radius:999px;background:rgba(255,255,255,.08);color:#cfd5e6;border:1px solid rgba(255,255,255,.09);font-weight:700;font-size:.88rem}
         .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}
-        .timeline{position:relative;margin:8px 0 0}
-        .timeline::before{content:"";position:absolute;left:clamp(18px,4vw,28px);top:0;bottom:0;width:2px;background:linear-gradient(var(--pi-blue),var(--pi-red));opacity:.35}
-        .tl-item{position:relative;padding-left:clamp(3.25rem,7vw,5rem);margin-bottom:18px}
-        .tl-dot{position:absolute;left:clamp(10px,3.5vw,20px);top:.6rem;width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--pi-blue),var(--pi-red));box-shadow:0 0 0 6px rgba(255,255,255,.05)}
-        .tl-card{background:#141B2B;border:1px solid var(--border);border-radius:16px;padding:14px 16px}
+
+        /* — timeline + progress dynamique */
+        .timeline{position:relative;margin:8px 0 0; --progress:0%}
+        .timeline::before{content:"";position:absolute;left:clamp(18px,4vw,28px);top:0;bottom:0;width:2px;background:linear-gradient(#2a3659,#2a3659);opacity:.35}
+        .timeline::after{content:"";position:absolute;left:clamp(18px,4vw,28px);top:0;width:2px;height:var(--progress);background:linear-gradient(var(--pi-blue),var(--pi-red));box-shadow:0 0 12px rgba(214,69,46,.25)}
+        .tl-item{position:relative;padding-left:clamp(3.25rem,7vw,5rem);margin-bottom:18px;transition:transform .3s ease}
+        .tl-dot{position:absolute;left:clamp(10px,3.5vw,20px);top:.6rem;width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--pi-blue),var(--pi-red));box-shadow:0 0 0 6px rgba(255,255,255,.05);transition:transform .25s ease, box-shadow .25s ease, filter .25s ease}
+        .tl-card{background:#141B2B;border:1px solid var(--border);border-radius:16px;padding:14px 16px;transition:box-shadow .3s ease, transform .3s ease}
+        .tl-item.is-active .tl-card{box-shadow:0 16px 38px rgba(0,0,0,.42); transform:translateY(-2px)}
+        .tl-item.is-active .tl-dot{transform:scale(1.15); box-shadow:0 0 0 8px rgba(255,255,255,.06), 0 0 20px rgba(214,69,46,.35)}
+
+        /* — stats */
         .stats{display:grid;grid-template-columns:repeat(6,minmax(140px,1fr));gap:14px}
         @media(max-width:1080px){.stats{grid-template-columns:repeat(3,1fr)}}
         @media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
-        .stat{background:#141B2B;border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center}
+        .stat{background:#141B2B;border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center; transform:scale(.98); opacity:.95; transition:transform .25s ease, box-shadow .25s ease, opacity .25s}
+        .stat:hover{ transform:scale(1); box-shadow:0 14px 34px rgba(0,0,0,.35); opacity:1 }
         .stat i{font-size:1.6rem;opacity:.9}
         .stat .num{font-size:2rem;font-weight:900;line-height:1;margin:.45rem 0}
         .stat .lbl{color:#cfd5e6;font-weight:700;font-size:.9rem}
+
+        /* — valeurs */
         .values{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
         @media(max-width:960px){.values{grid-template-columns:repeat(2,1fr)}}
         @media(max-width:520px){.values{grid-template-columns:1fr}}
-        .value{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--border);border-radius:16px;padding:16px}
-        .value .ico{width:48px;height:48px;border-radius:50%;background:#1B2436;display:grid;place-items:center;margin-bottom:8px}
+        .value{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--border);border-radius:16px;padding:16px; transition:border-color .25s ease, box-shadow .25s ease}
+        .value:hover{ border-color: rgba(214,69,46,.35); box-shadow: 0 14px 36px rgba(0,0,0,.3) }
+        .value .ico{width:48px;height:48px;border-radius:50%;background:#1B2436;display:grid;place-items:center;margin-bottom:8px; transition:transform .25s ease}
+        .value:hover .ico{ transform: translateY(-2px) scale(1.05) }
         .value h6{margin:.25rem 0 .35rem;font-size:1.05rem;font-weight:900}
         .value p{margin:0;color:#cfd5e6}
+
         .cta{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:18px;background:linear-gradient(180deg,rgba(46,76,151,.15),rgba(46,76,151,.05));padding:22px clamp(18px,4vw,28px);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
         @media(max-width:720px){.cta{grid-template-columns:1fr}}
 
-        /* ===== Reveal / Ripple / ToTop / Loader (mêmes comportements que ton 2e code) ===== */
+        /* ===== Reveal / Ripple / ToTop / Loader ===== */
         @media(prefers-reduced-motion:reduce){.reveal,.media,header.pi-simple,.btn,.tilt{transition:none!important;animation:none!important}}
         .reveal{opacity:0;transform:translateY(18px) scale(.98);filter:blur(2px);transition:opacity .6s cubic-bezier(.22,.61,.36,1),transform .6s cubic-bezier(.22,.61,.36,1),filter .6s cubic-bezier(.22,.61,.36,1)}
         .reveal.reveal--in{opacity:1;transform:none;filter:none}
@@ -182,35 +209,16 @@
         .loader__ring:nth-child(1){inset:12px;animation-duration:1.6s;border-top-color:var(--pi-red)}
         @keyframes spin{to{transform:rotate(360deg)}}
         .loader__logo{width:120px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
-        /* === Footer avec le même fond que le header === */
-        footer.pi-footer{
-            position: relative;          /* nécessaire pour le ::before */
-            isolation: isolate;          /* place le calque derrière le contenu */
-            background: transparent !important;
-            border-top: 1px solid #1d2742;  /* même teinte que le header */
-            color: var(--text);
-        }
 
+        /* Footer fond identique header */
+        footer.pi-footer{ position:relative; isolation:isolate; background:transparent !important; border-top: 1px solid #1d2742; color: var(--text); }
         footer.pi-footer::before{
-            content:"";
-            position:absolute;
-            z-index:-1;
-            top:0; bottom:0;
-            left:50%; right:50%;
-            margin-left:-50vw;           /* déborde jusqu’aux bords de l’écran */
-            margin-right:-50vw;
-            background: linear-gradient(180deg, rgba(15,21,37,.90), rgba(12,18,34,.86)); /* identique header */
-            box-shadow: 0 12px 28px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.05); /* identique header */
-            /* tu peux ajouter un léger radial comme sur la page si tu veux plus de “vie” :
-            background:
-              radial-gradient(900px 500px at 10% -10%, rgba(46,76,151,.12), transparent 60%),
-              radial-gradient(900px 500px at 90% -10%, rgba(214,69,46,.10), transparent 55%),
-              linear-gradient(180deg, rgba(15,21,37,.90), rgba(12,18,34,.86));
-            */
+            content:""; position:absolute; z-index:-1; top:0; bottom:0; left:50%; right:50%;
+            margin-left:-50vw; margin-right:-50vw;
+            background: linear-gradient(180deg, rgba(15,21,37,.90), rgba(12,18,34,.86));
+            box-shadow: 0 12px 28px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.05);
         }
-
     </style>
-
 </head>
 <body>
 
@@ -281,7 +289,7 @@
     <hr class="divider">
 </header>
 
-<!-- ===== CONTENU “Notre histoire” (avec classes reveal/tilt) ===== -->
+<!-- ===== CONTENU “Notre histoire” ===== -->
 <header class="hero">
     <div class="container story-grid">
         <div class="media reveal tilt" id="heroMedia">
@@ -291,7 +299,7 @@
         <div class="reveal" id="heroText">
             <span class="eyebrow">Notre ADN</span>
             <h1 style="margin:.35rem 0 .6rem;line-height:1.06;letter-spacing:-.02em;font-weight:900">
-                <span style="background-image:linear-gradient(90deg,#e21b3c,#2E4C97,#e21b3c);background-size:200% 100%;background-position:0% 50%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;display:inline-block;">Une histoire de famille</span>, de courage et de goût.
+                <span>Une histoire de famille</span>, de courage et de goût.
             </h1>
             <p style="color:#cfd5e6">
                 Arrivé jeune en Europe, <strong>Metin</strong> apprend vite le métier, de la plonge au service. À Paris,
@@ -318,7 +326,7 @@
 <section class="section" style="padding:26px 0 14px">
     <div class="container">
         <h2 class="reveal" style="margin:0 0 10px">Les jalons qui nous ont façonnés</h2>
-        <div class="timeline">
+        <div class="timeline" id="timeline">
             <div class="tl-item reveal">
                 <div class="tl-dot"></div>
                 <div class="tl-card tilt">
@@ -376,7 +384,7 @@
                 <div class="tl-card tilt">
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
                         <span class="year">2025</span>
-                        <span class="chip"><i class="bi bi-building"></i> 10 magasins</span>
+                        <span class="chip"><i class="bi bi-building"></i> 7 magasins</span>
                     </div>
                     <p style="color:#cfd5e6;margin:.6rem 0 .8rem">
                         Une chaîne familiale florissante, ancrée dans la proximité et la qualité. De nouveaux quartiers nous attendent.
@@ -399,7 +407,7 @@
             </div>
             <div class="stat reveal tilt">
                 <i class="bi bi-shop"></i>
-                <div class="num counter" data-target="10">0</div>
+                <div class="num counter" data-target="7">0</div>
                 <div class="lbl">Magasins</div>
             </div>
             <div class="stat reveal tilt">
@@ -490,7 +498,7 @@
     </div>
 </footer>
 
-<!-- ===== JS (animations du 2e code, adaptées pour header .pi-simple) ===== -->
+<!-- ===== JS ===== -->
 <script>
     /* Scroll progress */
     (function(){
@@ -510,7 +518,7 @@
         setTimeout(hide,4000);
     })();
 
-    /* Header sticky + ToTop (adapté à header.pi-simple) */
+    /* Header sticky + ToTop */
     (function(){
         const nav=document.querySelector('header.pi-simple'); const toTop=document.getElementById('toTop');
         const onS=()=>{ const y=window.scrollY||0; if(nav) nav.classList.toggle('nav--scrolled', y>8); toTop.classList.toggle('show', y>500); };
@@ -528,7 +536,7 @@
         els.forEach((el,i)=>{ el.style.setProperty('--reveal-delay',(i%6)*60+'ms'); io.observe(el); });
     })();
 
-    /* Ripple sur .btn (on laisse tel quel) */
+    /* Ripple sur .btn (si présent) */
     document.querySelectorAll('.btn').forEach(btn=>{
         btn.addEventListener('pointerdown', e=>{
             const r=document.createElement('span'); r.className='r';
@@ -613,6 +621,42 @@
             });
         },{threshold:.4});
         counters.forEach(c=>io.observe(c));
+    })();
+
+    /* Timeline progress + activation */
+    (function(){
+        const tl=document.getElementById('timeline'); if(!tl) return;
+        const items=[...tl.querySelectorAll('.tl-item')];
+
+        const update=()=>{
+            const rect=tl.getBoundingClientRect();
+            const viewH=window.innerHeight || document.documentElement.clientHeight;
+            const start=Math.max(0, viewH*0.1 - Math.max(0, -rect.top)); // début lisible
+            const total=Math.max(1, rect.height);
+            const seen=Math.min(total, Math.max(0, (viewH*0.6) - Math.max(0, rect.top))); // progression douce
+            const p=Math.max(0, Math.min(100, (seen/total)*100));
+            tl.style.setProperty('--progress', p+'%');
+
+            const mid=viewH*0.5;
+            items.forEach(it=>{
+                const r=it.getBoundingClientRect();
+                const active = (r.top < mid && r.bottom > viewH*0.25);
+                it.classList.toggle('is-active', active);
+            });
+        };
+        update();
+        document.addEventListener('scroll', update, {passive:true});
+        window.addEventListener('resize', update);
+    })();
+
+    /* Orbs parallax au scroll (soft) */
+    (function(){
+        const orbs=[...document.querySelectorAll('.pi-orbs .orb')]; if(!orbs.length) return;
+        const update=()=>{
+            const y=window.scrollY||0;
+            orbs.forEach((o,i)=>{ o.style.transform=`translateY(${(y*0.02)*(i%2?1:-1)}px)`; });
+        };
+        document.addEventListener('scroll', update, {passive:true});
     })();
 
     /* Footer year */

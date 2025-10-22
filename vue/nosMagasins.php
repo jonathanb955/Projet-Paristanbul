@@ -273,6 +273,7 @@ if ($magasinsJson === false) {
             header.pi-simple .pi-topbar{ grid-template-columns:1fr auto; row-gap:10px; }
             header.pi-simple .pi-right{ justify-self:start; }
             header.pi-simple .pi-menu{ flex-wrap:wrap; gap:18px 20px; }
+
         }
     </style>
 </head>
