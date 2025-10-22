@@ -144,7 +144,7 @@ $queryString = http_build_query($queryParams);
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Paristanbul — Admin • Offres d'emplois</title>
     <link rel="stylesheet" href="../../assets/css/admin.css" />
-    <link rel="stylesheet" href="../../assets/css/gestionOffreAdmin.css" />
+    <link rel="stylesheet" href="../../assets/css/candidatureAdmin.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
 
@@ -233,7 +233,7 @@ $queryString = http_build_query($queryParams);
                         <th>Secteur</th>
                         <th>Contrat</th>
                         <th>Ville</th>
-                        <th style="width:240px"></th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>

@@ -56,8 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ins = $pdo->prepare("INSERT INTO utilisateurs (nom, prenom, email, mdp, role) VALUES (:nom,:prenom,:email,:mdp,:role)");
         $ins->execute([':nom'=>$nom, ':prenom'=>$prenom, ':email'=>$email, ':mdp'=>$hash, ':role'=>$role]);
 
-        $_SESSION['user_email'] = $email;
-        $_SESSION['flash_success'] = "Connecté(e)";
         header('Location: ' . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/index.php');
         exit;
     } catch (Exception $e) {

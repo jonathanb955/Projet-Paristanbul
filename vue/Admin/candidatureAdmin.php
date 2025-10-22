@@ -235,8 +235,8 @@ $villes = $stmtVilles->fetchAll(PDO::FETCH_COLUMN);
                         <th>Poste</th>
                         <th>Magasin</th>
                         <th>Statut</th>
-                        <th>CV</th>
-                        <th style="width:240px"></th>
+                        <th>Actions</th>
+
                     </tr>
                     </thead>
                     <tbody>
@@ -273,11 +273,7 @@ $villes = $stmtVilles->fetchAll(PDO::FETCH_COLUMN);
                                         <i class="bi bi-star"></i> <?= htmlspecialchars($statutCandidat) ?>
                                     </span>
                             </td>
-                            <td>
-                                <a class="link" href="<?= "vue/telechargement/" . $candidature['lien_cv'] ?>" download>
-                                    <i class="bi bi-file-earmark-text"></i> Télécharger CV
-                                </a>
-                            </td>
+
                             <td class="row-actions">
                                 <form action="../../src/traitement/update_candidatures.php" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="<?= $candidature['id'] ?>">

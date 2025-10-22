@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="../../assets/css/admin.css">
     <link rel="stylesheet" href="../../assets/css/gestionUserAdmin.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        table.table tbody td.row-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+    </style>
+
+
 </head>
 <body>
 <aside class="sidebar">
@@ -163,7 +174,7 @@
             <div class="table-wrap">
                 <table class="table">
                     <thead>
-                    <tr><th>Nom</th><th>Prénom</th><th>Email</th><th>Rôle</th><th style="width:240px"></th></tr>
+                    <tr><th>Nom</th><th>Prénom</th><th>Email</th><th>Rôle</th><th>Actions</th></tr>
                     </thead>
                     <tbody>
                     <?php foreach ($utilisateurs as $utilisateur): ?>
@@ -172,11 +183,26 @@
                             <td><?= htmlspecialchars($utilisateur['prenom']) ?></td>
                             <td><?= htmlspecialchars($utilisateur['email']) ?></td>
                             <td><?= htmlspecialchars($utilisateur['role']) ?></td>
-                            <td><!-- Actions éditer/supprimer peuvent être ajoutées ici --></td>
+                            <td class="row-actions">
+                                <a href="../../src/traitement/editUser.php?id=<?= $utilisateur['id_utilisateur'] ?>"
+                                   class="btn btn-sm btn-outline" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <form action="../../src/traitement/supprimer_user.php" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="<?= $utilisateur['id_utilisateur'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer"
+                                            onclick="return confirm('Supprimer cet utilisateur ?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>
+
                 <div class="table-foot">
                     <span><?= $page ?> / <?= $totalPages ?></span>
                     <div class="pager">
