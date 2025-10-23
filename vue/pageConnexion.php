@@ -1,10 +1,18 @@
 <?php
+/* -------------------- Sécurité session -------------------- */
+ini_set('session.cookie_httponly', '1');
+ini_set('session.use_strict_mode', '1');
+ini_set('session.cookie_samesite', 'Lax'); // 'Strict' si pas de redirections cross-site
+if (!empty($_SERVER['HTTPS'])) {
+    ini_set('session.cookie_secure', '1');
+}
 session_start();
 
+/* -------------------- Connexion BDD (MAMP/WAMP) -------------------- */
 function db_connect(): PDO {
     $tries = [
-            ['h'=>'127.0.0.1','p'=>8889,'u'=>'root','pw'=>'root'],
-            ['h'=>'127.0.0.1','p'=>3306,'u'=>'root','pw'=>''],
+            ['h'=>'127.0.0.1','p'=>8889,'u'=>'root','pw'=>'root'], // MAMP par défaut
+            ['h'=>'127.0.0.1','p'=>3306,'u'=>'root','pw'=>''],     // WAMP/XAMPP habituels
     ];
     foreach ($tries as $t) {
         try {
@@ -18,50 +26,83 @@ function db_connect(): PDO {
                             PDO::ATTR_EMULATE_PREPARES => false,
                     ]
             );
-        } catch (Throwable $e) {}
+        } catch (Throwable $e) { /* on tente le suivant */ }
     }
     throw new Exception('Connexion MySQL impossible.');
 }
 
+/* -------------------- CSRF token (formulaire) -------------------- */
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(16));
+}
+
+/* -------------------- Rate limit ultra-simple -------------------- */
+$_SESSION['login_try']  = $_SESSION['login_try']  ?? 0;
+$_SESSION['login_lock'] = $_SESSION['login_lock'] ?? 0;
+
 $err = null;
 
-if (!empty($_POST['email']) && !empty($_POST['mdp'])) {
-    try {
-        $pdo  = db_connect();
-        $mail = trim($_POST['email']);
-        $mdp  = (string)$_POST['mdp'];
+/* -------------------- Traitement du POST -------------------- */
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // verrouillage temporaire après trop d'essais
+    if (time() < (int)$_SESSION['login_lock']) {
+        $err = "Trop d’essais. Réessayez dans quelques instants.";
+    } elseif (!hash_equals($_SESSION['csrf'] ?? '', $_POST['csrf'] ?? '')) {
+        $err = "Session expirée, réessayez.";
+    } else {
+        try {
+            $pdo  = db_connect();
 
-        // 👉 On récupère aussi le prénom (ou nom) si tu l’as en base
-        $stmt = $pdo->prepare("
-            SELECT id_utilisateur, email, mdp,
-                   COALESCE(NULLIF(role,''),'user') AS role,
-                   prenom
-            FROM utilisateurs
-            WHERE email = ?
-            LIMIT 1
-        ");
-        $stmt->execute([$mail]);
-        $u = $stmt->fetch();
+            // Normalisation + validation email
+            $mail = strtolower(trim($_POST['email'] ?? ''));
+            $mdp  = (string)($_POST['mdp'] ?? '');
 
-        if ($u && password_verify($mdp, $u['mdp'])) {
-            // Sécurise la session avant d’écrire les données
-            session_regenerate_id(true);
+            if ($mail === '' || !filter_var($mail, FILTER_VALIDATE_EMAIL) || $mdp === '') {
+                $err = "Identifiants invalides.";
+            } else {
+                // On récupère aussi un prénom pour l'UX
+                $stmt = $pdo->prepare("
+                    SELECT id_utilisateur, email, mdp,
+                           COALESCE(NULLIF(role,''),'user') AS role,
+                           prenom
+                    FROM utilisateurs
+                    WHERE email = ?
+                    LIMIT 1
+                ");
+                $stmt->execute([$mail]);
+                $u = $stmt->fetch();
 
-            $_SESSION['user_id']    = $u['id_utilisateur'];
-            $_SESSION['user_email'] = $u['email'];
-            $_SESSION['user_role']  = strtolower($u['role']);
-            $_SESSION['user_name']  = $u['prenom'] ?: $u['email'];
-            $_SESSION['flash_success'] = 'Connexion réussie 👌';
+                if ($u && password_verify($mdp, $u['mdp'])) {
+                    // Succès : on réinitialise le compteur/lock
+                    $_SESSION['login_try']  = 0;
+                    $_SESSION['login_lock'] = 0;
 
-            // Redirection propre selon le rôle
-            $dest = ($_SESSION['user_role'] === 'admin') ? 'pageAdmin.php' : 'index.php';
-            header('Location: ' . $dest);
-            exit;
-        } else {
-            $err = "Identifiants invalides.";
+                    // Sécurise la session puis enregistre l'état
+                    session_regenerate_id(true);
+                    $_SESSION['user_id']    = $u['id_utilisateur'];
+                    $_SESSION['user_email'] = $u['email'];
+                    $_SESSION['user_role']  = strtolower($u['role']);
+                    $_SESSION['user_name']  = $u['prenom'] ?: $u['email'];
+                    $_SESSION['flash_success'] = 'Connexion réussie 👌';
+                    unset($_SESSION['prefill_email']);
+
+                    // Redirection propre selon le rôle (adapter le chemin si besoin)
+                    $base = rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/';
+                    $dest = ($_SESSION['user_role'] === 'admin') ? $base . 'pageAdmin.php' : $base . 'index.php';
+                    header('Location: ' . $dest);
+                    exit;
+                } else {
+                    // Échec : on incrémente et on peut verrouiller
+                    $_SESSION['login_try']++;
+                    if ($_SESSION['login_try'] >= 8) {
+                        $_SESSION['login_lock'] = time() + 60; // 1 minute
+                    }
+                    $err = "Identifiants invalides.";
+                }
+            }
+        } catch (Throwable $e) {
+            $err = "Erreur serveur.";
         }
-    } catch (Throwable $e) {
-        $err = "Erreur serveur.";
     }
 }
 ?>
@@ -108,10 +149,17 @@ if (!empty($_POST['email']) && !empty($_POST['mdp'])) {
                 <p class="mb-6 text-sm text-slate-300">Connectez-vous pour accéder à votre espace.</p>
 
                 <form id="login-form" class="grid gap-4" autocomplete="on" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
-                    <div>
+                    <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($_SESSION['csrf']); ?>">                    <div>
                         <label for="email" class="mb-2 block text-sm font-medium text-slate-200">Adresse e-mail</label>
-                        <input id="email" name="email" type="email" required placeholder="vous@paristanbul.fr"
-                               class="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder-slate-400 outline-none focus:border-piBlue focus:ring-2 focus:ring-piBlue/30" />
+                        <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                required
+                                placeholder="vous@paristanbul.fr"
+                                autocomplete="username"
+                                value="<?php echo htmlspecialchars($_SESSION['prefill_email'] ?? ''); ?>"
+                                class="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder-slate-400 outline-none focus:border-piBlue focus:ring-2 focus:ring-piBlue/30"
                     </div>
 
                     <div>

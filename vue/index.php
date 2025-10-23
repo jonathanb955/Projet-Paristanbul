@@ -486,6 +486,9 @@ $username   = $_SESSION['user_name'] ?? 'Client';
     <!-- Nav -->
     <div class="container navrow">
         <ul class="menu" aria-label="Navigation principale">
+            <?php if (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') === 'admin')): ?>
+                <li><a href="pageAdmin.php">Admin</a></li>
+            <?php endif; ?>
             <li><a href="index.php" class="is-active">Accueil</a></li>
             <li><a href="quiSommesNous.html">Notre Histoire</a></li>
             <li><a href="#catalog">Catalogue</a></li>
