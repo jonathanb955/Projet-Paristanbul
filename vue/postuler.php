@@ -160,9 +160,9 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         a{color:inherit;text-decoration:none}
         .container{max-width:1200px;margin:0 auto;padding:0 20px}
 
-        /* === FOND UNIQUE (comme index) === */
-        #page-bg{ position:fixed; inset:0; z-index:-2; pointer-events:none; background:var(--page-bg); }
-        .pi-orbs{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+        /* === FOND GLOBAL === */
+        #page-bg{ position:fixed; inset:0; z-index:-4; pointer-events:none; background:var(--page-bg); }
+        .pi-orbs{ position:fixed; inset:0; z-index:-3; pointer-events:none; overflow:hidden; }
         .pi-orbs .orb{ position:absolute; width:48vmax; height:48vmax; border-radius:9999px; filter:blur(80px); opacity:.75; mix-blend-mode:screen; }
         .pi-orbs .blue{ background:rgba(46,76,151,.18) } .pi-orbs .red{ background:rgba(226,27,60,.16) }
         .pi-orbs .a{ top:-10vmax; left:-6vmax;  animation:orbA 36s linear infinite }
@@ -174,16 +174,47 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         @keyframes orbC{50%{transform:translate3d(2vw,-2vh,0) scale(1.06)}}
         @keyframes orbD{50%{transform:translate3d(-2vw,-3vh,0) scale(1.04)}}
 
-        /* ====== HEADER SIMPLE (.pi-simple) ====== */
-        .marquee{position:relative; overflow:hidden; border-top:1px solid #151a2a; border-bottom:1px solid #151a2a;
-            background: linear-gradient(180deg, rgba(15,21,37,.94), rgba(13,19,33,.88));}
+        /* ====== MARQUEE (opaque) ====== */
+        .marquee{
+            position:relative; overflow:hidden;
+            border-top:1px solid #151a2a; border-bottom:1px solid #151a2a;
+            background:
+                    radial-gradient(900px 500px at 10% -10%, rgba(46,76,151,.24) 0 60%, #0f1525 60%),
+                    radial-gradient(900px 500px at 90% -10%, rgba(214,69,46,.20) 0 55%, #0f1525 55%),
+                    linear-gradient(180deg, #0f1525 0%, #0c1223 100%);
+        }
         .marquee__inner{display:flex; gap:40px; padding:10px 0; white-space:nowrap; animation:marquee 22s linear infinite}
         .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px;
             background:linear-gradient(145deg,#121a34,#0f162a); border:1px solid #1b2744; font-size:.92rem}
         .pill .dot{width:8px;height:8px;border-radius:50%;background:conic-gradient(from 90deg,var(--red),var(--blue))}
         @keyframes marquee{from{transform:translateX(0)} to{transform:translateX(-50%)}}
 
-        header.pi-simple{ background:transparent !important; }
+        /* ====== HEADER SIMPLE (.pi-simple) — fond = footer, 100% opaque ====== */
+        header.pi-simple{
+            position: relative;
+            isolation: isolate; /* nouveau stacking context */
+            background:transparent !important; /* le fond vient du ::before */
+            z-index: 0;
+        }
+        header.pi-simple::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            z-index:-1;
+
+            /* full-bleed */
+            left:50%; right:50%;
+            margin-left:-50vw; margin-right:-50vw;
+
+            /* identique au footer, sans zones transparentes */
+            background:
+                    radial-gradient(900px 500px at 10% -10%, rgba(46,76,151,.24) 0 60%, #0f1525 60%),
+                    radial-gradient(900px 500px at 90% -10%, rgba(214,69,46,.20) 0 55%, #0f1525 55%),
+                    linear-gradient(180deg, #0f1525 0%, #0c1223 100%);
+            border-bottom:1px solid #141a2b;
+            box-shadow: inset 0 -12px 40px rgba(0,0,0,.35);
+        }
+
         .pi-simple .topbar{ display:grid; grid-template-columns:1fr minmax(200px, 1fr) 1fr; align-items:center; gap:16px; padding-block: clamp(18px, 3.5vh, 40px); }
         .pi-simple .left-col{display:flex}
         .pi-simple .social-group{display:flex; flex-direction:column; align-items:center; width:max-content}
@@ -196,21 +227,18 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         .pi-simple .tagline{display:flex; align-items:center; gap:14px; color:var(--muted); font-size: clamp(13px, 1.3vw, 16px); line-height:1}
         .pi-simple .tagline .rule{width: clamp(58px, 9vw, 92px); height:1px; background:rgba(255,255,255,.06)}
 
-        /* >>> Right column empilée + style bouton déplacé <<< */
+        /* >>> Right column empilée <<< */
         .pi-simple .right-col{
             display:flex;
-            flex-direction:column;   /* téléphone (ligne) puis bouton dessous */
+            flex-direction:column;
             align-items:flex-end;
             gap:12px;
             font-weight:800;
         }
-        .pi-simple .right-col .phone-line{
-            display:flex; align-items:center; gap:10px;
-        }
+        .pi-simple .right-col .phone-line{ display:flex; align-items:center; gap:10px; }
         .pi-simple .right-col i{color:#c9d4ea}
         .pi-simple .phone{font-size: clamp(14px, 1.2vw, 18px); color:#e7ecf5}
 
-        /* Bouton login — utilisable dans la nav ET dans la colonne droite */
         .pi-simple .menu .btn-login,
         .pi-simple .right-col .btn-login{
             display:inline-flex; align-items:center; gap:8px;
@@ -233,20 +261,20 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         @media (max-width:720px){
             .pi-simple .topbar{ grid-template-columns:1fr; text-align:center }
             .pi-simple .left-col{justify-content:center}
-            .pi-simple .right-col{ align-items:center; } /* centré sur mobile */
+            .pi-simple .right-col{ align-items:center; }
             .pi-simple .menu{flex-wrap:wrap; gap:18px}
             .pi-simple .menu .btn-login span{ display:none; }
             .pi-simple .menu .btn-login{ padding:10px; }
         }
 
-        /* FOOTER (identique index) */
+        /* ====== FOOTER ====== */
         footer.pi-footer{ position:relative; isolation:isolate; }
         footer.pi-footer::before{
             content:""; position:absolute; z-index:-1; top:0; bottom:0; left:50%; right:50%;
             margin-left:-50vw; margin-right:-50vw;
             background:
-                    radial-gradient(900px 500px at 10% -10%, rgba(46,76,151,.12), transparent 60%),
-                    radial-gradient(900px 500px at 90% -10%, rgba(214,69,46,.10), transparent 55%),
+                    radial-gradient(900px 500px at 10% -10%, rgba(46,76,151,.12) 0 60%, #0f1525 60%),
+                    radial-gradient(900px 500px at 90% -10%, rgba(214,69,46,.10) 0 55%, #0f1525 55%),
                     linear-gradient(180deg, #0f1525, #0c1223);
             border-top:1px solid #141a2b; box-shadow: inset 0 12px 40px rgba(0,0,0,.35);
         }
@@ -263,7 +291,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         .pi-footer .footer-nav a:hover{ color:var(--pi-red) }
         .pi-footer .copyright{ margin:6px 0 0; font-size:12px; color:#9aa4b2; user-select:none; }
 
-        /* --- Styles spécifiques page Recrutement (condensés) --- */
+        /* --- Styles spécifiques page Recrutement --- */
         .hero{ padding:64px 0 24px; }
         .badge-soft{ background: rgba(214,69,46,.12); color:#ffd7dc; border:1px solid rgba(214,69,46,.25); font-weight:700; padding:.35rem .6rem; border-radius:999px; }
         .pi-word-anim{ --c1:#e21b3c; --c2:#2E4C97; background-image:linear-gradient(90deg,var(--c1),var(--c2),var(--c1)); background-size:200% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:piWord 6s ease-in-out infinite alternate; }
@@ -283,41 +311,27 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
         .btn-ghost{ background:transparent; border:1px solid rgba(255,255,255,.14); color:#fff; font-weight:800; }
         .btn-ghost:hover{ border-color:#2a3d73; background:#0f1b3b; }
         .small-muted{ color:#9aa4b2 }
-        /* Bandeau */
-        .marquee{
-            position:relative; overflow:hidden;
-            border-top:1px solid #151a2a; border-bottom:1px solid #151a2a;
-            background:linear-gradient(180deg, rgba(15,21,37,.94), rgba(13,19,33,.88));
-        }
+
+        /* Marquee animation track */
         .marquee__track{
-            display:flex; width:max-content; /* s’ajuste à son contenu */
+            display:flex; width:max-content;
             will-change:transform;
             animation:marquee-roll 28s linear infinite;
         }
-        .marquee:hover .marquee__track{ animation-play-state:paused; } /* pause au survol */
+        .marquee:hover .marquee__track{ animation-play-state:paused; }
 
         .marquee__group{ display:flex; gap:40px; padding:10px 0; }
-        .pill{
-            display:inline-flex; align-items:center; gap:8px; padding:6px 12px;
-            border-radius:999px; background:linear-gradient(145deg,#121a34,#0f162a);
-            border:1px solid #1b2744; font-size:.92rem; color:#cfe0ff;
-            white-space:nowrap;
+        @keyframes marquee-roll{ from{ transform:translateX(0)} to{ transform:translateX(-50%)} }
+        @media (prefers-reduced-motion:reduce){ .marquee__track{ animation:none } }
+        /* HEADER : fond unique (sans rond bleu / sans lobes) */
+        header.pi-simple::before{
+            background: linear-gradient(180deg, #0f1525 0%, #0c1223 100%) !important;
         }
-        .pill .dot{ width:8px; height:8px; border-radius:50%;
-            background:conic-gradient(from 90deg,#D6452E,#2E4C97);
-        }
-
-        /* Défilement sans coupure :
-           On translate de 50% car on a deux groupes identiques à la suite. */
-        @keyframes marquee-roll{
-            from{ transform:translateX(0) }
-            to  { transform:translateX(-50%) }
+        /* MARQUEE : fond unique */
+        .marquee{
+            background: linear-gradient(180deg, #0f1525 0%, #0c1223 100%) !important;
         }
 
-        /* Accessibilité */
-        @media (prefers-reduced-motion:reduce){
-            .marquee__track{ animation:none }
-        }
     </style>
 </head>
 <body>
@@ -330,11 +344,12 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
     <span class="orb blue c"></span>
     <span class="orb red  d"></span>
 </div>
-<!-- BANDEAU défilant continu -->
+
+<!-- BANDEAU défilant continu (opaque) -->
 <div class="marquee" aria-hidden="true">
     <div class="marquee__track">
         <div class="marquee__group">
-            <span class="pill"><span class="dot"></span>Préparateur de commande</span>
+            <span class="pill"><span class="dot"></span> Préparateur de commande</span>
             <span class="pill"><span class="dot"></span> Manutentionnaire</span>
             <span class="pill"><span class="dot"></span> Logistique</span>
             <span class="pill"><span class="dot"></span> Caissier</span>
@@ -343,8 +358,6 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
             <span class="pill"><span class="dot"></span> Caissier</span>
             <span class="pill"><span class="dot"></span> Logistique</span>
         </div>
-
-        <!-- DUPLICAT exact pour boucle sans coupure -->
         <div class="marquee__group" aria-hidden="true">
             <span class="pill"><span class="dot"></span> Préparateur de commande</span>
             <span class="pill"><span class="dot"></span> Manutentionnaire</span>
@@ -358,8 +371,7 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
     </div>
 </div>
 
-
-<!-- HEADER .pi-simple (home) -->
+<!-- HEADER .pi-simple -->
 <header class="pi-simple">
     <div class="container topbar">
         <div class="left-col">
@@ -390,7 +402,6 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
                 <i class="fa-solid fa-phone"></i>
                 <a class="phone" href="tel:+33749826133">07 49 82 61 33</a>
             </div>
-            <a class="btn-login" href="pageConnexion.php"><i class="fa-regular fa-user"></i><span> Se connecter</span></a>
         </div>
     </div>
 
@@ -404,7 +415,6 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
             <li><a href="index.php#catalog">Catalogue</a></li>
             <li><a href="index.php#contact">Contact</a></li>
             <li><a href="postuler.php" class="is-active">Postuler</a></li>
-            <!-- Bouton login supprimé de la nav -->
         </ul>
     </div>
 
@@ -668,7 +678,6 @@ $ref_offre_from_get = isset($_GET['id']) ? (int)$_GET['id'] : null;
             </div>
         </div>
     </section>
-
 
 </main>
 

@@ -2,6 +2,11 @@
 require_once "../src/bdd/Bdd.php";
 use bdd\Bdd;
 
+session_start();
+if (empty($_SESSION['user_id']) || (($_SESSION['user_role'] ?? '') !== 'admin')) {
+    header('Location: index.php');
+    exit;
+}
 // Connexion à la base
 $pdo = (new Bdd())->getBdd();
 
@@ -40,6 +45,7 @@ $sqlMagasin->bindValue(':offset', $offset, PDO::PARAM_INT);
 $sqlMagasin->execute();
 $lignesMagasins = $sqlMagasin->fetchAll();
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
