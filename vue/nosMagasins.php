@@ -71,11 +71,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             border-bottom: 1px solid #141826;
             backdrop-filter: blur(8px);
         }
-        .marquee{position:relative; overflow:hidden; border-top:1px solid #1b2744; border-bottom:1px solid #1b2744; background: linear-gradient(180deg, rgba(15,21,37,.94), rgba(13,19,33,.88)); backdrop-filter: blur(10px);}
-        .marquee__inner{display:flex; gap:40px; padding:10px 0; white-space:nowrap; animation:marquee 22s linear infinite}
-        .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; background:linear-gradient(145deg,#121a34,#0f162a); border:1px solid #223055; font-size:.92rem}
-        .pill .dot{width:8px;height:8px;border-radius:50%;background:conic-gradient(from 90deg,var(--red),var(--blue))}
-        @keyframes marquee{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+
 
         .pi-simple .topbar{display:grid; grid-template-columns: 1fr minmax(200px, 1fr) 1fr; align-items:center; gap:16px; padding-block: clamp(18px, 3.5vh, 40px);}
         .pi-simple .left-col{display:flex; align-items:flex-start}
@@ -303,6 +299,34 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             .video-card.reveal{ transform:translateY(14px); opacity:0; }
             .video-card.reveal.is-in{ transform:translateY(0); opacity:1; }
         }
+        .marquee{
+            position:relative; overflow:hidden;
+            border-top:1px solid #1b2744; border-bottom:1px solid #1b2744;
+            background:linear-gradient(180deg, rgba(15,21,37,.94), rgba(13,19,33,.88));
+            --gap: 40px;               /* espace entre pastilles */
+            --speed: 22s;              /* durée d’un cycle (ajustée en JS si besoin) */
+        }
+        .marquee__inner{
+            display:flex; gap:var(--gap); padding:10px 0;
+            white-space:nowrap; width:max-content; /* largeur s’adapte au contenu */
+            animation:marquee var(--speed) linear infinite;
+        }
+        @keyframes marquee{
+            from{ transform:translateX(0) }
+            to  { transform:translateX(-50%) }  /* 2 pistes = -50% = boucle parfaite */
+        }
+
+        /* pastilles */
+        .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 12px;
+            border-radius:999px; background:linear-gradient(145deg,#121a34,#0f162a);
+            border:1px solid #223055; font-size:.92rem}
+        .pill .dot{width:8px;height:8px;border-radius:50%;background:conic-gradient(from 90deg,var(--red),var(--blue))}
+
+        /* pause au survol (optionnel) */
+        .marquee:hover .marquee__inner{ animation-play-state:paused; }
+        @media (prefers-reduced-motion:reduce){
+            .marquee__inner{ animation:none }
+        }
     </style>
 </head>
 <body>
@@ -330,20 +354,6 @@ $username   = $_SESSION['user_name'] ?? 'Client';
     <span class="orb red  b"></span>
     <span class="orb blue c"></span>
     <span class="orb red  d"></span>
-</div>
-
-<!-- Bandeau -->
-<div class="marquee" aria-hidden="true">
-    <div class="marquee__inner">
-        <span class="pill"><span class="dot"></span> Villemomble</span>
-        <span class="pill"><span class="dot"></span> Bondy</span>
-        <span class="pill"><span class="dot"></span> Villiers-Le-Bel</span>
-        <span class="pill"><span class="dot"></span> Nogent-Sur-Oise</span>
-        <span class="pill"><span class="dot"></span> Villemomble</span>
-        <span class="pill"><span class="dot"></span> Bondy</span>
-        <span class="pill"><span class="dot"></span> Vers-St-Denis</span>
-        <span class="pill"><span class="dot"></span> Drancy</span>
-    </div>
 </div>
 
 <header class="pi-simple">
@@ -875,6 +885,52 @@ $username   = $_SESSION['user_name'] ?? 'Client';
         io.observe(el);
     } else { el?.classList.add('is-in'); }
 </script>
+<script>
+    (function(){
+        const marquee = document.getElementById('cityMarquee');
+        if(!marquee) return;
+        const lanes = marquee.querySelectorAll('.marquee__inner');
+        if(lanes.length < 2) return;
 
+        // Clone la piste 1 dans la piste 2 pour obtenir 200% de largeur
+        lanes[1].innerHTML = lanes[0].innerHTML;
+
+        // Calcule une durée proportionnelle à la largeur (vitesse constante)
+        const totalWidth = lanes[0].scrollWidth;       // largeur d’une piste
+        const baseSpeedPxPerSec = 120;                 // ~vitesse souhaitée
+        const duration = (totalWidth / baseSpeedPxPerSec).toFixed(2) + 's';
+        marquee.style.setProperty('--speed', duration);
+
+        // (facultatif) recalcule à la resize
+        let t; window.addEventListener('resize', ()=>{
+            clearTimeout(t); t = setTimeout(()=>{
+                const w = lanes[0].scrollWidth;
+                marquee.style.setProperty('--speed', (w/baseSpeedPxPerSec).toFixed(2)+'s');
+            }, 150);
+        });
+    })();
+</script>
+<script>
+    (function(){
+        const marquee = document.getElementById('cityMarquee');
+        if(!marquee) return;
+        const lanes = marquee.querySelectorAll('.marquee__inner');
+        if(lanes.length < 2) return;
+
+        // duplique la piste
+        lanes[1].innerHTML = lanes[0].innerHTML;
+
+        // vitesse proportionnelle à la largeur (défilement fluide)
+        const baseSpeedPxPerSec = 120;
+        function tune(){
+            const w = lanes[0].scrollWidth;
+            marquee.style.setProperty('--speed', (w/baseSpeedPxPerSec).toFixed(2)+'s');
+            // ajuste la hauteur sur la vraie hauteur de pastilles
+            marquee.style.height = lanes[0].offsetHeight + 'px';
+        }
+        tune();
+        let t; window.addEventListener('resize', ()=>{ clearTimeout(t); t=setTimeout(tune,150); });
+    })();
+</script>
 </body>
 </html>
