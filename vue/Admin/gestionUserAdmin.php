@@ -189,7 +189,7 @@
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
-                                <form action="../../src/traitement/supprimer_user.php" method="post" style="display:inline;">
+                                <form action="../../src/traitement/deleteUser.php" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="<?= $utilisateur['id_utilisateur'] ?>">
                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer"
                                             onclick="return confirm('Supprimer cet utilisateur ?')">

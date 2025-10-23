@@ -8,17 +8,16 @@ if (!empty($_SESSION['error_message'])) {
     echo '<div class="alert alert-danger">' . htmlspecialchars($_SESSION['error_message']) . '</div>';
     unset($_SESSION['error_message']);
 }
-?>
 
-<?php
+
 // =====================================
 // Connexion PDO
 // =====================================
 try {
     $tries = [
-            ['h'=>'127.0.0.1','p'=>8889,'u'=>'root','pw'=>'root'],  // MAMP
-            ['h'=>'127.0.0.1','p'=>3306,'u'=>'root','pw'=>''],      // WAMP
-            ['h'=>'127.0.0.1','p'=>3306,'u'=>'root','pw'=>'root'],  // XAMPP ou autres configs
+            ['h' => '127.0.0.1', 'p' => 8889, 'u' => 'root', 'pw' => 'root'],  // MAMP
+            ['h' => '127.0.0.1', 'p' => 3306, 'u' => 'root', 'pw' => ''],      // WAMP
+            ['h' => '127.0.0.1', 'p' => 3306, 'u' => 'root', 'pw' => 'root'],  // XAMPP ou autres configs
     ];
 
     foreach ($tries as $t) {
@@ -45,11 +44,11 @@ try {
 // FILTRES & PAGINATION
 // =====================================
 $search = $_GET['search'] ?? '';
-$poste  = $_GET['tri-par-poste'] ?? '';
-$ville  = $_GET['tri-par-magasin'] ?? '';
+$poste = $_GET['tri-par-poste'] ?? '';
+$ville = $_GET['tri-par-magasin'] ?? '';
 
-$limit  = 3;
-$page   = max(1, intval($_GET['page'] ?? 1));
+$limit = 3;
+$page = max(1, intval($_GET['page'] ?? 1));
 $offset = ($page - 1) * $limit;
 
 // =====================================
@@ -131,11 +130,11 @@ $villes = $stmtVilles->fetchAll(PDO::FETCH_COLUMN);
 // =====================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['titre_poste'])) {
     $secteur_activite = trim($_POST['secteur_activite'] ?? '');
-    $titre_poste      = trim($_POST['titre_poste'] ?? '');
-    $ville_poste      = trim($_POST['ville'] ?? '');
-    $departement      = trim($_POST['departement'] ?? '');
-    $type_contrat     = trim($_POST['type_contrat'] ?? '');
-    $detail_poste     = trim($_POST['detail_poste'] ?? '');
+    $titre_poste = trim($_POST['titre_poste'] ?? '');
+    $ville_poste = trim($_POST['ville'] ?? '');
+    $departement = trim($_POST['departement'] ?? '');
+    $type_contrat = trim($_POST['type_contrat'] ?? '');
+    $detail_poste = trim($_POST['detail_poste'] ?? '');
 
     if ($secteur_activite && $titre_poste && $ville_poste && $departement && $type_contrat && $detail_poste) {
         $sqlInsert = $pdo->prepare("
@@ -151,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['titre_poste'])) {
     }
 }
 
-$departements = ['95', '94', '93', '92', '91', '78', '77', '60'];
+$departements = ['95', '94', '93', '92', '91', '78', '77','75', '60'];
 
 // =====================================
 // Conserver les filtres dans pagination
@@ -159,7 +158,9 @@ $departements = ['95', '94', '93', '92', '91', '78', '77', '60'];
 $queryParams = $_GET;
 unset($queryParams['page']);
 $queryString = http_build_query($queryParams);
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -168,8 +169,10 @@ $queryString = http_build_query($queryParams);
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Paristanbul — Admin • Offres d'emplois</title>
     <link rel="stylesheet" href="../../assets/css/admin.css" />
-    <link rel="stylesheet" href="../../assets/css/candidatureAdmin.css" />
+    <link rel="stylesheet" href="../../assets/css/gestionOffreAdmin.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+
 </head>
 
 
@@ -257,6 +260,7 @@ $queryString = http_build_query($queryParams);
                         <th>Secteur</th>
                         <th>Contrat</th>
                         <th>Ville</th>
+                        <th>Departement</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -270,10 +274,18 @@ $queryString = http_build_query($queryParams);
                                 <td><?= htmlspecialchars($offre['secteur_activite']) ?></td>
                                 <td><?= htmlspecialchars($offre['type_contrat']) ?></td>
                                 <td><?= htmlspecialchars($offre['ville']) ?></td>
+                                <td><?= htmlspecialchars($offre['departement']) ?></td>
                                 <td class="row-actions">
-                                    <form action="../../src/traitement/update_offresAdmin.php" method="POST" onsubmit="return confirm('Supprimer cette offre ?');" style="display:inline;">
-                                        <input type="hidden" name="id_offre" value="<?= $offre['id_offre'] ?>">
-                                        <button type="submit" name="delete_offre" class="btn ghost btn-sm" title="Supprimer">
+                                    <a href="../../src/traitement/editOffre.php?id=<?= $offre['id_offre'] ?>"
+                                       class="btn btn-sm btn-outline" title="Modifier">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <form action="../../src/traitement/deleteOffre.php" method="post" style="display:inline;">
+                                        <input type="hidden" name="id_offre" value="<?= htmlspecialchars($offre['id_offre']) ?>">
+                                        <input type="hidden" name="delete_offre" value="1">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                title="Supprimer" onclick="return confirm('Supprimer cette offre ?')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

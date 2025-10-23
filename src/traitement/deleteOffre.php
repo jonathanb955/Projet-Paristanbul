@@ -18,8 +18,8 @@ if (isset($_POST['delete_offre'])) {
             $stmt->execute([$idOffre]);
 
             // (Optionnel) supprimer les candidatures associées
-            $stmt2 = $pdo->prepare("DELETE FROM candidatures WHERE ref_offre = ?");
-            $stmt2->execute([$idOffre]);
+            //$stmt2 = $pdo->prepare("DELETE FROM candidatures WHERE ref_offre = ?");
+            //$stmt2->execute([$idOffre]);
 
         } catch (Exception $e) {
             // Pour test : afficher l'erreur temporairement
