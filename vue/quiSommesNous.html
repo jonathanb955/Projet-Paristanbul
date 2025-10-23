@@ -215,69 +215,7 @@
             box-shadow: 0 12px 28px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.05);
         }
 
-        /* ===== Slider "Sites de conception" (3 cartes superposées) — FIX ===== */
-        .pi-sites{
-            display:grid; grid-template-columns: 1.05fr 1fr; align-items:center;
-            gap: clamp(24px, 5vw, 80px); min-height: 62vh;
-            position:relative; /* pour z-index local */
-        }
-        .pi-sites__left{ position:relative; z-index:5; }     /* texte au-dessus */
-        .pi-sites__stack{ position:relative; z-index:1; }    /* images dessous */
 
-        .pi-sites__left .eyebrow{
-            letter-spacing:.15em; text-transform:uppercase; color: var(--muted);
-            font-weight:800; font-size: clamp(12px, .95vw, 14px); margin:0 0 10px 0;
-        }
-        .pi-sites__left .title{
-            /* plus raisonnable qu'avant */
-            font-size: clamp(28px, 6vw, 76px);
-            line-height:.95; color:#e6ecf5; margin:0 0 24px 0; font-weight:800;
-        }
-        .pi-sites__nav{ display:flex; gap:14px; margin-top: clamp(16px, 3vh, 40px); }
-        .pi-sites__nav .btn{
-            width:44px; height:44px; border-radius:999px; cursor:pointer;
-            background:#111729; border:1px solid rgba(255,255,255,.14);
-            display:grid; place-items:center; color:#e6edff;
-            transition: transform .12s ease, border-color .2s ease, background .2s ease;
-        }
-        .pi-sites__nav .btn:hover{ border-color:#2a3d73; background:#162038; }
-        .pi-sites__nav .btn:active{ transform: translateY(1px); }
-
-        .pi-sites__stack{ min-height: clamp(360px, 58vh, 640px); }
-        .pi-sites__card{
-            position:absolute; inset:auto 0 0 auto;
-            width: min(52vw, 760px); height: 80%;
-            border-radius: 12px; overflow:hidden; background:#1a2032;
-            border:1px solid rgba(255,255,255,.06);
-            box-shadow: 0 22px 60px rgba(0,0,0,.28);
-            transform-origin: center center;
-            transition: transform var(--sites-t) cubic-bezier(.22,.8,.24,1), opacity var(--sites-t) ease;
-        }
-        .pi-sites__card img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-        /* positions */
-        .pi-role-left  { transform: translate(-12vw, 6vh) scale(.66); z-index:1; opacity:.9; }
-        .pi-role-center{ transform: translate(0, 0)        scale(1);    z-index:3; opacity:1; }
-        .pi-role-right { transform: translate(14vw,-3vh)   scale(.62);  z-index:2; opacity:.9; }
-
-        /* états en mouvement */
-        .pi-shift-next .pi-role-left{   transform: translate(-26vw, 12vh) scale(.56); opacity:0; }
-        .pi-shift-next .pi-role-center{ transform: translate(-12vw, 6vh)  scale(.66); }
-        .pi-shift-next .pi-role-right{  transform: translate(0,0)         scale(1); }
-
-        .pi-shift-prev .pi-role-right{  transform: translate(24vw, -12vh) scale(.54); opacity:0; }
-        .pi-shift-prev .pi-role-center{ transform: translate(14vw, -3vh)  scale(.62); }
-        .pi-shift-prev .pi-role-left{   transform: translate(0,0)         scale(1); }
-
-        /* Légende indépendante (toujours au-dessus de la carte centrale) */
-        .pi-legend{
-            position:absolute; left:22px; bottom:22px; z-index:6;
-            display:flex; align-items:center; gap:12px;
-            color:#fff; font-size: clamp(18px, 2.2vw, 40px); font-weight:800;
-            text-shadow: 0 2px 10px rgba(0,0,0,.35), 0 6px 30px rgba(0,0,0,.45);
-            pointer-events:none;
-        }
-        .pi-legend svg{ width: clamp(18px, 2vw, 42px); height:auto; filter: drop-shadow(0 2px 10px rgba(0,0,0,.5)); }
 
         @media (max-width: 980px){
             .pi-sites{ grid-template-columns:1fr; }
@@ -545,43 +483,7 @@
     </div>
 </section>
 
-<!-- ===== SLIDER : Nos sites ===== -->
-<section class="section" style="padding:10px 0 10px">
-    <div class="container pi-sites">
-        <!-- Colonne gauche (texte + flèches) -->
-        <div class="pi-sites__left">
-            <p class="eyebrow">NOS MAGASINS PARTOUT EN FRANCE</p>
-            <!-- remplace ce titre dans la section SLIDER -->
-            <h2 class="title" id="piSitesTitle">Villiers-le-Bel</h2>
 
-
-            <div class="pi-sites__nav" aria-label="Contrôles du slider">
-                <button class="btn" id="piSitesPrev" aria-label="Précédent">
-                    <i class="bi bi-chevron-left"></i>
-                </button>
-                <button class="btn" id="piSitesNext" aria-label="Suivant">
-                    <i class="bi bi-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Colonne droite (pile 3 cartes) -->
-        <div class="pi-sites__stack" id="piSitesStack" aria-live="polite">
-            <figure class="pi-sites__card pi-role-left"><img alt=""></figure>
-            <figure class="pi-sites__card pi-role-center"><img alt=""></figure>
-            <figure class="pi-sites__card pi-role-right"><img alt=""></figure>
-
-            <!-- Légende indépendante (toujours par-dessus la carte centrale) -->
-            <figcaption class="pi-legend">
-                <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M25 47l8-9 8 3 6-6 12 1 4-7 7 3 12-2 6 10-3 8 8 5-2 8 6 7-11 4-4 9-10-2-6 6-9-5-10 2-1-11-9-6 5-8-8-10z" fill="white" stroke="white" stroke-width="2"/>
-                </svg>
-                <span id="piSitesCity">Tourcoing, Fr</span>
-            </figcaption>
-        </div>
-    </div>
-</section>
-<br>
 
 <section class="section" style="padding:26px 0 14px">
     <div class="container">

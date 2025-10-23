@@ -23,6 +23,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin />
     <!-- PageFlip -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/css/page-flip.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
 
     <style>
         :root{
@@ -385,6 +386,146 @@ $username   = $_SESSION['user_name'] ?? 'Client';
         /* Donne une vraie taille au canvas Leaflet */
         #stores .map-container { position: relative; }
         #stores #map { width: 100%; height: 100%; min-height: 420px; }
+        .pi-footer .headline .line{
+            height:4px; width:260px; border-radius:2px;
+            background:var(--pi-red, #D6452E);
+            transform:scaleX(1);            /* <- au lieu de 0 */
+            transition:transform .6s cubic-bezier(.22,.84,.3,1);
+        }
+        /* === SLIDER "Nos sites" (3 cartes superposées) === */
+        :root{ --sites-t:560ms; } /* durée transition */
+
+        .pi-sites{
+            display:grid; grid-template-columns: 1.05fr 1fr; align-items:center;
+            gap: clamp(24px, 5vw, 80px); min-height: 62vh; position:relative;
+        }
+        .pi-sites__left{ position:relative; z-index:5; }
+        .pi-sites__stack{ position:relative; z-index:1; min-height: clamp(360px, 58vh, 640px); isolation:isolate; }
+
+        .pi-sites__left .eyebrow{
+            letter-spacing:.15em; text-transform:uppercase; color: var(--muted);
+            font-weight:800; font-size: clamp(12px, .95vw, 14px); margin:0 0 10px 0;
+        }
+        .pi-sites__left .title{
+            font-size: clamp(28px, 6vw, 76px);
+            line-height:.95; color:#e6ecf5; margin:0 0 24px 0; font-weight:800;
+            -webkit-text-stroke: 1.4px rgba(0,0,0,.75);
+            paint-order: stroke fill;
+            text-shadow:none!important;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: geometricPrecision;
+            will-change: opacity, transform, filter, letter-spacing;
+        }
+        @supports not (-webkit-text-stroke: 1px black){
+            .pi-sites__left .title{
+                text-shadow:
+                        -1px 0 0 rgba(0,0,0,.85),
+                        1px 0 0 rgba(0,0,0,.85),
+                        0 -1px 0 rgba(0,0,0,.85),
+                        0  1px 0 rgba(0,0,0,.85);
+            }
+        }
+        @media (max-width:720px){
+            .pi-sites__left .title{ -webkit-text-stroke: 1.1px rgba(0,0,0,.75); }
+        }
+        .title-appear{ animation: piTitleIn .60s cubic-bezier(.22,.61,.36,1); }
+        @keyframes piTitleIn{
+            0%{ opacity:0; transform:translateY(12px) scale(.98); filter:blur(2px); letter-spacing:.02em; }
+            60%{ opacity:1; transform:translateY(0) scale(1); filter:none; }
+            100%{ opacity:1; transform:none; letter-spacing:0; }
+        }
+        @media(prefers-reduced-motion:reduce){ .title-appear{ animation:none } }
+
+        .pi-sites__nav{ display:flex; gap:14px; margin-top: clamp(16px, 3vh, 40px); }
+        .pi-sites__nav .btn{
+            width:44px; height:44px; border-radius:999px; cursor:pointer;
+            background:#111729; border:1px solid rgba(255,255,255,.14);
+            display:grid; place-items:center; color:#e6edff;
+            transition: transform .12s ease, border-color .2s ease, background .2s ease;
+        }
+        .pi-sites__nav .btn:hover{ border-color:#2a3d73; background:#162038; }
+        .pi-sites__nav .btn:active{ transform: translateY(1px); }
+
+        .pi-sites__card{
+            position:absolute; inset:auto 0 0 auto;
+            width: min(52vw, 760px); height: 80%;
+            border-radius: 12px; overflow:hidden; background:#1a2032;
+            border:1px solid rgba(255,255,255,.06);
+            box-shadow: 0 22px 60px rgba(0,0,0,.28);
+            transform-origin: center center;
+            transition: transform var(--sites-t) cubic-bezier(.22,.8,.24,1), opacity var(--sites-t) ease;
+            z-index:0;
+        }
+        .pi-sites__card img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+        /* positions */
+        .pi-role-left  { transform: translate(-12vw, 6vh) scale(.66); z-index:1; opacity:.9; }
+        .pi-role-center{ transform: translate(0, 0)        scale(1);    z-index:3; opacity:1; }
+        .pi-role-right { transform: translate(14vw,-3vh)   scale(.62);  z-index:1; opacity:.9; }
+
+        /* états en mouvement */
+        .pi-shift-next .pi-role-left{   transform: translate(-26vw, 12vh) scale(.56); opacity:0; }
+        .pi-shift-next .pi-role-center{ transform: translate(-12vw, 6vh)  scale(.66); }
+        .pi-shift-next .pi-role-right{  transform: translate(0,0)         scale(1); }
+
+        .pi-shift-prev .pi-role-right{  transform: translate(24vw, -12vh) scale(.54); opacity:0; }
+        .pi-shift-prev .pi-role-center{ transform: translate(14vw, -3vh)  scale(.62); }
+        .pi-shift-prev .pi-role-left{   transform: translate(0,0)         scale(1); }
+
+        /* z-index pendant mouvement : la carte entrante passe au-dessus */
+        .pi-shift-next .pi-role-right{  z-index:5; }
+        .pi-shift-next .pi-role-center{ z-index:2; }
+        .pi-shift-prev .pi-role-left{   z-index:5; }
+        .pi-shift-prev .pi-role-center{ z-index:2; }
+
+        /* clics seulement sur la centrale */
+        .pi-role-left, .pi-role-right{ pointer-events:none; }
+        .pi-role-center{ pointer-events:auto; }
+
+        /* Légende */
+        .pi-legend{
+            position:absolute; left:22px; bottom:22px; z-index:6;
+            display:flex; align-items:center; gap:12px;
+            color:#fff; font-size: clamp(18px, 2.2vw, 40px); font-weight:800;
+            text-shadow: 0 2px 10px rgba(0,0,0,.35), 0 6px 30px rgba(0,0,0,.45);
+            pointer-events:none;
+        }
+        .pi-legend svg{ display:none !important; }
+
+        @media (max-width:980px){
+            .pi-sites{ grid-template-columns:1fr; }
+            .pi-sites__stack{ order:-1; min-height: 54vh; }
+            .pi-sites__card{ width: 88vw; }
+            .pi-role-left{  transform: translate(-14vw, 6vh) scale(.7); }
+            .pi-role-right{ transform: translate(14vw, -4vh) scale(.68); }
+        }
+        /* === FIX: icônes visibles dans la toolbar du catalogue === */
+        #catalog .toolbar .btn.icon{
+            width: 40px;                /* taille du bouton */
+            height: 40px;
+            padding: 0;                 /* icône centrée */
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+        }
+
+        #catalog .toolbar .btn.icon svg{
+            width: 20px;                /* tailles explicites pour l’icône */
+            height: 20px;
+            display: block;
+            pointer-events: none;       /* clic sur le bouton, pas sur le SVG */
+            stroke: currentColor;       /* hérite bien de la couleur du bouton */
+        }
+
+        #catalog .toolbar .btn.icon:hover{
+            background:#0f1b3b;
+            border-color:#2a3659;
+        }
+
+        /* (optionnel) un peu plus de contraste global dans la toolbar */
+        #catalog .toolbar .btn,
+        #catalog .toolbar .btn svg{ color:#eaf0ff; }
+
     </style>
 </head>
 <body>
@@ -529,7 +670,40 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             </div>
         </div>
     </section>
+<br>
+    <!-- ===== SLIDER : Nos sites ===== -->
+    <section class="section" id="sites-slider" style="padding:10px 0 10px">
+        <div class="container pi-sites">
+            <!-- Colonne gauche (texte + flèches) -->
+            <div class="pi-sites__left">
+                <p class="eyebrow">NOS MAGASINS PARTOUT EN FRANCE</p>
+                <h2 class="title" id="piSitesTitle">Villiers-le-Bel</h2>
 
+                <div class="pi-sites__nav" aria-label="Contrôles du slider">
+                    <button class="btn" id="piSitesPrev" aria-label="Précédent">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <button class="btn" id="piSitesNext" aria-label="Suivant">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Colonne droite (pile 3 cartes) -->
+            <div class="pi-sites__stack" id="piSitesStack" aria-live="polite">
+                <figure class="pi-sites__card pi-role-left"><img alt=""></figure>
+                <figure class="pi-sites__card pi-role-center"><img alt=""></figure>
+                <figure class="pi-sites__card pi-role-right"><img alt=""></figure>
+
+                <!-- Légende indépendante -->
+                <figcaption class="pi-legend">
+                    <span id="piSitesCity">Tourcoing, Fr</span>
+                </figcaption>
+            </div>
+        </div>
+    </section>
+<br>
+    <br>
     <!-- CATALOGUE -->
     <section id="catalog">
         <div class="container">
@@ -1161,6 +1335,153 @@ $username   = $_SESSION['user_name'] ?? 'Client';
         add('footer.pi-footer .social li', 'pop', 50);
         add('footer.pi-footer .footer-nav a', 'rise', 30);
         add('footer.pi-footer .copyright', 'rise', 200);
+    })();
+</script>
+<script>
+    /* ===== Slider "Nos sites" — logique par rôle ===== */
+    (function(){
+        const stack   = document.getElementById('piSitesStack');
+        if(!stack) return;
+
+        const titleEl = document.getElementById('piSitesTitle');
+        const cityEl  = document.getElementById('piSitesCity');
+        const prevBtn = document.getElementById('piSitesPrev');
+        const nextBtn = document.getElementById('piSitesNext');
+
+        // ➜ Remplace ici si besoin par tes chemins d’images
+        const slides = [
+            { title:"Villiers-le-Bel",   city:"", img:"../assets/img/stores/villiers-le-bel.jpg" },
+            { title:"Villiers-le-Bel 2", city:"", img:"../assets/img/stores/villiers-le-bel-2.jpg" },
+            { title:"Drancy",            city:"", img:"../assets/img/stores/drancy.jpg" },
+            { title:"Bondy",             city:"", img:"../assets/img/stores/bondy.jpg" },
+            { title:"Villemomble",       city:"", img:"../assets/img/stores/villemomble.jpg" },
+            { title:"Nogent-sur-Oise",   city:"", img:"../assets/img/stores/nogent-sur-oise.jpg" },
+            { title:"Vert-Saint-Denis",  city:"", img:"../assets/img/stores/vert-saint-denis.jpg" }
+        ];
+
+        const N = slides.length;
+        let idx = 0;
+        let busy = false;
+        const T = 560; // doit matcher --sites-t
+
+        const mod = (n,m)=>((n%m)+m)%m;
+
+        function imgsByRole(){
+            return {
+                left:   stack.querySelector('.pi-role-left img'),
+                center: stack.querySelector('.pi-role-center img'),
+                right:  stack.querySelector('.pi-role-right img')
+            };
+        }
+
+        function render(){
+            const {left, center, right} = imgsByRole();
+            const prev = slides[mod(idx-1, N)];
+            const curr = slides[idx];
+            const next = slides[mod(idx+1, N)];
+
+            if(left){   left.src   = prev.img;  left.alt   = prev.title; }
+            if(center){ center.src = curr.img;  center.alt = curr.title; }
+            if(right){  right.src  = next.img;  right.alt  = next.title; }
+
+            titleEl.textContent = curr.title;
+            cityEl.textContent  = curr.city;
+
+            // relance l’animation du titre
+            titleEl.classList.remove('title-appear');
+            void titleEl.offsetWidth;
+            titleEl.classList.add('title-appear');
+        }
+
+        // init
+        render();
+
+        function rotateNext(){
+            if(busy) return; busy = true;
+            stack.classList.add('pi-shift-next');
+
+            setTimeout(()=>{
+                idx = mod(idx+1, N);
+                stack.classList.remove('pi-shift-next');
+
+                const left  = stack.querySelector('.pi-role-left');
+                const cent  = stack.querySelector('.pi-role-center');
+                const right = stack.querySelector('.pi-role-right');
+                left.classList.replace('pi-role-left',  'pi-role-right');
+                cent.classList.replace('pi-role-center','pi-role-left');
+                right.classList.replace('pi-role-right','pi-role-center');
+
+                render();
+                busy = false;
+            }, T);
+        }
+
+        function rotatePrev(){
+            if(busy) return; busy = true;
+            stack.classList.add('pi-shift-prev');
+
+            setTimeout(()=>{
+                idx = mod(idx-1, N);
+                stack.classList.remove('pi-shift-prev');
+
+                const left  = stack.querySelector('.pi-role-left');
+                const cent  = stack.querySelector('.pi-role-center');
+                const right = stack.querySelector('.pi-role-right');
+                right.classList.replace('pi-role-right','pi-role-left');
+                cent.classList.replace('pi-role-center','pi-role-right');
+                left.classList.replace('pi-role-left','pi-role-center');
+
+                render();
+                busy = false;
+            }, T);
+        }
+
+        nextBtn.addEventListener('click', rotateNext);
+        prevBtn.addEventListener('click', rotatePrev);
+        document.addEventListener('keydown', e=>{
+            if(e.key==='ArrowRight') rotateNext();
+            if(e.key==='ArrowLeft')  rotatePrev();
+        });
+
+        /* ===== AUTOPLAY (défilement auto des magasins) ===== */
+        (function(){
+            const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (prefersReduced) return;
+
+            const AREA  = document.querySelector('.pi-sites');
+            const DELAY = 4800;
+            let timer = null;
+
+            const schedule = (d = DELAY) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    if (!busy) rotateNext();
+                    schedule();
+                }, d);
+            };
+
+            const stop  = () => { clearTimeout(timer); timer = null; };
+            const reset = () => { stop(); schedule(); };
+
+            schedule();
+            AREA?.addEventListener('mouseenter', stop);
+            AREA?.addEventListener('mouseleave', reset);
+            AREA?.addEventListener('focusin', stop);
+            AREA?.addEventListener('focusout', reset);
+            AREA?.addEventListener('touchstart', stop,  { passive: true });
+            AREA?.addEventListener('touchend',   reset, { passive: true });
+
+            nextBtn.addEventListener('click', reset);
+            prevBtn.addEventListener('click', reset);
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') reset();
+            });
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) stop(); else reset();
+            });
+        })();
+
     })();
 </script>
 
