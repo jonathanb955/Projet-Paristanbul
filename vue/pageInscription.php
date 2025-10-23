@@ -3,24 +3,27 @@ session_start();
 
 function db_connect(): PDO {
     $tries = [
-            ['h'=>'127.0.0.1','p'=>8889,'u'=>'root','pw'=>'root'],
-            ['h'=>'127.0.0.1','p'=>3306,'u'=>'root','pw'=>'root'],
-            ['h'=>'127.0.0.1','p'=>8889,'u'=>'root','pw'=>''],
-            ['h'=>'127.0.0.1','p'=>3306,'u'=>'root','pw'=>''],
+        ['h'=>'127.0.0.1','p'=>8889,'u'=>'root','pw'=>'root'],
+        ['h'=>'127.0.0.1','p'=>3306,'u'=>'root','pw'=>''],
     ];
     foreach ($tries as $t) {
         try {
             return new PDO(
-                    "mysql:host={$t['h']};port={$t['p']};dbname=bdd_paristanbul;charset=utf8mb4",
-                    $t['u'],$t['pw'],
-                    [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC, PDO::ATTR_EMULATE_PREPARES=>false]
+                "mysql:host={$t['h']};port={$t['p']};dbname=bdd_paristanbul;charset=utf8mb4",
+                $t['u'], $t['pw'],
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                ]
             );
         } catch (Throwable $e) {}
     }
     throw new Exception("Connexion MySQL impossible (ports 8889/3306, mdp root/vide).");
 }
 
-$form_status = null; $form_msg = '';
+$form_status = null;
+$form_msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
@@ -38,31 +41,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (strlen($mdp) < 8) throw new Exception("Mot de passe trop court (min 8).");
         if ($mdp !== $confirm) throw new Exception("Les mots de passe ne correspondent pas.");
 
-        $pdo->exec("CREATE TABLE IF NOT EXISTS utilisateurs ( id_utilisateur INT AUTO_INCREMENT PRIMARY KEY,  nom TINYTEXT NOT NULL, prenom TINYTEXT NOT NULL,  email VARCHAR(255) NOT NULL UNIQUE, mdp VARCHAR(255) NOT NULL, role TEXT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS utilisateurs (
+            id_utilisateur INT AUTO_INCREMENT PRIMARY KEY,
+            nom TINYTEXT NOT NULL,
+            prenom TINYTEXT NOT NULL,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            mdp VARCHAR(255) NOT NULL,
+            role TEXT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
         $check = $pdo->prepare("SELECT 1 FROM utilisateurs WHERE email=? LIMIT 1");
         $check->execute([$email]);
         if ($check->fetch()) throw new Exception("Cet email est déjà utilisé.");
 
         $hash = password_hash($mdp, PASSWORD_BCRYPT);
-        $ins->execute([':nom'=>$nom, ':prenom'=>$prenom, ':email'=>$email, ':mdp'=>$hash, ':role'=>$role]);
 
-<<<<<<< HEAD
-        header('Location: ' . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/index.php');
-=======
-// Option B : on ne connecte PAS l'utilisateur.
-// (facultatif) garde l’email pour pré-remplir le formulaire de connexion
+        $ins = $pdo->prepare("
+            INSERT INTO utilisateurs (nom, prenom, email, mdp, role)
+            VALUES (:nom, :prenom, :email, :mdp, :role)
+        ");
+        $ins->execute([
+            ':nom'    => $nom,
+            ':prenom' => $prenom,
+            ':email'  => $email,
+            ':mdp'    => $hash,
+            ':role'   => $role
+        ]);
+
+        // Bonne UX : ne pas connecter tout de suite.
         $_SESSION['prefill_email'] = $email;
-
         $_SESSION['flash_success'] = "Compte créé avec succès. Connectez-vous pour continuer.";
-        header('Location: ' . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/pageConnexion.php');
->>>>>>> ebf869d (WIP: modifs inscription)
-        exit;
-    } catch (Exception $e) {
+
+        // Redirection vers la page de connexion
+        $base = rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/';
+        header('Location: ' . $base . 'pageConnexion.php');
+        exit; // <- on coupe ici
+    } catch (Throwable $e) {
         $form_status = 'error';
         $form_msg = $e->getMessage();
     }
-}
+} // <-- on ferme bien le if
 ?>
 <!DOCTYPE html>
 <html lang="fr">
