@@ -723,8 +723,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.08 4.18 2 2 0  0 1 4.06 2h3a2 2 0 0 1 2 1.72c.12.9.3 1.77.55 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.47-1.08a2 2 0 0 1 2.11-.45c.84.25 1.71.43 2.61.55A2 2 0 0 1 22 16.92z"/>
                         </svg>
                         <div class="info-label">Téléphone</div>
-                        <div class="info-value">07 49 82 61 33 (appel gratuit)</div>
-
+                        <div class="info-value">+33 7 49 82 61 33 (appel gratuit)</div>
                         <svg class="info-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/>
                         </svg>
@@ -1009,7 +1008,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             image: '/Projet-Paristanbul/assets/img/magasins/villiers1.jpg',
             address: '3 avenue des entrepreneurs, VILLIERS-LE-BEL',
             hours: 'Lundi à Dimanche : 08:30-20:00',
-            phone: '01 39 94 12 34',
+            phone: '+33 7 49 82 61 33',
             coordinates: [49.0010, 2.3894]
         },
         villiers2: {
@@ -1017,7 +1016,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             image: '/Projet-Paristanbul/assets/img/magasins/villiers2.jpg',
             address: '117 Avenue Pierre Semard, VILLIERS-LE-BEL',
             hours: 'Lundi à Dimanche : 08:30-20:00',
-            phone: '01 39 95 12 34',
+            phone: '+33 7 49 82 61 33',
             coordinates: [48.9985, 2.4148]
         },
         drancy: {
@@ -1025,7 +1024,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             image: '/Projet-Paristanbul/assets/img/magasins/drancy.jpg',
             address: '83 avenue Marceau, DRANCY',
             hours: 'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00',
-            phone: '01 48 95 12 34',
+            phone: '+33 7 49 82 61 33',
             coordinates: [48.9242, 2.4456]
         },
         bondy: {
@@ -1033,7 +1032,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             image: '/Projet-Paristanbul/assets/img/magasins/bondy.jpg',
             address: '116 Av. Gallieni, BONDY',
             hours: 'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00',
-            phone: '01 48 47 12 34',
+            phone: '+33 7 49 82 61 33',
             coordinates: [48.9024, 2.4823]
         },
         villemomble: {
@@ -1041,7 +1040,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             image: '/Projet-Paristanbul/assets/img/magasins/villemomble.jpg',
             address: '68 ALLEE DU PLATEAU, VILLEMOMBLE',
             hours: 'Lundi à Dimanche : 08:00-20:30',
-            phone: '01 45 28 12 34',
+            phone: '+33 7 49 82 61 33',
             coordinates: [48.8844, 2.5103]
         },
         nogent: {
@@ -1049,7 +1048,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             image: '/Projet-Paristanbul/assets/img/magasins/nogent.jpg',
             address: '171 Rue Jean Monnet, NOGENT-SUR-OISE',
             hours: 'Lundi à Samedi : 09:30-20:00, Dimanche : 10:00-19:00',
-            phone: '03 44 74 12 34',
+            phone: '+33 7 49 82 61 33',
             coordinates: [49.2765, 2.2011]
         },
         vertsaintdenis: {
@@ -1057,7 +1056,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             image: '/Projet-Paristanbul/assets/img/magasins/vertsaintdenis.jpg',
             address: 'La Fontaine Ronde, VERT-SAINT-DENIS',
             hours: 'Lundi à Dimanche : 08:30-20:30',
-            phone: '01 64 10 12 34',
+            phone: '+33 7 49 82 61 33',
             coordinates: [48.6478, 2.6223]
         }
     };
