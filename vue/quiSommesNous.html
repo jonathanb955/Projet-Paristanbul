@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Paristanbul — Notre histoire</title>
 
-    <!-- Fonts + Icons (inchangés) -->
+    <!-- Fonts + Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -30,6 +30,9 @@
                     radial-gradient(1000px 500px at 10% 10%, rgba(46,76,151,.25), transparent 60%),
                     radial-gradient(900px 600px at 90% 10%, rgba(214,69,46,.18), transparent 55%),
                     linear-gradient(180deg, #0B1326, #0A0F1F 70%);
+
+            /* Slider */
+            --sites-t:560ms; /* durée transition */
         }
 
         *{box-sizing:border-box}
@@ -139,13 +142,11 @@
         .story-grid{display:grid;grid-template-columns:minmax(320px,1fr) minmax(320px,1fr);gap:28px;align-items:center}
         @media(max-width:720px){.story-grid{grid-template-columns:1fr}}
 
-        /* — media + shine */
         .media{aspect-ratio:16/9;border-radius:18px;overflow:hidden;position:relative;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .6s cubic-bezier(.2,.8,.2,1),box-shadow .6s}
         .media::after{content:""; position:absolute; inset:-20% -60% auto auto; width:40%; height:200%; transform:rotate(25deg); background:linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent); opacity:.0; transition:opacity .6s, transform .6s;}
         .media:hover{transform:scale(1.02) rotateZ(.1deg);box-shadow:0 18px 40px rgba(0,0,0,.45)}
         .media:hover::after{opacity:.9; transform:translateX(-60%) rotate(25deg)}
 
-        /* — headline gradient animé */
         .hero h1 span{
             background-image:linear-gradient(90deg,#e21b3c,#2E4C97,#e21b3c);
             background-size:200% 100%;
@@ -158,7 +159,6 @@
         .chip{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem .75rem;border-radius:999px;background:rgba(255,255,255,.08);color:#cfd5e6;border:1px solid rgba(255,255,255,.09);font-weight:700;font-size:.88rem}
         .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}
 
-        /* — timeline + progress dynamique */
         .timeline{position:relative;margin:8px 0 0; --progress:0%}
         .timeline::before{content:"";position:absolute;left:clamp(18px,4vw,28px);top:0;bottom:0;width:2px;background:linear-gradient(#2a3659,#2a3659);opacity:.35}
         .timeline::after{content:"";position:absolute;left:clamp(18px,4vw,28px);top:0;width:2px;height:var(--progress);background:linear-gradient(var(--pi-blue),var(--pi-red));box-shadow:0 0 12px rgba(214,69,46,.25)}
@@ -168,7 +168,6 @@
         .tl-item.is-active .tl-card{box-shadow:0 16px 38px rgba(0,0,0,.42); transform:translateY(-2px)}
         .tl-item.is-active .tl-dot{transform:scale(1.15); box-shadow:0 0 0 8px rgba(255,255,255,.06), 0 0 20px rgba(214,69,46,.35)}
 
-        /* — stats */
         .stats{display:grid;grid-template-columns:repeat(6,minmax(140px,1fr));gap:14px}
         @media(max-width:1080px){.stats{grid-template-columns:repeat(3,1fr)}}
         @media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
@@ -178,7 +177,6 @@
         .stat .num{font-size:2rem;font-weight:900;line-height:1;margin:.45rem 0}
         .stat .lbl{color:#cfd5e6;font-weight:700;font-size:.9rem}
 
-        /* — valeurs */
         .values{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
         @media(max-width:960px){.values{grid-template-columns:repeat(2,1fr)}}
         @media(max-width:520px){.values{grid-template-columns:1fr}}
@@ -192,7 +190,6 @@
         .cta{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:18px;background:linear-gradient(180deg,rgba(46,76,151,.15),rgba(46,76,151,.05));padding:22px clamp(18px,4vw,28px);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
         @media(max-width:720px){.cta{grid-template-columns:1fr}}
 
-        /* ===== Reveal / Ripple / ToTop / Loader ===== */
         @media(prefers-reduced-motion:reduce){.reveal,.media,header.pi-simple,.btn,.tilt{transition:none!important;animation:none!important}}
         .reveal{opacity:0;transform:translateY(18px) scale(.98);filter:blur(2px);transition:opacity .6s cubic-bezier(.22,.61,.36,1),transform .6s cubic-bezier(.22,.61,.36,1),filter .6s cubic-bezier(.22,.61,.36,1)}
         .reveal.reveal--in{opacity:1;transform:none;filter:none}
@@ -210,7 +207,6 @@
         @keyframes spin{to{transform:rotate(360deg)}}
         .loader__logo{width:120px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
 
-        /* Footer fond identique header */
         footer.pi-footer{ position:relative; isolation:isolate; background:transparent !important; border-top: 1px solid #1d2742; color: var(--text); }
         footer.pi-footer::before{
             content:""; position:absolute; z-index:-1; top:0; bottom:0; left:50%; right:50%;
@@ -218,6 +214,183 @@
             background: linear-gradient(180deg, rgba(15,21,37,.90), rgba(12,18,34,.86));
             box-shadow: 0 12px 28px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.05);
         }
+
+        /* ===== Slider "Sites de conception" (3 cartes superposées) — FIX ===== */
+        .pi-sites{
+            display:grid; grid-template-columns: 1.05fr 1fr; align-items:center;
+            gap: clamp(24px, 5vw, 80px); min-height: 62vh;
+            position:relative; /* pour z-index local */
+        }
+        .pi-sites__left{ position:relative; z-index:5; }     /* texte au-dessus */
+        .pi-sites__stack{ position:relative; z-index:1; }    /* images dessous */
+
+        .pi-sites__left .eyebrow{
+            letter-spacing:.15em; text-transform:uppercase; color: var(--muted);
+            font-weight:800; font-size: clamp(12px, .95vw, 14px); margin:0 0 10px 0;
+        }
+        .pi-sites__left .title{
+            /* plus raisonnable qu'avant */
+            font-size: clamp(28px, 6vw, 76px);
+            line-height:.95; color:#e6ecf5; margin:0 0 24px 0; font-weight:800;
+        }
+        .pi-sites__nav{ display:flex; gap:14px; margin-top: clamp(16px, 3vh, 40px); }
+        .pi-sites__nav .btn{
+            width:44px; height:44px; border-radius:999px; cursor:pointer;
+            background:#111729; border:1px solid rgba(255,255,255,.14);
+            display:grid; place-items:center; color:#e6edff;
+            transition: transform .12s ease, border-color .2s ease, background .2s ease;
+        }
+        .pi-sites__nav .btn:hover{ border-color:#2a3d73; background:#162038; }
+        .pi-sites__nav .btn:active{ transform: translateY(1px); }
+
+        .pi-sites__stack{ min-height: clamp(360px, 58vh, 640px); }
+        .pi-sites__card{
+            position:absolute; inset:auto 0 0 auto;
+            width: min(52vw, 760px); height: 80%;
+            border-radius: 12px; overflow:hidden; background:#1a2032;
+            border:1px solid rgba(255,255,255,.06);
+            box-shadow: 0 22px 60px rgba(0,0,0,.28);
+            transform-origin: center center;
+            transition: transform var(--sites-t) cubic-bezier(.22,.8,.24,1), opacity var(--sites-t) ease;
+        }
+        .pi-sites__card img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+        /* positions */
+        .pi-role-left  { transform: translate(-12vw, 6vh) scale(.66); z-index:1; opacity:.9; }
+        .pi-role-center{ transform: translate(0, 0)        scale(1);    z-index:3; opacity:1; }
+        .pi-role-right { transform: translate(14vw,-3vh)   scale(.62);  z-index:2; opacity:.9; }
+
+        /* états en mouvement */
+        .pi-shift-next .pi-role-left{   transform: translate(-26vw, 12vh) scale(.56); opacity:0; }
+        .pi-shift-next .pi-role-center{ transform: translate(-12vw, 6vh)  scale(.66); }
+        .pi-shift-next .pi-role-right{  transform: translate(0,0)         scale(1); }
+
+        .pi-shift-prev .pi-role-right{  transform: translate(24vw, -12vh) scale(.54); opacity:0; }
+        .pi-shift-prev .pi-role-center{ transform: translate(14vw, -3vh)  scale(.62); }
+        .pi-shift-prev .pi-role-left{   transform: translate(0,0)         scale(1); }
+
+        /* Légende indépendante (toujours au-dessus de la carte centrale) */
+        .pi-legend{
+            position:absolute; left:22px; bottom:22px; z-index:6;
+            display:flex; align-items:center; gap:12px;
+            color:#fff; font-size: clamp(18px, 2.2vw, 40px); font-weight:800;
+            text-shadow: 0 2px 10px rgba(0,0,0,.35), 0 6px 30px rgba(0,0,0,.45);
+            pointer-events:none;
+        }
+        .pi-legend svg{ width: clamp(18px, 2vw, 42px); height:auto; filter: drop-shadow(0 2px 10px rgba(0,0,0,.5)); }
+
+        @media (max-width: 980px){
+            .pi-sites{ grid-template-columns:1fr; }
+            .pi-sites__stack{ order:-1; min-height: 54vh; }
+            .pi-sites__card{ width: 88vw; }
+            .pi-role-left{  transform: translate(-14vw, 6vh) scale(.7); }
+            .pi-role-right{ transform: translate(14vw, -4vh) scale(.68); }
+        }
+        /* === FIX superposition slider (centre toujours au-dessus) === */
+        .pi-sites__stack{ isolation:isolate; } /* propre stacking context */
+
+        .pi-sites__card{ z-index:0; }
+        .pi-role-left{  z-index:1; }
+        .pi-role-right{ z-index:1; }
+        .pi-role-center{ z-index:4; }
+
+        /* Pendant le mouvement, on garde la carte centrale au-dessus de tout */
+        .pi-shift-next .pi-role-center,
+        .pi-shift-prev .pi-role-center{ z-index:6; }
+
+        /* (optionnel) les cartes latérales ne capturent pas de clics */
+        .pi-role-left, .pi-role-right{ pointer-events:none; }
+        .pi-role-center{ pointer-events:auto; }
+        /* === FIX superposition : la carte qui arrive doit être au-dessus === */
+        .pi-sites__stack{ isolation:isolate; }          /* stacking context propre */
+
+        /* couches par défaut */
+        .pi-sites__card{ z-index:0; }
+        .pi-role-left, .pi-role-right{ z-index:1; }
+        .pi-role-center{ z-index:3; }
+
+        /* NEXT: la carte de droite (entrante) passe devant l'ancienne centre */
+        .pi-shift-next .pi-role-right{  z-index:5; }    /* entrante tout en haut */
+        .pi-shift-next .pi-role-center{ z-index:2; }    /* sortante passe dessous */
+
+        /* PREV: la carte de gauche (entrante) passe devant l'ancienne centre */
+        .pi-shift-prev .pi-role-left{   z-index:5; }    /* entrante tout en haut */
+        .pi-shift-prev .pi-role-center{ z-index:2; }    /* sortante passe dessous */
+
+        /* (optionnel) clics seulement sur la centrale hors animation */
+        .pi-role-left, .pi-role-right{ pointer-events:none; }
+        .pi-role-center{ pointer-events:auto; }
+        /* === Ombre + contour pour le titre du slider === */
+        /* — Titre slider : contour net, pas de triangles — */
+        .pi-sites__left .title{
+            /* remplissage normal */
+            color:#f1f4ff;
+
+            /* contour propre */
+            -webkit-text-stroke: 1.4px rgba(0,0,0,.75);
+            paint-order: stroke fill;          /* le trait sous le remplissage */
+
+            /* on retire les ombres multiples qui créaient les triangles */
+            text-shadow: none !important;
+
+            /* rendu plus propre selon navigateurs */
+            -webkit-font-smoothing: antialiased;
+            text-rendering: geometricPrecision;
+        }
+
+        /* Fallback pour navigateurs sans -webkit-text-stroke (ex: vieux Firefox) :
+           on ne garde que 4 directions (pas de diagonales) pour éviter les triangles. */
+        @supports not (-webkit-text-stroke: 1px black){
+            .pi-sites__left .title{
+                text-shadow:
+                        -1px 0 0 rgba(0,0,0,.85),
+                        1px 0 0 rgba(0,0,0,.85),
+                        0 -1px 0 rgba(0,0,0,.85),
+                        0  1px 0 rgba(0,0,0,.85);
+            }
+        }
+
+        /* (optionnel) un trait un peu plus fin sur mobile */
+        @media (max-width: 720px){
+            .pi-sites__left .title{ -webkit-text-stroke: 1.1px rgba(0,0,0,.75); }
+        }
+
+        /* Apparition du titre slider */
+        .pi-sites__left .title{
+            will-change: opacity, transform, filter, letter-spacing;
+        }
+
+        .title-appear{
+            animation: piTitleIn .60s cubic-bezier(.22,.61,.36,1);
+        }
+
+        @keyframes piTitleIn{
+            0%{
+                opacity: 0;
+                transform: translateY(12px) scale(.98);
+                filter: blur(2px);
+                letter-spacing: .02em;
+            }
+            60%{
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+            100%{
+                opacity: 1;
+                transform: none;
+                letter-spacing: 0;
+            }
+        }
+
+        /* Respect des préférences d’accessibilité */
+        @media (prefers-reduced-motion: reduce){
+            .title-appear{ animation: none; }
+        }
+
+        /* Supprimer l’icône blanche dans la légende du slider */
+        .pi-legend svg{ display:none !important; }
+
     </style>
 </head>
 <body>
@@ -284,7 +457,6 @@
             <li><a href="index.php#catalog">Catalogue</a></li>
             <li><a href="index.php#contact">Contact</a></li>
             <li><a href="postuler.php">Postuler</a></li>
-
         </ul>
     </div>
 
@@ -324,6 +496,7 @@
         </div>
     </div>
 </header>
+
 <!-- ===== AMBITION & ENGAGEMENT ===== -->
 <section id="engagement" class="section" style="padding:10px 0 24px">
     <div class="container">
@@ -371,6 +544,44 @@
         </div>
     </div>
 </section>
+
+<!-- ===== SLIDER : Nos sites ===== -->
+<section class="section" style="padding:10px 0 10px">
+    <div class="container pi-sites">
+        <!-- Colonne gauche (texte + flèches) -->
+        <div class="pi-sites__left">
+            <p class="eyebrow">NOS MAGASINS PARTOUT EN FRANCE</p>
+            <!-- remplace ce titre dans la section SLIDER -->
+            <h2 class="title" id="piSitesTitle">Villiers-le-Bel</h2>
+
+
+            <div class="pi-sites__nav" aria-label="Contrôles du slider">
+                <button class="btn" id="piSitesPrev" aria-label="Précédent">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn" id="piSitesNext" aria-label="Suivant">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Colonne droite (pile 3 cartes) -->
+        <div class="pi-sites__stack" id="piSitesStack" aria-live="polite">
+            <figure class="pi-sites__card pi-role-left"><img alt=""></figure>
+            <figure class="pi-sites__card pi-role-center"><img alt=""></figure>
+            <figure class="pi-sites__card pi-role-right"><img alt=""></figure>
+
+            <!-- Légende indépendante (toujours par-dessus la carte centrale) -->
+            <figcaption class="pi-legend">
+                <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M25 47l8-9 8 3 6-6 12 1 4-7 7 3 12-2 6 10-3 8 8 5-2 8 6 7-11 4-4 9-10-2-6 6-9-5-10 2-1-11-9-6 5-8-8-10z" fill="white" stroke="white" stroke-width="2"/>
+                </svg>
+                <span id="piSitesCity">Tourcoing, Fr</span>
+            </figcaption>
+        </div>
+    </div>
+</section>
+<br>
 
 <section class="section" style="padding:26px 0 14px">
     <div class="container">
@@ -422,9 +633,7 @@
                         <span class="year">2020</span>
                         <span class="chip"><i class="bi bi-phone"></i> E-commerce de proximité</span>
                     </div>
-                    <p style="color:#cfd5e6;margin:.6rem 0 0">
-                        .
-                    </p>
+                    <p style="color:#cfd5e6;margin:.6rem 0 0">.</p>
                 </div>
             </div>
 
@@ -445,6 +654,8 @@
         </div>
     </div>
 </section>
+
+
 
 <section class="section" style="padding:12px 0 8px">
     <div class="container">
@@ -550,160 +761,248 @@
 <!-- ===== JS ===== -->
 <script>
     /* Scroll progress */
-    (function(){
-        const bar=document.getElementById('scrollProgress');
-        const onScroll=()=>{ const h=document.documentElement; const s=h.scrollTop; const d=h.scrollHeight-h.clientHeight; bar.style.width=(d?(s/d)*100:0)+'%'; };
-        document.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+    (function () {
+        const bar = document.getElementById('scrollProgress');
+        const onScroll = () => {
+            const h = document.documentElement;
+            const s = h.scrollTop;
+            const d = h.scrollHeight - h.clientHeight;
+            bar.style.width = (d ? (s / d) * 100 : 0) + '%';
+        };
+        document.addEventListener('scroll', onScroll, {passive: true});
+        onScroll();
     })();
 
     /* Loader robuste */
-    (function(){
-        const loader=document.getElementById('piLoader'); if(!loader) return;
-        let done=false; const hide=()=>{if(done)return;done=true;loader.classList.add('hide');setTimeout(()=>loader.remove(),800);};
-        const start=Date.now(),MIN=500; const afterMin=fn=>setTimeout(fn,Math.max(0,MIN-(Date.now()-start)));
-        if(document.readyState==='complete'){afterMin(hide);return;}
-        window.addEventListener('DOMContentLoaded',()=>afterMin(hide),{once:true});
-        window.addEventListener('load',()=>afterMin(hide),{once:true});
-        setTimeout(hide,4000);
+    (function () {
+        const loader = document.getElementById('piLoader');
+        if (!loader) return;
+        let done = false;
+        const hide = () => {
+            if (done) return;
+            done = true;
+            loader.classList.add('hide');
+            setTimeout(() => loader.remove(), 800);
+        };
+        const start = Date.now(), MIN = 500;
+        const afterMin = fn => setTimeout(fn, Math.max(0, MIN - (Date.now() - start)));
+        if (document.readyState === 'complete') {
+            afterMin(hide);
+            return;
+        }
+        window.addEventListener('DOMContentLoaded', () => afterMin(hide), {once: true});
+        window.addEventListener('load', () => afterMin(hide), {once: true});
+        setTimeout(hide, 4000);
     })();
 
     /* Header sticky + ToTop */
-    (function(){
-        const nav=document.querySelector('header.pi-simple'); const toTop=document.getElementById('toTop');
-        const onS=()=>{ const y=window.scrollY||0; if(nav) nav.classList.toggle('nav--scrolled', y>8); toTop.classList.toggle('show', y>500); };
-        onS(); window.addEventListener('scroll', onS, {passive:true});
-        toTop.addEventListener('click', ()=>window.scrollTo({top:0,behavior:'smooth'}));
+    (function () {
+        const nav = document.querySelector('header.pi-simple');
+        const toTop = document.getElementById('toTop');
+        const onS = () => {
+            const y = window.scrollY || 0;
+            if (nav) nav.classList.toggle('nav--scrolled', y > 8);
+            toTop.classList.toggle('show', y > 500);
+        };
+        onS();
+        window.addEventListener('scroll', onS, {passive: true});
+        toTop.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
     })();
 
     /* Reveal */
-    (function(){
-        const els=[...document.querySelectorAll('.reveal,.tilt')]; if(!els.length) return;
-        if(!('IntersectionObserver' in window)){els.forEach(el=>el.classList.add('reveal--in'));return;}
-        const io=new IntersectionObserver(ents=>{
-            ents.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('reveal--in'); io.unobserve(e.target);} });
-        },{threshold:.12, rootMargin:'0px 0px -10% 0px'});
-        els.forEach((el,i)=>{ el.style.setProperty('--reveal-delay',(i%6)*60+'ms'); io.observe(el); });
+    (function () {
+        const els = [...document.querySelectorAll('.reveal,.tilt')];
+        if (!els.length) return;
+        if (!('IntersectionObserver' in window)) {
+            els.forEach(el => el.classList.add('reveal--in'));
+            return;
+        }
+        const io = new IntersectionObserver(ents => {
+            ents.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('reveal--in');
+                    io.unobserve(e.target);
+                }
+            });
+        }, {threshold: .12, rootMargin: '0px 0px -10% 0px'});
+        els.forEach((el, i) => {
+            el.style.setProperty('--reveal-delay', (i % 6) * 60 + 'ms');
+            io.observe(el);
+        });
     })();
 
     /* Ripple sur .btn (si présent) */
-    document.querySelectorAll('.btn').forEach(btn=>{
-        btn.addEventListener('pointerdown', e=>{
-            const r=document.createElement('span'); r.className='r';
-            const rect=btn.getBoundingClientRect(); const d=Math.max(rect.width,rect.height);
-            r.style.width=r.style.height=d+'px';
-            r.style.left=(e.clientX-rect.left-d/2)+'px';
-            r.style.top=(e.clientY-rect.top-d/2)+'px';
-            btn.appendChild(r); r.addEventListener('animationend',()=>r.remove());
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('pointerdown', e => {
+            const r = document.createElement('span');
+            r.className = 'r';
+            const rect = btn.getBoundingClientRect();
+            const d = Math.max(rect.width, rect.height);
+            r.style.width = r.style.height = d + 'px';
+            r.style.left = (e.clientX - rect.left - d / 2) + 'px';
+            r.style.top = (e.clientY - rect.top - d / 2) + 'px';
+            btn.appendChild(r);
+            r.addEventListener('animationend', () => r.remove());
         });
     });
 
     /* Magnetic buttons (classe .magnet) */
-    (function(){
-        const prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const isTouch=('ontouchstart'in window)||navigator.maxTouchPoints>0;
-        if(prefersReduced||isTouch) return;
-        document.querySelectorAll('.magnet').forEach(el=>{
-            const strength=10; let tX=0,tY=0,cX=0,cY=0,RAF=null;
-            const lerp=(a,b,t)=>a+(b-a)*t;
-            const animate=()=>{ cX=lerp(cX,tX,.18); cY=lerp(cY,tY,.18); el.style.transform=`translate(${cX}px,${cY}px)`; RAF=requestAnimationFrame(animate); };
-            el.addEventListener('mousemove', e=>{
-                const r=el.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width-.5; const y=(e.clientY-r.top)/r.height-.5;
-                tX=x*strength; tY=y*strength; if(!RAF) animate();
+    (function () {
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+        if (prefersReduced || isTouch) return;
+        document.querySelectorAll('.magnet').forEach(el => {
+            const strength = 10;
+            let tX = 0, tY = 0, cX = 0, cY = 0, RAF = null;
+            const lerp = (a, b, t) => a + (b - a) * t;
+            const animate = () => {
+                cX = lerp(cX, tX, .18);
+                cY = lerp(cY, tY, .18);
+                el.style.transform = `translate(${cX}px,${cY}px)`;
+                RAF = requestAnimationFrame(animate);
+            };
+            el.addEventListener('mousemove', e => {
+                const r = el.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - .5;
+                const y = (e.clientY - r.top) / r.height - .5;
+                tX = x * strength;
+                tY = y * strength;
+                if (!RAF) animate();
             });
-            el.addEventListener('mouseleave',()=>{ tX=0; tY=0; cancelAnimationFrame(RAF); RAF=null; el.style.transform=''; });
+            el.addEventListener('mouseleave', () => {
+                tX = 0;
+                tY = 0;
+                cancelAnimationFrame(RAF);
+                RAF = null;
+                el.style.transform = '';
+            });
         });
     })();
 
     /* Parallax léger du hero */
-    (function(){
-        const prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const isTouch=('ontouchstart'in window)||navigator.maxTouchPoints>0;
-        if(prefersReduced||isTouch) return;
-        const hero=document.querySelector('.hero');
-        const media=document.getElementById('heroMedia');
-        const text=document.getElementById('heroText');
-        let tx=0,ty=0,cx=0,cy=0; const lerp=(a,b,t)=>a+(b-a)*t;
-        hero?.addEventListener('mousemove',(e)=>{
-            const r=hero.getBoundingClientRect(); tx=((e.clientX-r.left)/r.width-.5); ty=((e.clientY-r.top)/r.height-.5);
+    (function () {
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+        if (prefersReduced || isTouch) return;
+        const hero = document.querySelector('.hero');
+        const media = document.getElementById('heroMedia');
+        const text = document.getElementById('heroText');
+        let tx = 0, ty = 0, cx = 0, cy = 0;
+        const lerp = (a, b, t) => a + (b - a) * t;
+        hero?.addEventListener('mousemove', (e) => {
+            const r = hero.getBoundingClientRect();
+            tx = ((e.clientX - r.left) / r.width - .5);
+            ty = ((e.clientY - r.top) / r.height - .5);
         });
-        (function raf(){
-            cx=lerp(cx,tx,.08); cy=lerp(cy,ty,.08);
-            if(text)  text.style.transform=`translate3d(${cx*8}px,${cy*8}px,0)`;
-            if(media) media.style.transform=`translate3d(${cx*-10}px,${cy*-10}px,0)`;
+        (function raf() {
+            cx = lerp(cx, tx, .08);
+            cy = lerp(cy, ty, .08);
+            if (text) text.style.transform = `translate3d(${cx * 8}px,${cy * 8}px,0)`;
+            if (media) media.style.transform = `translate3d(${cx * -10}px,${cy * -10}px,0)`;
             requestAnimationFrame(raf);
         })();
     })();
 
     /* Tilt 3D pour cartes */
-    (function(){
-        const prefersReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if(prefersReduced) return;
-        const MAX=10;
-        document.querySelectorAll('.tilt, .tl-card, .value, .stat').forEach(card=>{
-            const onMove=(e)=>{
-                const r=card.getBoundingClientRect();
-                const px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
-                const rx=(py-.5)*-MAX, ry=(px-.5)*MAX;
-                card.style.setProperty('--rx', rx.toFixed(2)+'deg');
-                card.style.setProperty('--ry', ry.toFixed(2)+'deg');
-                card.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    (function () {
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReduced) return;
+        const MAX = 10;
+        document.querySelectorAll('.tilt, .tl-card, .value, .stat').forEach(card => {
+            const onMove = (e) => {
+                const r = card.getBoundingClientRect();
+                const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+                const rx = (py - .5) * -MAX, ry = (px - .5) * MAX;
+                card.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+                card.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+                card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
             };
             card.addEventListener('mousemove', onMove);
-            card.addEventListener('mouseleave', ()=>{ card.style.removeProperty('--rx'); card.style.removeProperty('--ry'); card.style.transform=''; });
+            card.addEventListener('mouseleave', () => {
+                card.style.removeProperty('--rx');
+                card.style.removeProperty('--ry');
+                card.style.transform = '';
+            });
         });
     })();
 
-    /* Compteurs (stats) */
-    (function(){
-        const counters=document.querySelectorAll('.counter');
-        if(!('IntersectionObserver' in window)||!counters.length) return;
-        const io=new IntersectionObserver(entries=>{
-            entries.forEach(e=>{
-                if(!e.isIntersecting) return;
-                const el=e.target; const target=+el.dataset.target||0;
-                const step=Math.max(1,Math.floor(target/80));
-                const tick=()=>{ const n=+el.textContent.replace(/\D/g,'')||0;
-                    if(n<target){ el.textContent=String(n+step); requestAnimationFrame(tick); }
-                    else { el.textContent=target.toLocaleString('fr-FR'); }
-                };
-                tick(); io.unobserve(el);
-            });
-        },{threshold:.4});
-        counters.forEach(c=>io.observe(c));
+
+        /* Compteurs (stats) — version ralentie avec easing */
+        (function(){
+        const counters = document.querySelectorAll('.counter');
+        if(!('IntersectionObserver' in window) || !counters.length) return;
+
+        // courbe douce (easeOutCubic)
+        const ease = t => 1 - Math.pow(1 - t, 3);
+
+        const io = new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+
+        const el = entry.target;
+        const target = Number(el.dataset.target || '0');
+
+        // Durée plus longue = animation plus lente
+        const duration =
+        target < 10     ? 1600 :
+        target < 100    ? 2000 :
+        target < 1000   ? 2400 :
+        target < 10000  ? 2800 :
+        3200; // 12 000, etc.
+
+        let start = null;
+        function frame(ts){
+        if(start === null) start = ts;
+        const t = Math.min(1, (ts - start) / duration);
+        const value = Math.round(target * ease(t));
+        el.textContent = value.toLocaleString('fr-FR');
+        if(t < 1){
+        requestAnimationFrame(frame);
+    }else{
+        el.textContent = target.toLocaleString('fr-FR'); // valeur finale propre
+    }
+    }
+        requestAnimationFrame(frame);
+        io.unobserve(el);
+    });
+    }, {threshold: .4});
+
+        counters.forEach(c => io.observe(c));
     })();
 
-    /* Timeline progress + activation */
-    (function(){
-        const tl=document.getElementById('timeline'); if(!tl) return;
-        const items=[...tl.querySelectorAll('.tl-item')];
 
-        const update=()=>{
-            const rect=tl.getBoundingClientRect();
-            const viewH=window.innerHeight || document.documentElement.clientHeight;
-            const start=Math.max(0, viewH*0.1 - Math.max(0, -rect.top)); // début lisible
-            const total=Math.max(1, rect.height);
-            const seen=Math.min(total, Math.max(0, (viewH*0.6) - Math.max(0, rect.top))); // progression douce
-            const p=Math.max(0, Math.min(100, (seen/total)*100));
-            tl.style.setProperty('--progress', p+'%');
 
-            const mid=viewH*0.5;
-            items.forEach(it=>{
-                const r=it.getBoundingClientRect();
-                const active = (r.top < mid && r.bottom > viewH*0.25);
-                it.classList.toggle('is-active', active);
-            });
-        };
-        update();
-        document.addEventListener('scroll', update, {passive:true});
-        window.addEventListener('resize', update);
-    })();
+/* Timeline progress + activation */
+(function(){
+const tl=document.getElementById('timeline'); if(!tl) return;
+const items=[...tl.querySelectorAll('.tl-item')];
 
-    /* Orbs parallax au scroll (soft) */
-    (function(){
-        const orbs=[...document.querySelectorAll('.pi-orbs .orb')]; if(!orbs.length) return;
-        const update=()=>{
-            const y=window.scrollY||0;
-            orbs.forEach((o,i)=>{ o.style.transform=`translateY(${(y*0.02)*(i%2?1:-1)}px)`; });
+const update=()=>{
+const rect=tl.getBoundingClientRect();
+const viewH=window.innerHeight || document.documentElement.clientHeight;
+const total=Math.max(1, rect.height);
+const seen=Math.min(total, Math.max(0, (viewH*0.6) - Math.max(0, rect.top)));
+const p=Math.max(0, Math.min(100, (seen/total)*100));
+tl.style.setProperty('--progress', p+'%');
+
+const mid=viewH*0.5;
+items.forEach(it=>{
+const r=it.getBoundingClientRect();
+const active = (r.top < mid && r.bottom > viewH*0.25);
+it.classList.toggle('is-active', active);
+});
+};
+update();
+document.addEventListener('scroll', update, {passive:true});
+window.addEventListener('resize', update);
+})();
+
+/* Orbs parallax au scroll (soft) */
+(function(){
+const orbs=[...document.querySelectorAll('.pi-orbs .orb')]; if(!orbs.length) return;
+const update=()=>{
+const y=window.scrollY||0;
+orbs.forEach((o,i)=>{ o.style.transform=`translateY(${(y*0.02)*(i%2?1:-1)}px)`; });
         };
         document.addEventListener('scroll', update, {passive:true});
     })();
@@ -712,6 +1011,162 @@
     document.addEventListener('DOMContentLoaded', ()=> {
         var y=document.getElementById('year'); if(y) y.textContent=new Date().getFullYear();
     });
+
+    /* ===== Slider "Nos sites" — logique par rôle (pas d'IDs fixes) ===== */
+    (function(){
+        const stack   = document.getElementById('piSitesStack');
+        if(!stack) return;
+
+        const titleEl = document.getElementById('piSitesTitle');
+        const cityEl  = document.getElementById('piSitesCity');
+        const prevBtn = document.getElementById('piSitesPrev');
+        const nextBtn = document.getElementById('piSitesNext');
+
+        // Remplace les URLs par tes images locales
+        // ===== Slider "Nos sites" — remplace UNIQUEMENT ce tableau =====
+        const slides = [
+            { title:"Villiers-le-Bel",   city:"",   img:"../assets/img/stores/villiers-le-bel.jpg" },
+            { title:"Villiers-le-Bel 2", city:"",   img:"../assets/img/stores/villiers-le-bel-2.jpg" },
+            { title:"Drancy",            city:"",            img:"../assets/img/stores/drancy.jpg" },
+            { title:"Bondy",             city:"",             img:"../assets/img/stores/bondy.jpg" },
+            { title:"Villemomble",       city:"",       img:"../assets/img/stores/villemomble.jpg" },
+            { title:"Nogent-sur-Oise",   city:"",   img:"../assets/img/stores/nogent-sur-oise.jpg" },
+            { title:"Vert-Saint-Denis",  city:"",  img:"../assets/img/stores/vert-saint-denis.jpg" }
+        ];
+
+
+        const N = slides.length;
+        let idx = 0;
+        let busy = false;
+        const T = 560; // doit matcher --sites-t
+
+        const mod = (n,m)=>((n%m)+m)%m;
+
+        function imgsByRole(){
+            return {
+                left:   stack.querySelector('.pi-role-left img'),
+                center: stack.querySelector('.pi-role-center img'),
+                right:  stack.querySelector('.pi-role-right img')
+            };
+        }
+
+        function render(){
+            const {left, center, right} = imgsByRole();
+            const prev = slides[mod(idx-1, N)];
+            const curr = slides[idx];
+            const next = slides[mod(idx+1, N)];
+
+            if(left){   left.src   = prev.img;  left.alt   = prev.title; }
+            if(center){ center.src = curr.img;  center.alt = curr.title; }
+            if(right){  right.src  = next.img;  right.alt  = next.title; }
+
+            titleEl.textContent = curr.title;
+            cityEl.textContent  = curr.city;
+            // relance l’animation d’apparition du titre
+            titleEl.classList.remove('title-appear');
+            void titleEl.offsetWidth;        // force un reflow pour reset l'animation
+            titleEl.classList.add('title-appear');
+
+        }
+
+        // init
+        render();
+
+        function rotateNext(){
+            if(busy) return; busy = true;
+            stack.classList.add('pi-shift-next');
+
+            setTimeout(()=>{
+                idx = mod(idx+1, N);
+                stack.classList.remove('pi-shift-next');
+
+                const left  = stack.querySelector('.pi-role-left');
+                const cent  = stack.querySelector('.pi-role-center');
+                const right = stack.querySelector('.pi-role-right');
+                left.classList.replace('pi-role-left',  'pi-role-right');
+                cent.classList.replace('pi-role-center','pi-role-left');
+                right.classList.replace('pi-role-right','pi-role-center');
+
+                render();
+                busy = false;
+            }, T);
+        }
+
+        function rotatePrev(){
+            if(busy) return; busy = true;
+            stack.classList.add('pi-shift-prev');
+
+            setTimeout(()=>{
+                idx = mod(idx-1, N);
+                stack.classList.remove('pi-shift-prev');
+
+                const left  = stack.querySelector('.pi-role-left');
+                const cent  = stack.querySelector('.pi-role-center');
+                const right = stack.querySelector('.pi-role-right');
+                right.classList.replace('pi-role-right','pi-role-left');
+                cent.classList.replace('pi-role-center','pi-role-right');
+                left.classList.replace('pi-role-left','pi-role-center');
+
+                render();
+                busy = false;
+            }, T);
+        }
+
+        nextBtn.addEventListener('click', rotateNext);
+        prevBtn.addEventListener('click', rotatePrev);
+        document.addEventListener('keydown', e=>{
+            if(e.key==='ArrowRight') rotateNext();
+            if(e.key==='ArrowLeft')  rotatePrev();
+        });
+        /* ===== AUTOPLAY (défilement auto des magasins) ===== */
+        (function(){
+            // Respecte l’accessibilité
+            const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (prefersReduced) return;
+
+            const AREA  = document.querySelector('.pi-sites'); // zone du slider
+            const DELAY = 4800;  // ⏱️ intervalle entre 2 slides (ms) — ajuste ici
+            let timer = null;
+
+            // programme le prochain passage
+            const schedule = (d = DELAY) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    if (!busy) rotateNext(); // réutilise ta fonction existante
+                    schedule();              // reprogramme le suivant
+                }, d);
+            };
+
+            const stop  = () => { clearTimeout(timer); timer = null; };
+            const reset = () => { stop(); schedule(); };
+
+            // démarrage
+            schedule();
+
+            // pause au survol / focus (desktop et clavier)
+            AREA?.addEventListener('mouseenter', stop);
+            AREA?.addEventListener('mouseleave', reset);
+            AREA?.addEventListener('focusin', stop);
+            AREA?.addEventListener('focusout', reset);
+
+            // tactile: pause pendant l’interaction
+            AREA?.addEventListener('touchstart', stop,  { passive: true });
+            AREA?.addEventListener('touchend',   reset, { passive: true });
+
+            // Clics et flèches clavier remettent le timer à zéro
+            nextBtn.addEventListener('click', reset);
+            prevBtn.addEventListener('click', reset);
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') reset();
+            });
+
+            // Onglet caché = pause, retour = reprise
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) stop(); else reset();
+            });
+        })();
+
+    })();
 </script>
 </body>
 </html>
