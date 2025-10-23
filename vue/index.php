@@ -633,7 +633,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
             <li><a href="index.php" class="is-active">Accueil</a></li>
             <li><a href="quiSommesNous.html">Notre Histoire</a></li>
             <li><a href="#catalog">Catalogue</a></li>
-            <li><a href="#stores">Nos Magasins</a></li>
+            <li><a href="nosMagasins.php">Nos Magasins</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="postuler.php">Postuler</a></li>
         </ul>
@@ -829,31 +829,6 @@ $username   = $_SESSION['user_name'] ?? 'Client';
         </div>
     </section>
 
-
-    <!-- MAGASINS -->
-    <section id="stores">
-        <div class="container">
-            <div class="section-hd reveal">
-                <h2>Nos magasins</h2>
-                <div class="sub">Choisissez une ville pour voir la carte, l'adresse et les horaires</div>
-            </div>
-
-            <div class="nav-tabs">
-                <button class="nav-tab active" data-store="villiers1">Villiers-le-Bel</button>
-                <button class="nav-tab" data-store="villiers2">Villiers-le-Bel 2</button>
-                <button class="nav-tab" data-store="drancy">Drancy</button>
-                <button class="nav-tab" data-store="bondy">Bondy</button>
-                <button class="nav-tab" data-store="villemomble">Villemomble</button>
-                <button class="nav-tab" data-store="nogent">Nogent-sur-Oise</button>
-                <button class="nav-tab" data-store="vertsaintdenis">Vert-Saint-Denis <span class="badge-new">New</span></button>
-            </div>
-
-            <div class="content-area" id="contentArea">
-                <div class="sub" style="grid-column:1/-1; text-align:center;">Chargement…</div>
-            </div>
-        </div>
-    </section>
-
     <!-- CONTACT -->
     <section id="contact">
         <div class="container">
@@ -957,7 +932,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
 
         <nav class="footer-nav" aria-label="Navigation pied de page">
             <a href="index.php">Accueil</a>
-            <a href="index.php#stores">Nos magasins</a>
+            <a href="nosMagasins.php">Nos magasins</a>
             <a href="#catalog">Catalogue</a>
             <a href="quiSommesNous.html">À propos</a>
             <a href="postuler.php">Postuler</a>
@@ -1351,7 +1326,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
         // ➜ Remplace ici si besoin par tes chemins d’images
         const slides = [
             { title:"Villiers-le-Bel",   city:"", img:"../assets/img/stores/villiers-le-bel.jpg" },
-            { title:"Villiers-le-Bel 2", city:"", img:"../assets/img/stores/villiers-le-bel-2.jpg" },
+            { title:"Villiers-le-Bel", city:"", img:"../assets/img/stores/villiers-le-bel-2.jpg" },
             { title:"Drancy",            city:"", img:"../assets/img/stores/drancy.jpg" },
             { title:"Bondy",             city:"", img:"../assets/img/stores/bondy.jpg" },
             { title:"Villemomble",       city:"", img:"../assets/img/stores/villemomble.jpg" },
