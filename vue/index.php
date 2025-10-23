@@ -593,7 +593,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
                         </article>
 
                         <article class="card tilt" tabindex="0">
-                            <div class="thumb"><img src="https://i.pinimg.com/1200x/bb/b9/3c/bbb93c3d3c6142c00083d6bd40a8e591.jpg" alt=""></div>
+                            <div class="thumb"><img src="../assets/img/DSC09743.JPG" alt=""></div>
                             <div class="meta"><span class="dot" style="background:#b9143f"></span><span>Qualité</span></div>
                             <h3>Boucherie sélection</h3>
                             <p>Viandes حلال, tendreté garantie, découpe du jour et traçabilité.</p>
@@ -601,7 +601,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
                         </article>
 
                         <article class="card tilt" tabindex="0">
-                            <div class="thumb"><img src="https://i.pinimg.com/1200x/e7/1a/25/e71a25d82e39cf9b377b904333c1ff92.jpg" alt=""></div>
+                            <div class="thumb"><img src="../assets/img/DSC09757.JPG" alt=""></div>
                             <div class="meta"><span class="dot" style="background:#19c37d"></span><span>Prix</span></div>
                             <h3>Produits frais</h3>
                             <p>Fruits croquants, légumes de saison, crèmerie du matin.</p>
@@ -617,7 +617,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
                         </article>
 
                         <article class="card tilt" tabindex="0">
-                            <div class="thumb"><img src="https://i.pinimg.com/1200x/79/6c/34/796c34906c9111f02f41a319298a261b.jpg" alt=""></div>
+                            <div class="thumb"><img src="../assets/img/DJI_0264.JPG" alt=""></div>
                             <div class="meta"><span class="dot" style="background:#b07cff"></span><span>Gourmand</span></div>
                             <h3>Boissons</h3>
                             <p>Eaux, jus, sodas et packs familiaux à prix doux.</p>
@@ -655,23 +655,6 @@ $username   = $_SESSION['user_name'] ?? 'Client';
         </div>
     </section>
 
-    <!-- STRIP -->
-    <section class="strip-section">
-        <div class="container">
-            <div class="strip" aria-label="Galerie défilante">
-                <div class="marquee-strip">
-                    <div class="track-strip" id="trackStrip">
-                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09743.JPG" alt="Rayon fruits"/></span></article>
-                        <article class="card-strip"><span class="inner"><img src="../assets/img/DJI_0264.JPG" alt="Vue drone"/></span></article>
-                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09757.JPG" alt="Légumes"/></span></article>
-                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09764.JPG" alt="Rayon fruits"/></span></article>
-                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09680.JPG" alt="Clients"/></span></article>
-                        <article class="card-strip"><span class="inner"><img src="../assets/img/DSC09686.JPG" alt="Légumes"/></span></article>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- MAGASINS -->
     <section id="stores">
@@ -860,14 +843,19 @@ $username   = $_SESSION['user_name'] ?? 'Client';
 
     /* ====== Catalogue (PageFlip) ====== */
     (function(){
-        const TOTAL_PAGES = 7;
         const PATH = '/Projet-Paristanbul/assets/pages';
         const FILENAME = i => String(i).padStart(2,'0') + '.jpg';
         const BUST = `?v=${Date.now()}`;
         const MOBILE_BREAKPOINT = 768;
         const MIN_W = 480, MAX_W = 1040;
 
-        const pages = Array.from({length: TOTAL_PAGES}, (_,k) => `${PATH}/${FILENAME(k+1)}${BUST}`);
+
+// ordre personnalisé : on retire 2
+        const PAGES_ORDER = [1, 3, 4, 5, 6, 7];
+        const pages = PAGES_ORDER.map(n => `${PATH}/${FILENAME(n)}${BUST}`);
+
+// TOTAL_PAGES dérivé automatiquement
+        const TOTAL_PAGES = pages.length;
         pages.forEach(src => { const i = new Image(); i.src = src; });
 
         let pageFlip, pageAspect = 0.707, pageW = 600, scale = 1, baseScale = 1;
