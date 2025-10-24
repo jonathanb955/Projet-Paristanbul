@@ -579,6 +579,723 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
         .small-muted{ color:#9aa4b2; font-size:.8rem; font-weight:500; }
 
         /* ========= (le reste des sections: catalogue, carrousels, map, contact, footer sera dans PARTIE 2 & 3) ========= */
+        /* ==== Bloc promo appli ==== */
+
+        .apppromo-wrap{
+            position:relative;
+            display:grid;
+            grid-template-columns:1fr minmax(260px,360px);
+            gap: clamp(24px,4vw,48px);
+            align-items:center;
+
+            background:
+                    linear-gradient(180deg,#111418 0%,#141922 100%);
+            /* j’enlève les gros radial-gradient rouges/bleus internes */
+
+            border:1px solid rgba(255,255,255,.07);
+            border-radius:22px;
+
+            box-shadow:
+                    0 40px 80px -20px rgba(0,0,0,.9); /* juste l’ombre noire dessous */
+            /* plus de halo coloré */
+
+            padding:24px clamp(20px,3vw,32px);
+        }
+
+        @media(max-width:840px){
+            .apppromo-wrap{
+                grid-template-columns:1fr;
+                text-align:center;
+            }
+            .apppromo-right{
+                order:-1;
+                justify-self:center;
+            }
+        }
+
+        .apppromo-left .eyebrow{
+            font-size:.8rem;
+            color:#c9d4ea;
+            letter-spacing:.2em;
+            font-weight:800;
+            text-transform:uppercase;
+            margin-bottom:10px;
+        }
+
+        .apppromo-title{
+            font-size:clamp(24px,3vw,32px);
+            line-height:1.15;
+            font-weight:800;
+            color:#fff;
+            text-shadow:0 12px 30px rgba(0,0,0,.8);
+            margin:0 0 14px 0;
+        }
+
+        .apppromo-lead{
+            color:#e3eaff;
+            font-size:1rem;
+            line-height:1.4;
+            max-width:45ch;
+            margin:0 0 18px 0;
+        }
+        @media(max-width:840px){
+            .apppromo-lead{
+                max-width:38ch;
+                margin-left:auto;
+                margin-right:auto;
+            }
+        }
+
+        /* bullets */
+        .apppromo-bullets{
+            list-style:none;
+            padding:0;
+            margin:0 0 20px 0;
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+            color:#fff;
+            font-size:.9rem;
+            font-weight:600;
+        }
+        .apppromo-bullets li{
+            display:flex;
+            align-items:flex-start;
+            gap:10px;
+            background:#0f152b;
+            background:linear-gradient(145deg,#0f152b,#0c1223);
+            border:1px solid #1e2740;
+            border-radius:12px;
+            padding:.7rem .8rem;
+            color:#cfe0ff;
+            box-shadow:0 18px 40px rgba(0,0,0,.8),
+            inset 0 1px 0 rgba(255,255,255,.06);
+        }
+        .apppromo-bullets i{
+            font-size:1rem;
+            line-height:1;
+            color:#A32929;
+            flex-shrink:0;
+            text-shadow:0 0 12px rgba(214,69,46,.5);
+        }
+
+        /* CTA row */
+        .apppromo-cta-row{
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            gap:12px;
+        }
+        @media(max-width:840px){
+            .apppromo-cta-row{
+                flex-direction:column;
+                justify-content:center;
+            }
+        }
+        .apppromo-btn-download{
+            border-radius:14px;
+            padding:12px 16px;
+            line-height:1;
+            font-size:.8rem;
+            font-weight:800;
+            letter-spacing:.05em;
+            text-transform:uppercase;
+            color:#fff;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            box-shadow:
+                    0 20px 40px -10px rgba(139,31,34,.6),
+                    0 0 60px rgba(214,69,46,.4);
+        }
+        .apppromo-btn-download:hover{
+            background:#8B1A1A !important;
+            border-color:#8B1A1A !important;
+            box-shadow:
+                    0 24px 50px -10px rgba(139,31,34,.8),
+                    0 0 80px rgba(214,69,46,.6);
+            transform:translateY(-1px) scale(1.02);
+        }
+
+        .apppromo-small-text{
+            color:#c9d4ea;
+            font-size:.8rem;
+            font-weight:600;
+            line-height:1.2;
+        }
+
+        /* téléphone visuel */
+        .apppromo-right{
+            position:relative;
+            filter:drop-shadow(0 30px 60px rgba(0,0,0,.9))
+            drop-shadow(0 0 60px rgba(46,76,151,.4))
+            drop-shadow(0 0 100px rgba(214,69,46,.3));
+        }
+        .apppromo-phoneCard{
+            position:relative;
+            width:min(240px,60vw);
+            aspect-ratio: 9 / 16;
+            border-radius:24px;
+            padding:12px;
+            background:
+                    radial-gradient(circle at 0% 0%,rgba(46,76,151,.35)0%,rgba(16,23,51,.2)60%),
+                    #0f1320;
+            border:1px solid rgba(255,255,255,.07);
+            box-shadow:
+                    0 28px 60px -20px rgba(0,0,0,.9),
+                    0 0 80px rgba(46,76,151,.2),
+                    inset 0 1px 0 rgba(255,255,255,.07);
+            margin-inline:auto;
+        }
+        .apppromo-phoneMock{
+            position:relative;
+            width:100%;
+            height:100%;
+            border-radius:20px;
+            background:#000;
+            overflow:hidden;
+            box-shadow:0 12px 30px rgba(0,0,0,.8),
+            0 0 40px rgba(214,69,46,.4);
+            border:1px solid #1e2740;
+        }
+
+        /* badge promos */
+        .apppromo-badge{
+            position:absolute;
+            right:-10px;
+            bottom:-10px;
+            background:linear-gradient(145deg,#8B1A1A,#A32929);
+            border:2px solid #A32929;
+            border-radius:14px;
+            padding:.6rem .8rem;
+            min-width:88px;
+
+            box-shadow:
+                    0 20px 40px -10px rgba(139,31,34,.6),
+                    0 0 60px rgba(214,69,46,.5),
+                    0 0 100px rgba(46,76,151,.4);
+            color:#fff;
+            font-weight:800;
+            line-height:1.2;
+            text-align:center;
+            text-shadow:0 2px 10px rgba(0,0,0,.45);
+        }
+        .apppromo-badge-num{
+            font-size:1.2rem;
+            font-weight:900;
+            line-height:1;
+        }
+        .apppromo-badge-label{
+            font-size:.7rem;
+            font-weight:700;
+            letter-spacing:.03em;
+            text-transform:uppercase;
+        }
+        /* ====== SLIDER RAYONS (mêmes animations que nosMagasins.php) ====== */
+
+        /* on donne une vraie transition smooth aux cartes */
+        .pi-sites__card{
+            transition: transform 560ms cubic-bezier(.22,.8,.24,1),
+            opacity   560ms ease;
+            transform-origin:center center;
+            z-index:0;
+        }
+
+        /* position de base (tes inline styles init resteront ok au chargement),
+           mais on redéclare ici pour les étapes animées */
+        .pi-role-left  { transform:translate(-12vw,6vh) scale(.66); z-index:1; opacity:.9; pointer-events:none; }
+        .pi-role-center{ transform:translate(0,0)      scale(1);    z-index:3; opacity:1;  pointer-events:auto; }
+        .pi-role-right { transform:translate(14vw,-3vh) scale(.62); z-index:1; opacity:.9; pointer-events:none; }
+
+        /* État pendant le mouvement vers la droite (next) */
+        .pi-shift-next .pi-role-left{
+            transform: translate(-26vw, 12vh) scale(.56);
+            opacity:0;
+        }
+        .pi-shift-next .pi-role-center{
+            transform: translate(-12vw, 6vh) scale(.66);
+            opacity:.9;
+        }
+        .pi-shift-next .pi-role-right{
+            transform: translate(0,0) scale(1);
+            opacity:1;
+            z-index:5;
+        }
+        /* baisse un peu l'ancienne carte du centre pendant l'anim */
+        .pi-shift-next .pi-role-center{ z-index:2; }
+
+        /* État pendant le mouvement vers la gauche (prev) */
+        .pi-shift-prev .pi-role-right{
+            transform: translate(24vw, -12vh) scale(.54);
+            opacity:0;
+        }
+        .pi-shift-prev .pi-role-center{
+            transform: translate(14vw,-3vh) scale(.62);
+            opacity:.9;
+        }
+        .pi-shift-prev .pi-role-left{
+            transform: translate(0,0) scale(1);
+            opacity:1;
+            z-index:5;
+        }
+        /* baisse un peu l'ancienne carte du centre pendant l'anim */
+        .pi-shift-prev .pi-role-center{ z-index:2; }
+
+        /* petit effet arrivée pour le titre du rayon */
+        @keyframes piTitleIn{
+            0%{
+                opacity:0;
+                transform:translateY(12px) scale(.98);
+                filter:blur(2px);
+                letter-spacing:.02em;
+            }
+            60%{
+                opacity:1;
+                transform:translateY(0) scale(1);
+                filter:none;
+            }
+            100%{
+                opacity:1;
+                transform:none;
+                letter-spacing:0;
+            }
+        }/* ====== SLIDER RAYONS (mêmes animations que nosMagasins.php) ====== */
+
+        /* on donne une vraie transition smooth aux cartes */
+        .pi-sites__card{
+            transition: transform 560ms cubic-bezier(.22,.8,.24,1),
+            opacity   560ms ease;
+            transform-origin:center center;
+            z-index:0;
+        }
+
+        /* position de base (tes inline styles init resteront ok au chargement),
+           mais on redéclare ici pour les étapes animées */
+        .pi-role-left  { transform:translate(-12vw,6vh) scale(.66); z-index:1; opacity:.9; pointer-events:none; }
+        .pi-role-center{ transform:translate(0,0)      scale(1);    z-index:3; opacity:1;  pointer-events:auto; }
+        .pi-role-right { transform:translate(14vw,-3vh) scale(.62); z-index:1; opacity:.9; pointer-events:none; }
+
+        /* État pendant le mouvement vers la droite (next) */
+        .pi-shift-next .pi-role-left{
+            transform: translate(-26vw, 12vh) scale(.56);
+            opacity:0;
+        }
+        .pi-shift-next .pi-role-center{
+            transform: translate(-12vw, 6vh) scale(.66);
+            opacity:.9;
+        }
+        .pi-shift-next .pi-role-right{
+            transform: translate(0,0) scale(1);
+            opacity:1;
+            z-index:5;
+        }
+        /* baisse un peu l'ancienne carte du centre pendant l'anim */
+        .pi-shift-next .pi-role-center{ z-index:2; }
+
+        /* État pendant le mouvement vers la gauche (prev) */
+        .pi-shift-prev .pi-role-right{
+            transform: translate(24vw, -12vh) scale(.54);
+            opacity:0;
+        }
+        .pi-shift-prev .pi-role-center{
+            transform: translate(14vw,-3vh) scale(.62);
+            opacity:.9;
+        }
+        .pi-shift-prev .pi-role-left{
+            transform: translate(0,0) scale(1);
+            opacity:1;
+            z-index:5;
+        }
+        /* baisse un peu l'ancienne carte du centre pendant l'anim */
+        .pi-shift-prev .pi-role-center{ z-index:2; }
+
+        /* petit effet arrivée pour le titre du rayon */
+        @keyframes piTitleIn{
+            0%{
+                opacity:0;
+                transform:translateY(12px) scale(.98);
+                filter:blur(2px);
+                letter-spacing:.02em;
+            }
+            60%{
+                opacity:1;
+                transform:translateY(0) scale(1);
+                filter:none;
+            }
+            100%{
+                opacity:1;
+                transform:none;
+                letter-spacing:0;
+            }
+        }
+        /* ============ Modal download app ============ */
+        .appModal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Plus Jakarta Sans', system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+        }
+        .appModal.is-visible { display:flex; }
+
+        .appModal__backdrop {
+            position:absolute;
+            inset:0;
+            background:rgba(0,0,0,.6);
+            backdrop-filter:blur(6px);
+        }
+
+        /* panel = style Paristanbul (bleu nuit + halo rouge/bleu + bord arrondi 20px) */
+        .appModal__panel {
+            position:relative;
+            width:90%;
+            max-width:380px;
+            border-radius:20px;
+            padding:20px 20px 16px;
+            color:#fff;
+            background:
+                    radial-gradient(circle at 0% 0%, rgba(46,76,151,.28) 0%, rgba(0,0,0,0) 60%),
+                    radial-gradient(circle at 100% 0%, rgba(214,69,46,.22) 0%, rgba(0,0,0,0) 60%),
+                    linear-gradient(180deg,#111827 0%,#0f172a 100%);
+            border:1px solid rgba(255,255,255,.1);
+            box-shadow:
+                    0 40px 80px rgba(0,0,0,.9),
+                    0 0 80px rgba(46,76,151,.4),
+                    0 0 120px rgba(214,69,46,.4);
+            box-sizing:border-box;
+            z-index:2;
+        }
+
+        /* bouton X */
+        .appModal__close {
+            position:absolute;
+            top:8px;
+            right:8px;
+            border:0;
+            border-radius:10px;
+            background:rgba(15,23,42,.8);
+            color:#fff;
+            font-size:16px;
+            line-height:1;
+            font-weight:600;
+            width:28px;
+            height:28px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            box-shadow:
+                    0 10px 20px rgba(0,0,0,.8),
+                    0 0 20px rgba(214,69,46,.4),
+                    inset 0 1px 0 rgba(255,255,255,.07);
+            border:1px solid rgba(255,255,255,.15);
+            z-index:3;
+        }
+        .appModal__close:active{
+            transform:scale(.96);
+            filter:brightness(.9);
+        }
+
+        .appModal__content {
+            position:relative;
+            z-index:2;
+            display:flex;
+            flex-direction:column;
+            gap:16px;
+            text-align:left;
+        }
+
+        .appModal__eyebrow {
+            margin:0;
+            font-size:10px;
+            line-height:1.2;
+            font-weight:800;
+            letter-spacing:.18em;
+            text-transform:uppercase;
+            color:#c9d4ea;
+        }
+
+        .appModal__title {
+            margin:2px 0 8px 0;
+            font-size:18px;
+            line-height:1.25;
+            font-weight:800;
+            color:#fff;
+            text-shadow:0 12px 30px rgba(0,0,0,.8);
+        }
+
+        .appModal__text {
+            margin:0;
+            font-size:13px;
+            line-height:1.45;
+            color:#e3eaff;
+            font-weight:500;
+            max-width:32ch;
+        }
+
+        /* badges store */
+        .appModal__stores {
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+        }
+
+        /* style badge => fond noir glossy, bord arrondi */
+        .storeBadge {
+            flex:1 1 150px;
+            background:linear-gradient(#0f172a,#000);
+            border-radius:12px;
+            border:1px solid rgba(255,255,255,.18);
+            box-shadow:
+                    0 20px 40px rgba(0,0,0,.8),
+                    0 0 40px rgba(46,76,151,.4);
+            text-decoration:none;
+            color:#fff;
+            min-height:50px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:10px 12px;
+            position:relative;
+            box-sizing:border-box;
+        }
+        .storeBadge:hover{
+            filter:brightness(1.08);
+            box-shadow:
+                    0 24px 50px rgba(0,0,0,.9),
+                    0 0 60px rgba(214,69,46,.6),
+                    0 0 80px rgba(46,76,151,.4);
+        }
+
+        .storeBadge__inner{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            line-height:1.2;
+        }
+        .storeBadge__icon{
+            width:28px;
+            height:28px;
+            flex-shrink:0;
+            color:#fff;
+            display:block;
+        }
+        .storeBadge__textcol{
+            display:flex;
+            flex-direction:column;
+            line-height:1.2;
+            font-weight:600;
+        }
+        .storeBadge__mini{
+            font-size:10px;
+            color:#c9d4ea;
+            font-weight:600;
+        }
+        .storeBadge__main{
+            font-size:14px;
+            color:#fff;
+            font-weight:700;
+        }
+
+        /* petit texte en bas */
+        .appModal__legal {
+            margin:0;
+            font-size:10px;
+            line-height:1.4;
+            color:#9aa4b2;
+            text-align:center;
+            font-weight:500;
+        }
+        .ctaDownloadApp{
+            appearance:none;
+            cursor:pointer;
+            border:0;
+            border-radius:14px;
+            padding:14px 16px;
+            line-height:1;
+            font-size:.8rem;
+            font-weight:800;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+            color:#fff;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            background:linear-gradient(145deg,#8B1A1A,#A32929);
+            border:1px solid #A32929;
+            box-shadow:
+                    0 20px 40px -10px rgba(139,31,34,.6),
+                    0 0 60px rgba(214,69,46,.4),
+                    0 0 80px rgba(46,76,151,.4);
+            transition:.18s;
+        }
+        .ctaDownloadApp:hover{
+            background:#8B1A1A;
+            border-color:#8B1A1A;
+            transform:translateY(-1px) scale(1.03) rotate(-.4deg);
+            box-shadow:
+                    0 24px 50px -10px rgba(139,31,34,.8),
+                    0 0 80px rgba(214,69,46,.6),
+                    0 0 100px rgba(46,76,151,.5);
+        }
+        .ctaDownloadApp i{
+            font-size:16px;
+            line-height:1;
+        }
+        /* ====== POPUP APP DOWNLOAD (overlay + card avec badges officiels) ====== */
+        .appPromo-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 7, 14, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 500;
+            opacity: 1;
+            transition: opacity .2s ease;
+        }
+        .appPromo-overlay.is-hidden {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+
+        .appPromo-card {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            bottom: auto;
+            transform: translate(-50%, -50%);
+            width: clamp(280px, 90vw, 360px);
+
+            background: radial-gradient(circle at 20% 20%, rgba(40,50,90,.6) 0%, rgba(10,12,25,.6) 60%);
+            background-color: rgba(15,19,40,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+
+            box-shadow:
+                    0 20px 40px rgba(0,0,0,.8),
+                    0 0 80px rgba(58,104,255,.4);
+
+            color: #fff;
+            font-family: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+            padding: 1rem 1rem 1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: .75rem;
+
+            z-index: 600;
+            backdrop-filter: blur(16px) saturate(160%);
+            -webkit-backdrop-filter: blur(16px) saturate(160%);
+
+        }
+        .appPromo-card.is-hidden {
+             opacity: 0;
+             pointer-events: none;
+             transform: translate(-50%, -50%) scale(.98);
+             transition: all .2s ease;
+             display: none;
+         }
+        .appPromo-card.is-visible {
+            animation: appPromo-pop .25s cubic-bezier(.2,.8,.3,1) both;
+        }
+        @keyframes appPromo-pop {
+            0%   {opacity:0; transform:translate(-50%, -50%) scale(.96);}
+            100% {opacity:1; transform:translate(-50%, -50%) scale(1);}
+        }
+
+        /* bouton X */
+        .appPromo-close {
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
+            width: 28px;
+            height: 28px;
+            border-radius: .5rem;
+            border: 0;
+            background: rgba(255,255,255,0.07);
+            color: #fff;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: background .15s;
+        }
+        .appPromo-close:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        /* texte haut */
+        .appPromo-headline {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+            padding-right: 2rem; /* laisse la place de la croix */
+        }
+        .appPromo-eyebrow {
+            font-size: .65rem;
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: .08em;
+            color: rgba(255,255,255,.6);
+        }
+        .appPromo-title {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.3;
+            color: #fff;
+            margin: 0;
+        }
+        .appPromo-desc {
+            font-size: .8rem;
+            line-height: 1.4;
+            color: rgba(255,255,255,.75);
+            margin: 0;
+        }
+
+        /* badges store officiels */
+        .appPromo-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem .75rem;
+        }
+        .store-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            line-height: 0;
+
+            background: transparent;
+            border: 0;
+            border-radius: 8px;
+            padding: 0;
+            min-height: auto;
+            box-shadow: none;
+        }
+        .store-badge img {
+            display: block;
+            height: 40px;            /* un peu plus grand, joli */
+            width: auto;
+            object-fit: contain;
+
+            border-radius: 8px;      /* arrondi badge */
+            box-shadow: 0 20px 40px rgba(0,0,0,.7); /* glow propre dans ton thème */
+        }
+
+        /* petit texte gris en bas */
+        .appPromo-footnote {
+            color: rgba(255,255,255,.4);
+            font-size: .7rem;
+            line-height: 1.2;
+            text-align: center;
+            margin-top: .25rem;
+        }
     </style>
 </head>
 <body>
@@ -960,146 +1677,7 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
         </div>
     </section>
 
-    <!-- SLIDER "NOS RAYONS" (pile de 3 cartes qui tournent) -->
-    <section id="rayons" class="section" style="padding-top:32px; padding-bottom:32px;">
-        <div class="container pi-sites" style="
-            display:grid;
-            grid-template-columns:1.05fr 1fr;
-            align-items:center;
-            gap: clamp(24px, 5vw, 80px);
-            min-height: 62vh;
-            position:relative;
-        ">
-            <!-- Texte / contrôles -->
-            <div class="pi-sites__left" style="position:relative;z-index:5;">
-                <p class="eyebrow" style="margin:0 0 10px 0;">Un rayon, une histoire</p>
 
-                <h2 class="hero-title" id="piSitesTitle" style="
-                    font-size:clamp(28px,6vw,52px);
-                    line-height:1.05;
-                    font-weight:800;
-                    margin:0 0 24px 0;
-                    color:#e6ecf5;
-                    text-shadow:0 12px 30px rgba(0,0,0,.8);
-                ">
-                    Boucherie sélection
-                </h2>
-
-                <div class="pi-sites__nav" aria-label="Contrôles du slider" style="display:flex;gap:14px;">
-                    <button class="btn magnet" id="piSitesPrev" aria-label="Précédent" style="
-                        width:44px;
-                        height:44px;
-                        border-radius:14px;
-                        cursor:pointer;
-                        background:#111729;
-                        border:1px solid rgba(255,255,255,.14);
-                        display:grid;
-                        place-items:center;
-                        color:#e6edff;
-                        font-weight:800;
-                        box-shadow:0 16px 30px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.06);
-                    ">
-                        <i class="bi bi-chevron-left"></i>
-                    </button>
-                    <button class="btn magnet" id="piSitesNext" aria-label="Suivant" style="
-                        width:44px;
-                        height:44px;
-                        border-radius:14px;
-                        cursor:pointer;
-                        background:#111729;
-                        border:1px solid rgba(255,255,255,.14);
-                        display:grid;
-                        place-items:center;
-                        color:#e6edff;
-                        font-weight:800;
-                        box-shadow:0 16px 30px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.06);
-                    ">
-                        <i class="bi bi-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Stack visuelle -->
-            <div class="pi-sites__stack" id="piSitesStack" aria-live="polite" style="
-                position:relative;
-                min-height: clamp(360px, 58vh, 640px);
-                isolation:isolate;
-            ">
-                <!-- 3 cartes superposées -->
-                <figure class="pi-sites__card pi-role-left" style="
-                    position:absolute;
-                    inset:auto 0 0 auto;
-                    width:min(52vw,760px);
-                    height:80%;
-                    border-radius:12px;
-                    overflow:hidden;
-                    background:#1a2032;
-                    border:1px solid rgba(255,255,255,.06);
-                    box-shadow:0 22px 60px rgba(0,0,0,.28);
-                    transform:translate(-12vw,6vh) scale(.66);
-                    z-index:1;
-                    opacity:.9;
-                    transition: transform 560ms cubic-bezier(.22,.8,.24,1), opacity 560ms ease;
-                ">
-                    <img src="../assets/img/DSC09757.JPG" alt="Produit frais" style="width:100%;height:100%;object-fit:cover;display:block;">
-                </figure>
-
-                <figure class="pi-sites__card pi-role-center" style="
-                    position:absolute;
-                    inset:auto 0 0 auto;
-                    width:min(52vw,760px);
-                    height:80%;
-                    border-radius:12px;
-                    overflow:hidden;
-                    background:#1a2032;
-                    border:1px solid rgba(255,255,255,.06);
-                    box-shadow:0 22px 60px rgba(0,0,0,.28);
-                    transform:translate(0,0) scale(1);
-                    z-index:3;
-                    opacity:1;
-                    transition: transform 560ms cubic-bezier(.22,.8,.24,1), opacity 560ms ease;
-                ">
-                    <img src="../assets/img/DSC09743.JPG" alt="Boucherie sélection" style="width:100%;height:100%;object-fit:cover;display:block;">
-                </figure>
-
-                <figure class="pi-sites__card pi-role-right" style="
-                    position:absolute;
-                    inset:auto 0 0 auto;
-                    width:min(52vw,760px);
-                    height:80%;
-                    border-radius:12px;
-                    overflow:hidden;
-                    background:#1a2032;
-                    border:1px solid rgba(255,255,255,.06);
-                    box-shadow:0 22px 60px rgba(0,0,0,.28);
-                    transform:translate(14vw,-3vh) scale(.62);
-                    z-index:1;
-                    opacity:.9;
-                    transition: transform 560ms cubic-bezier(.22,.8,.24,1), opacity 560ms ease;
-                ">
-                    <img src="../assets/img/DJI_0264.JPG" alt="Boissons" style="width:100%;height:100%;object-fit:cover;display:block;">
-                </figure>
-
-                <!-- Légende overlay -->
-                <figcaption class="pi-legend" style="
-                    position:absolute;
-                    left:22px;
-                    bottom:22px;
-                    z-index:6;
-                    display:flex;
-                    align-items:center;
-                    gap:12px;
-                    color:#fff;
-                    font-size: clamp(18px, 2.2vw, 32px);
-                    font-weight:800;
-                    text-shadow:0 2px 10px rgba(0,0,0,.35),0 6px 30px rgba(0,0,0,.45);
-                    pointer-events:none;
-                ">
-                    <span id="piSitesCity">Paristanbul</span>
-                </figcaption>
-            </div>
-        </div>
-    </section>
 
     <!-- CARROUSEL MAGASINS "quelques-uns de nos magasins" -->
 
@@ -1244,6 +1822,71 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
             </div>
         </div>
     </section>
+    <section class="section" id="appPromo" style="padding-top:32px; padding-bottom:32px;">
+        <div class="container apppromo-wrap">
+            <!-- Col texte -->
+            <div class="apppromo-left">
+                <div class="eyebrow">Ne ratez plus une promo</div>
+
+                <h2 class="apppromo-title">
+                    Dites bonjour à
+                    <span class="gradient-text">toutes nos promos</span>
+                    en direct 📲
+                </h2>
+
+                <p class="apppromo-lead">
+                    Notre application Paristanbul vous donne l’accès immédiat aux
+                    <strong>offres du moment</strong>, aux <strong>réductions exclusives</strong>
+                    et au <strong>catalogue à jour</strong> — avant même l’affichage en magasin.
+                </p>
+
+                <ul class="apppromo-bullets">
+                    <li>
+                        <i class="bi bi-fire"></i>
+                        <span>Promos fraîchement ajoutées chaque semaine</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-bell"></i>
+                        <span>Alertes sur vos produits favoris</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Magasin le plus proche & horaires</span>
+                    </li>
+                </ul>
+
+                <div class="apppromo-cta-row">
+                    <button id="openAppModal" class="ctaDownloadApp">
+                        <i class="fa-solid fa-download" aria-hidden="true"></i>
+                        <span>TÉLÉCHARGER L’APPLI</span>
+                    </button>
+
+                    <div class="apppromo-small-text">
+                        Gratuit • iOS &amp; Android
+                    </div>
+                </div>
+            </div>
+
+            <!-- Col visuel téléphone -->
+            <!-- Col visuel téléphone -->
+            <div class="apppromo-right" data-parallax data-speed="0.015">
+                <div class="apppromo-phoneCard">
+                    <div class="apppromo-phoneMock">
+                        <img src="../assets/img/app_paristanbul_mockup.jpeg"
+                             alt="Application Paristanbul — interface de fidélité"
+                             style="width:100%;height:100%;object-fit:cover;display:block;border-radius:20px;">
+                    </div>
+
+                    <div class="apppromo-badge">
+                        <div class="apppromo-badge-num">+100</div>
+                        <div class="apppromo-badge-label">
+                            promos <br>chaque semaine
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <!-- CONTACT -->
     <section id="contact" class="section" style="padding-top:32px;">
         <div class="container">
@@ -1370,7 +2013,7 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
                         </button>
                     </form>
                 </div>
-
+                <!-- (legacy appModal removed: using new centered popup instead) -->
                 <!-- Bloc infos / newsletter -->
                 <div class="contact-panel" style="
                     background:linear-gradient(180deg,#121826,#0e1422);
@@ -2304,6 +2947,245 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
         selectStore('villiers1');
     });
 </script>
+<script>
+    (function(){
+        // ====== SLIDES "RAYONS" ======
+        const slides = [
+            {
+                title: "Boucherie sélection",
+                city:  "Halal & fraîche du jour",
+                img:   "../assets/img/DSC09743.JPG"
+            },
+            {
+                title: "Fruits & Légumes frais",
+                city:  "Primeur de saison",
+                img:   "../assets/img/DSC09757.JPG"
+            },
+            {
+                title: "Boissons & rafraîchissements",
+                city:  "Jus, soft & plus",
+                img:   "../assets/img/DJI_0264.JPG"
+            },
+            {
+                title: "Hygiène & Entretien",
+                city:  "Pour la maison",
+                img:   "../assets/img/hygiene.jpg"
+            },
+            {
+                title: "Surgelé",
+                city:  "Ultra-frais à -18°C",
+                img:   "../assets/img/surgele.jpg"
+            },
+            {
+                title: "Emballage & Gros volumes",
+                city:  "Cartons, packs, stock",
+                img:   "../assets/img/emballage.jpg"
+            },
+            {
+                title: "Produits secs",
+                city:  "Épicerie & pâtes",
+                img:   "../assets/img/produits-secs.jpg"
+            }
+        ];
+
+        const stack   = document.getElementById('piSitesStack');
+        const titleEl = document.getElementById('piSitesTitle');
+        const cityEl  = document.getElementById('piSitesCity');
+        const prevBtn = document.getElementById('piSitesPrev');
+        const nextBtn = document.getElementById('piSitesNext');
+
+        function getCards(){
+            return {
+                leftFigure:   stack.querySelector('.pi-role-left'),
+                centerFigure: stack.querySelector('.pi-role-center'),
+                rightFigure:  stack.querySelector('.pi-role-right')
+            };
+        }
+        function getImgs(){
+            return {
+                left:   stack.querySelector('.pi-role-left img'),
+                center: stack.querySelector('.pi-role-center img'),
+                right:  stack.querySelector('.pi-role-right img')
+            };
+        }
+
+        const N   = slides.length;
+        let idx   = 0;
+        let busy  = false;
+        const T   = 560;
+        const mod = (n,m)=>((n%m)+m)%m;
+
+        function renderCurrentTriplet(){
+            const {left, center, right} = getImgs();
+
+            const prevSlide = slides[ mod(idx-1, N) ];
+            const currSlide = slides[ idx ];
+            const nextSlide = slides[ mod(idx+1, N) ];
+
+            if (left)   { left.src   = prevSlide.img;  left.alt   = prevSlide.title; }
+            if (center) { center.src = currSlide.img;  center.alt = currSlide.title; }
+            if (right)  { right.src  = nextSlide.img;  right.alt  = nextSlide.title; }
+
+            titleEl.textContent = currSlide.title;
+            cityEl.textContent  = currSlide.city;
+
+            titleEl.style.animation = 'none';
+            void titleEl.offsetWidth;
+            titleEl.style.animation = 'piTitleIn .60s cubic-bezier(.22,.61,.36,1)';
+        }
+
+        function goNext(){
+            if (busy) return;
+            busy = true;
+            stack.classList.add('pi-shift-next');
+            setTimeout(()=>{
+                idx = mod(idx+1, N);
+                stack.classList.remove('pi-shift-next');
+
+                const {leftFigure, centerFigure, rightFigure} = getCards();
+                leftFigure.classList.replace('pi-role-left','pi-role-right');
+                centerFigure.classList.replace('pi-role-center','pi-role-left');
+                rightFigure.classList.replace('pi-role-right','pi-role-center');
+
+                renderCurrentTriplet();
+                busy = false;
+            }, T);
+        }
+
+        function goPrev(){
+            if (busy) return;
+            busy = true;
+            stack.classList.add('pi-shift-prev');
+            setTimeout(()=>{
+                idx = mod(idx-1, N);
+                stack.classList.remove('pi-shift-prev');
+
+                const {leftFigure, centerFigure, rightFigure} = getCards();
+                rightFigure.classList.replace('pi-role-right','pi-role-left');
+                centerFigure.classList.replace('pi-role-center','pi-role-right');
+                leftFigure.classList.replace('pi-role-left','pi-role-center');
+
+                renderCurrentTriplet();
+                busy = false;
+            }, T);
+        }
+
+        nextBtn.addEventListener('click', goNext);
+        prevBtn.addEventListener('click', goPrev);
+
+        (function autoplay(){
+            const area   = document.querySelector('.pi-sites');
+            const DELAY  = 4800;
+            let timer    = null;
+
+            function start(){
+                stop();
+                timer = setTimeout(function tick(){
+                    if (!busy) goNext();
+                    start();
+                }, DELAY);
+            }
+            function stop(){
+                if (timer){ clearTimeout(timer); timer = null; }
+            }
+
+            start();
+            area?.addEventListener('mouseenter', stop);
+            area?.addEventListener('mouseleave', start);
+            area?.addEventListener('focusin',    stop);
+            area?.addEventListener('focusout',   start);
+            area?.addEventListener('touchstart', stop,  {passive:true});
+            area?.addEventListener('touchend',   start, {passive:true});
+            nextBtn.addEventListener('click', start);
+            prevBtn.addEventListener('click', start);
+            document.addEventListener('visibilitychange', ()=>{
+                if (document.hidden) stop();
+                else start();
+            });
+        })();
+
+        document.addEventListener('keydown', e=>{
+            if(e.key === 'ArrowRight') goNext();
+            if(e.key === 'ArrowLeft')  goPrev();
+        });
+
+        renderCurrentTriplet();
+    })();
+</script>
+<!-- ... ton footer / "Contactez-nous" / etc ... -->
+
+
+
+<!-- ====== POPUP APP DOWNLOAD ====== -->
+<!-- ====== POPUP APP DOWNLOAD ====== -->
+<div class="appPromo-overlay is-hidden" id="appPromo-overlay"></div>
+
+<div class="appPromo-card is-hidden" id="appPromo-card" role="dialog" aria-labelledby="appPromo-title" aria-modal="true">
+    <button class="appPromo-close" id="appPromo-close" aria-label="Fermer la fenêtre">
+        <span aria-hidden="true">&times;</span>
+    </button>
+
+    <div class="appPromo-headline">
+        <div class="appPromo-eyebrow">PARISTANBUL APP</div>
+        <h2 class="appPromo-title" id="appPromo-title">Téléchargez l’application</h2>
+        <p class="appPromo-desc">
+            Courses, promos en direct, carte de fidélité digitale. Gratuit sur iOS et Android.
+        </p>
+    </div>
+
+    <div class="appPromo-badges">
+        <a class="store-badge"
+           href="https://apps.apple.com/fr/search?term=paristanbul"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Ouvrir Paristanbul sur l’App Store (iOS)">
+            <img src="../assets/img/badge-appstore.png" alt="Disponible sur l’App Store">
+        </a>
+
+        <a class="store-badge"
+           href="https://play.google.com/store/apps/details?id=com.akead.paristanbul&hl=fr"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="Ouvrir Paristanbul sur Google Play (Android)">
+            <img src="../assets/img/badge-googleplay.png" alt="Disponible sur Google Play">
+        </a>
+    </div>
+
+    <div class="appPromo-footnote">Bientôt disponible officiellement.</div>
+</div>
+
+<script>
+    (function () {
+        const card     = document.getElementById('appPromo-card');
+        const overlay  = document.getElementById('appPromo-overlay');
+        const closeBtn = document.getElementById('appPromo-close');
+        const trigger  = document.getElementById('openAppModal'); // ton bouton "TÉLÉCHARGER L’APPLI"
+
+        function openPopup() {
+            card.classList.remove('is-hidden');
+            overlay.classList.remove('is-hidden');
+            card.classList.add('is-visible');
+        }
+
+
+        function closePopup() {
+            card.classList.remove('is-visible');
+            card.classList.add('is-hidden');
+            overlay.classList.add('is-hidden');
+        }
+
+        if (trigger) {
+            trigger.addEventListener('click', function(e){
+                e.preventDefault();
+                openPopup();
+            });
+        }
+
+        closeBtn.addEventListener('click', closePopup);
+        overlay.addEventListener('click', closePopup);
+    })();
+</script>
+<!-- ====== /POPUP APP DOWNLOAD ====== -->
 
 </body>
 </html>
