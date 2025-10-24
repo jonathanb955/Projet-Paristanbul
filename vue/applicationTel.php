@@ -1,352 +1,544 @@
+<?php
+session_start();
+$isLoggedIn = !empty($_SESSION['user_id']);
+$username   = $_SESSION['user_name'] ?? 'Client';
+?>
+
 <!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Paristanbul — Télécharger l’application</title>
-    <meta name="description" content="Téléchargez l’app Paristanbul : promos en avant-première, carte de fidélité, magasins à deux pas. Disponible sur iOS et Android."/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Téléchargez l'application Paristanbul — Supermarché</title>
+    <meta name="description" content="Téléchargez l'application mobile Paristanbul pour accéder à nos offres exclusives, catalogues numériques et bien plus encore !" />
+
+    <!-- Fonts + Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
 
     <style>
         :root{
+            --black:#0a0c10; --blue:#0b3b8a; --red:#7b0f20;
+            --text:#ffffff; --muted:#c9d4ea; --panel:#0f1320; --ring:#2c59ff55;
+            --edge:#1b2235; --panel-2:#0e1422;
             --pi-blue:#2E4C97; --pi-red:#D6452E;
-            --text:#fff; --muted:#c9d4ea; --edge:rgba(255,255,255,.08);
+            --ink:#E6E9F2; --muted-2:#cfd5e6;
             --bg-1:#0B1326; --bg-2:#0A0F1F;
-            --card:#141B2B; --chip:#1B2436; --ring:#2c59ff55;
+            --card:#141B2B; --chip:#1B2436;
+            --border:rgba(255,255,255,.06);
+            --page-bg:
+                    radial-gradient(1000px 500px at 10% 10%, rgba(46,76,151,.25), transparent 60%),
+                    radial-gradient(900px 600px at 90% 10%, rgba(214,69,46,.18), transparent 55%),
+                    linear-gradient(180deg, var(--bg-1), var(--bg-2) 70%);
         }
-        *{box-sizing:border-box}
-        html,body{height:100%}
-        body{
-            margin:0; font-family:"Plus Jakarta Sans",system-ui,Segoe UI,Roboto,Arial;
-            color:var(--text); background:
-                radial-gradient(1000px 500px at 10% 0%, rgba(46,76,151,.22), transparent 60%),
-                radial-gradient(1000px 600px at 90% 0%, rgba(214,69,46,.16), transparent 55%),
-                linear-gradient(180deg, var(--bg-1), var(--bg-2) 70%);
-        }
-        a{color:inherit;text-decoration:none}
-        .container{max-width:1200px;margin:0 auto;padding:0 20px}
+        *{box-sizing:border-box; margin:0; padding:0}
+        html,body{height:100%; background:var(--bg-1); color:var(--text); font-family:'Plus Jakarta Sans', sans-serif; line-height:1.5;}
+        a{color:inherit; text-decoration:none;}
+        .container{width:100%; max-width:1200px; margin:0 auto; padding:0 20px;}
 
-        /* Header minimal */
+        /* ========== HEADER « pi-simple » ========== */
+        /* Bandeau promo (marquee) */
+        .marquee{position:relative; overflow:hidden; border-top:1px solid #1b2744; border-bottom:1px solid #1b2744; background: linear-gradient(180deg, rgba(15,21,37,.94), rgba(13,19,33,.88)); backdrop-filter: blur(10px);}
+        .marquee__inner{display:flex; gap:40px; padding:10px 0; white-space:nowrap; animation:marquee 22s linear infinite}
+        .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; background:linear-gradient(145deg,#121a34,#0f162a); border:1px solid #223055; font-size:.92rem}
+        .pill .dot{width:8px;height:8px;border-radius:50%;background:conic-gradient(from 90deg,var(--red),var(--blue))}
+        @keyframes marquee{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+
+        /* Bloc header */
         header{
-            position:sticky; top:0; z-index:10;
-            background:linear-gradient(180deg, #0f1525ee, #0c1223ee);
-            border-bottom:1px solid #141a2b; backdrop-filter:blur(8px);
+            position: static;
+            background:
+                    radial-gradient(600px 300px at 10% 0%, rgba(46,76,151,.18), transparent 60%),
+                    radial-gradient(600px 300px at 90% 0%, rgba(214,69,46,.14), transparent 55%),
+                    linear-gradient(180deg, #0f1525ee, #0c1223ee);
+            border-bottom: 1px solid #141826;
+            backdrop-filter: blur(8px);
         }
-        .topbar{
-            display:flex; align-items:center; justify-content:space-between;
-            gap:16px; padding:16px 0;
+        header.pi-simple .topbar{
+            display:grid; grid-template-columns: 1fr minmax(200px, 1fr) 1fr;
+            align-items:center; gap:16px; padding-block: clamp(18px, 3.5vh, 40px);
         }
-        .brand{display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:.02em}
-        .brand img{height:38px; width:auto; display:block}
-        .nav{display:flex; gap:18px; font-weight:800; color:#dbe6ff}
-        .nav a{opacity:.9} .nav a:hover{opacity:1}
+        .left-col{display:flex; align-items:flex-start}
+        .social-group{display:flex; flex-direction:column; align-items:center; width:max-content}
+        .social{display:flex; align-items:center; gap:16px; color:var(--muted)}
+        .social a{font-size:18px; color:var(--muted)}
+        .social a:hover{color:#fff}
+        .join{font-size:13px; color:var(--muted); font-weight:800; margin-top:6px; text-align:center}
 
-        /* Badges stores */
-        .store-badges{display:flex; gap:10px; flex-wrap:wrap}
-        .store{
-            display:inline-flex; align-items:center; gap:10px;
-            padding:10px 14px; border-radius:12px; border:1px solid #223055;
-            background:linear-gradient(145deg,#101831,#0c1224);
-            font-weight:800; color:#eaf0ff;
-            transition:transform .08s ease, filter .18s ease, border-color .18s ease;
-        }
-        .store i{font-size:20px}
-        .store small{display:block; font-weight:700; line-height:1; opacity:.8}
-        .store span{display:block; font-size:15px; line-height:1.1}
-        .store:hover{filter:brightness(1.06); border-color:#2a3d73; transform:translateY(-1px)}
+        .brand{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px}
+        .brand img{height: clamp(60px, 9vw, 72px)}
+        .tagline{display:flex; align-items:center; gap:14px; color:var(--muted); font-size: clamp(13px, 1.3vw, 16px); line-height:1}
+        .tagline .rule{width: clamp(58px, 9vw, 92px); height:1px; background:rgba(255,255,255,.06)}
 
-        /* HERO */
-        #hero{padding:46px 0 26px}
-        .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:center}
-        @media (max-width:980px){ .hero-grid{grid-template-columns:1fr; gap:26px} }
-        .eyebrow{font-size:.9rem; color:var(--muted); letter-spacing:.2em; text-transform:uppercase}
-        .hero-title{
-            margin:.35rem 0 .7rem; font-weight:900; line-height:1.06; letter-spacing:-.02em;
-            font-size: clamp(34px, 5.2vw, 86px);
-        }
-        .hero-title .line, .hero-title .kicker{display:block; white-space:nowrap}
-        @media (max-width:980px){ .hero-title .line,.hero-title .kicker{white-space:normal} }
-        .gradient-text{
-            background-image:linear-gradient(90deg, var(--pi-red), var(--pi-blue), var(--pi-red));
-            background-size:200% 100%;
-            -webkit-background-clip:text; background-clip:text;
-            -webkit-text-fill-color:transparent; color:transparent;
-            animation:ink-move 8s ease-in-out infinite;
-        }
-        @keyframes ink-move{0%,100%{background-position:0% 50%} 50%{background-position:100% 50%}}
+        .right-col{display:flex; flex-direction:column; align-items:flex-end; gap:10px; font-weight:800}
+        .right-col .phone-row{ display:flex; align-items:center; gap:10px; }
+        .right-col i{color:#c9d4ea}
+        .phone{font-size: clamp(14px, 1.2vw, 18px); color:#e7ecf5}
 
-        .hero-lead{font-size:1.1rem; color:#e3eaff; margin:0 0 14px}
+        .divider{border:0; border-top:1px solid #141a26; margin:0}
+        .navrow{padding:12px 0; position: relative;}
+        .menu{display:flex; justify-content:center; gap:28px; list-style:none; margin:0; padding:0}
+        .menu a{ font-weight:800; font-size:14px; color:#c9d4ea; letter-spacing:.06em; text-transform:uppercase; }
+        .menu a:hover, .menu a.is-active{color:#ffffff}
 
-        .hero-card{
-            position:relative; border:1px solid var(--edge); border-radius:18px;
-            background:linear-gradient(180deg,#0f1525,#0b101d); padding:16px;
-            box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 #ffffff10;
+        /* Bouton connexion (non utilisé ici, laissé pour cohérence du styleguide) */
+        .btn-login{
+            --ring: rgba(44,89,255,.28);
+            --bg1:#0f1833; --bg2:#1c2b59;
+            --bd1:#3a58ff; --bd2:#e5473a;
+            display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+            padding:14px 18px; min-width:130px; text-align:center; border-radius:16px;
+            background: linear-gradient(180deg, var(--bg2), var(--bg1)) padding-box,
+            linear-gradient(135deg, var(--bd1), var(--bd2)) border-box;
+            border:1px solid transparent; color:#eaf0ff; font-weight:800; letter-spacing:.02em; text-transform:uppercase;
+            box-shadow:0 12px 26px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+            transition: transform .14s cubic-bezier(.2,.9,.2,1.2), box-shadow .22s ease, filter .22s ease, background .22s ease;
         }
-        .qr-wrap{display:grid; grid-template-columns:140px 1fr; gap:14px; align-items:center}
-        .qr{
-            width:140px; height:140px; border-radius:12px; overflow:hidden;
-            background:#0c1224; display:grid; place-items:center; border:1px solid #223055;
+        .btn-login i{
+            font-size:18px; line-height:1; width:40px; height:40px; border-radius:999px; display:grid; place-items:center;
+            background: radial-gradient(120% 120% at 30% 20%, #2a3f86 0%, #182650 45%, #0f1833 100%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 6px 18px rgba(58,88,255,.25);
         }
-        .qr img, .qr canvas{width:100%; height:100%; object-fit:cover; display:block}
-        .hint{color:#cfe0ff; font-weight:700}
+        .btn-login:hover{ transform:translateY(-1px); box-shadow: 0 16px 34px rgba(0,0,0,.45), 0 0 0 3px var(--ring); filter:brightness(1.04);}
+        .btn-login:active{ transform:translateY(0) scale(.995); filter:brightness(.98); }
 
-        /* Features */
-        section{padding:56px 0}
-        .section-hd{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px}
-        .section-hd h2{margin:0; font-size:clamp(24px,3.3vw,40px)}
-        .sub{color:var(--muted)}
-        .features{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
-        @media (max-width:980px){ .features{grid-template-columns:repeat(2,1fr)} }
-        @media (max-width:560px){ .features{grid-template-columns:1fr} }
-        .feat{
-            background:linear-gradient(180deg,#11192d,#0c1222); border:1px solid #1e2740;
-            border-radius:16px; padding:16px; transition:transform .15s ease, box-shadow .15s ease, border-color .15s;
+        @media (max-width:720px){
+            header.pi-simple .topbar{grid-template-columns:1fr; row-gap:10px; text-align:center}
+            .left-col{justify-content:center}
+            .menu{flex-wrap:wrap; gap:18px}
+            .right-col{ align-items:center; }
+            .btn-login{ padding:12px 14px; min-width:118px; border-radius:14px; }
+            .btn-login i{ width:36px; height:36px; font-size:17px; }
         }
-        .feat:hover{ transform:translateY(-2px); border-color:#2a3659; box-shadow:0 14px 38px rgba(0,0,0,.32) }
-        .ico{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:#1B2436;margin-bottom:8px}
-        .ico i{font-size:22px;color:#eaf0ff}
-        .feat h3{margin:.25rem 0 .25rem; font-size:1.05rem; font-weight:900}
-        .feat p{margin:0; color:#c9d4ea}
 
-        /* Steps */
-        .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
-        @media (max-width:980px){ .steps{grid-template-columns:repeat(2,1fr)} }
-        @media (max-width:560px){ .steps{grid-template-columns:1fr} }
-        .step{background:linear-gradient(180deg,#0f1525,#0c1222); border:1px solid #1e2740; border-radius:16px; padding:16px}
-        .badge{display:inline-grid; place-items:center; width:34px; height:34px; border-radius:10px; background:#1B2436; border:1px solid #213055; font-weight:900; margin-bottom:10px}
+        /* ========== CONTENU DE LA PAGE (hero, features, cta…) ========== */
+        /* Hero Section */
+        .app-hero{padding:120px 0 100px; background:var(--page-bg); position:relative; overflow:hidden;}
+        .hero-content{display:flex; align-items:center; gap:60px; position:relative; z-index:2;}
+        .hero-text{flex:1; max-width:600px;}
+        .hero-text h1{font-size:clamp(2.5rem, 5vw, 4rem); font-weight:800; line-height:1.1; margin-bottom:24px; background:linear-gradient(45deg, #fff, #c9d4ea); -webkit-background-clip:text; -webkit-text-fill-color:transparent;}
+        .hero-text p{font-size:1.2rem; color:var(--muted); margin-bottom:32px; max-width:500px;}
+        .app-badges{display:flex; gap:16px; margin-top:10px;}
+        .app-badge{height:50px; transition:transform 0.2s;}
+        .app-badge:hover{transform:translateY(-3px);}
+        .hero-image{flex:1; position:relative;}
+        .phone-mockup{width:100%; max-width:300px; margin:0 auto; position:relative; animation:float 6s ease-in-out infinite;}
+        .phone-mockup img{width:100%; height:auto; display:block;}
+        .floating-element{position:absolute; background:var(--pi-red); width:100px; height:100px; border-radius:50%; filter:blur(60px); opacity:0.3;}
+        .floating-1{top:10%; left:10%; width:200px; height:200px; background:var(--pi-blue);}
+        .floating-2{bottom:10%; right:10%; width:150px; height:150px;}
 
-        /* Screens */
-        .screens{
-            display:grid; grid-template-columns:1fr 1fr; gap:14px;
+        /* Petit texte “Cliquez ici pour télécharger” */
+        .download-note{
+            font-size:.95rem;
+            color:var(--muted);
+            margin:8px 0 6px;
+            display:flex; align-items:center; gap:8px;
         }
-        @media (max-width:980px){ .screens{grid-template-columns:1fr} }
-        .phone{
-            border-radius:28px; padding:14px; background:linear-gradient(180deg,#0e1423,#0b101c);
-            border:1px solid #1e2740; box-shadow:0 18px 48px rgba(0,0,0,.35); aspect-ratio:9/19; display:grid; place-items:center;
+        .download-note i{ font-size:1rem; opacity:.9; }
+        @media (max-width: 992px){
+            .download-note{ justify-content:center; }
         }
-        .phone img{width:100%; height:100%; object-fit:cover; border-radius:20px}
 
-        /* FAQ (details) */
-        .faq{max-width:900px; margin:0 auto}
-        details{
-            background:linear-gradient(180deg,#0f1525,#0c1222); border:1px solid #1e2740; border-radius:14px; padding:14px 16px;
-        }
-        details+details{margin-top:10px}
-        summary{
-            display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; font-weight:900;
-            list-style:none; color:#eaf0ff;
-        }
-        summary::-webkit-details-marker{display:none}
-        details[open]{border-color:#2a3659}
+        /* Features Section */
+        .features{background:var(--bg-2); padding:100px 0; position:relative;}
+        .section-title{text-align:center; margin-bottom:60px;}
+        .section-title h2{font-size:2.5rem; font-weight:800; margin-bottom:16px; background:linear-gradient(45deg, var(--pi-red), var(--pi-blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; display:inline-block;}
+        .section-title p{color:var(--muted); max-width:600px; margin:0 auto;}
+        .features-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:30px;}
+        .feature-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:32px; transition:transform 0.3s, box-shadow 0.3s;}
+        .feature-card:hover{transform:translateY(-5px); box-shadow:0 15px 30px rgba(0,0,0,0.2);}
+        .feature-icon{width:60px; height:60px; background:linear-gradient(135deg, var(--pi-red), var(--pi-blue)); border-radius:16px; display:flex; align-items:center; justify-content:center; margin-bottom:24px;}
+        .feature-icon i{font-size:28px; color:white;}
+        .feature-card h3{font-size:1.4rem; margin-bottom:16px; color:var(--text);}
+        .feature-card p{color:var(--muted); margin-bottom:0;}
 
-        /* Footer */
-        footer{
-            padding:28px 0 20px; border-top:1px solid #141a2b;
-            background:linear-gradient(180deg,#0f1525,#0c1223);
-        }
-        .social{list-style:none; display:flex; gap:12px; justify-content:center; padding:0; margin:12px 0 0}
-        .social a{ width:40px;height:40px; display:grid; place-items:center; border-radius:50%; background:#101733; border:1px solid #1e2740; color:#cfe0ff }
-        .social a:hover{ background:linear-gradient(145deg,var(--pi-blue),var(--pi-red)); color:#fff }
-        .copyright{ text-align:center; color:#c9d4ea; font-size:12px; margin-top:10px }
+        /* CTA Section */
+        .cta-section{background:linear-gradient(135deg, var(--pi-blue), var(--pi-red)); padding:80px 0; text-align:center; position:relative; overflow:hidden;}
+        .cta-content{position:relative; z-index:2; max-width:800px; margin:0 auto; padding:0 20px;}
+        .cta-content h2{font-size:2.5rem; font-weight:800; margin-bottom:24px; color:white;}
+        .cta-content p{font-size:1.2rem; color:rgba(255,255,255,0.9); margin-bottom:32px; max-width:600px; margin-left:auto; margin-right:auto;}
+        .cta-buttons{display:flex; justify-content:center; gap:20px; flex-wrap:wrap;}
+        .btn{display:inline-flex; align-items:center; justify-content:center; padding:12px 28px; border-radius:12px; font-weight:600; font-size:1rem; transition:all 0.3s; border:none; cursor:pointer;}
+        .btn-primary{background:white; color:var(--pi-red);}
+        .btn-primary:hover{transform:translateY(-3px); box-shadow:0 10px 20px rgba(0,0,0,0.2);}
+        .btn-outline{background:transparent; border:2px solid white; color:white;}
+        .btn-outline:hover{background:rgba(255,255,255,0.1); transform:translateY(-3px);}
+        .cta-bg{position:absolute; width:100%; height:100%; top:0; left:0; opacity:0.1;}
+        .cta-bg div{position:absolute; border-radius:50%; background:white;}
 
-        /* Small helpers */
-        .btn{
-            display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:14px;
-            border:1px solid #1f2842; background:linear-gradient(145deg,#151c32,#0f1424); font-weight:800
+        /* Animations */
+        @keyframes float{
+            0%, 100%{transform:translateY(0);}
+            50%{transform:translateY(-20px);}
         }
-        .grid-gap-14{display:grid; gap:14px}
+
+        /* Responsive */
+        @media (max-width: 992px){
+            .hero-content{flex-direction:column-reverse; text-align:center; gap:40px;}
+            .hero-text{max-width:100%;}
+            .hero-text p{margin-left:auto; margin-right:auto;}
+            .app-badges{justify-content:center;}
+        }
+        @media (max-width: 768px){
+            .app-hero{padding:100px 0 80px;}
+            .features{padding:80px 0;}
+            .features-grid{grid-template-columns:1fr;}
+            .cta-content h2{font-size:2rem;}
+        }
+        @media (max-width: 576px){
+            .app-badges{flex-direction:column; align-items:center;}
+            .btn{padding:10px 20px; font-size:0.9rem;}
+        }
+
+        /* ===== Footer avancé (pi-footer) ===== */
+        footer.pi-footer{ position: relative; isolation: isolate; }
+        footer.pi-footer::before{
+            content:""; position:absolute; z-index:-1; top:0; bottom:0; left:50%; right:50%;
+            margin-left:-50vw; margin-right:-50vw;
+            background:
+                    radial-gradient(900px 500px at 10% -10%, rgba(46,76,151,.12), transparent 60%),
+                    radial-gradient(900px 500px at 90% -10%, rgba(214,69,46,.10), transparent 55%),
+                    linear-gradient(180deg, #0f1525, #0c1223);
+            border-top: 1px solid #141a2b;
+            box-shadow: inset 0 12px 40px rgba(0,0,0,.35);
+        }
+        .pi-footer .wrap{ max-width:1100px; margin:0 auto; text-align:center; padding:24px 20px 10px; }
+        .pi-footer .brand{ height:72px; width:auto; object-fit:contain; display:block; margin:0 auto 18px; }
+        .pi-footer .headline{ display:flex; align-items:center; justify-content:center; gap:22px; margin:6px auto 18px; }
+        .pi-footer .headline h2{ margin:0; font-weight:800; letter-spacing:.12em; color:var(--pi-red, #D6452E); font-size:24px; }
+        .pi-footer .headline .line{ height:4px; width:260px; border-radius:2px; background:var(--pi-red, #D6452E); transform-origin:center; }
+        @media (max-width:720px){ .pi-footer .headline .line{ width:20vw } .pi-footer .headline h2{ font-size:20px } }
+        .pi-footer .social{ list-style:none; display:flex; justify-content:center; align-items:center; gap:14px; padding:0; margin:14px 0 20px; }
+        .pi-footer .social a{ width:42px; height:42px; display:grid; place-items:center; background:#101733; color:#cfe0ff; border-radius:50%; border:1px solid #1e2740; font-size:18px; transition:transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease; }
+        .pi-footer .social a:hover{ background: linear-gradient(145deg, var(--pi-blue,#2E4C97), var(--pi-red,#D6452E)); border-color:#2a3659; color:#fff; transform:translateY(-2px); }
+        .pi-footer .footer-nav{ display:flex; flex-wrap:wrap; justify-content:center; gap:26px 30px; padding:12px 0 8px; margin:0 auto 12px; }
+        .pi-footer .footer-nav a{ text-decoration:none; color:#e9f1ff; font-weight:800; font-size:14px; letter-spacing:.04em; text-transform:uppercase; transition:color .2s ease; }
+        .pi-footer .footer-nav a:hover{ color:var(--pi-red,#D6452E) }
+        .pi-footer .copyright{ margin:6px 0 0; font-size:12px; color:var(--muted); user-select:none; }
+
+        /* ===== Fond global (identique à la home) ===== */
+        html,body{ background:transparent !important; } /* laisse voir le fond fixe derrière */
+        #page-bg{ position:fixed; inset:0; z-index:-2; pointer-events:none; background:var(--page-bg); }
+        .pi-orbs{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+        .pi-orbs .orb{
+            position:absolute; width:48vmax; height:48vmax; border-radius:9999px;
+            filter:blur(80px); opacity:.75; mix-blend-mode:screen; will-change:transform;
+        }
+        .pi-orbs .blue{ background:rgba(46,76,151,.18); }
+        .pi-orbs .red { background:rgba(226,27,60,.16);  }
+        .pi-orbs .a{ top:-10vmax; left:-6vmax;  animation:orbA 36s linear infinite; }
+        .pi-orbs .b{ top:-8vmax;  right:-10vmax; animation:orbB 42s linear infinite; }
+        .pi-orbs .c{ bottom:-12vmax; left:15vw;  animation:orbC 40s linear infinite; width:42vmax;height:42vmax;}
+        .pi-orbs .d{ bottom:-14vmax; right:10vw; animation:orbD 46s linear infinite; width:50vmax;height:50vmax;}
+        @keyframes orbA{ 50%{ transform:translate3d(4vw,2vh,0) scale(1.05);} }
+        @keyframes orbB{ 50%{ transform:translate3d(-3vw,3vh,0) scale(1.03);} }
+        @keyframes orbC{ 50%{ transform:translate3d(2vw,-2vh,0) scale(1.06);} }
+        @keyframes orbD{ 50%{ transform:translate3d(-2vw,-3vh,0) scale(1.04);} }
+        @media (prefers-reduced-motion:reduce){ .pi-orbs .orb{ animation:none; opacity:.55; } }
     </style>
 </head>
 <body>
+<!-- Fond global -->
+<div id="page-bg" aria-hidden="true"></div>
+<div class="pi-orbs" aria-hidden="true">
+    <span class="orb blue a"></span>
+    <span class="orb red  b"></span>
+    <span class="orb blue c"></span>
+    <span class="orb red  d"></span>
+</div>
 
-<header>
+
+
+<!-- ====== Header « pi-simple » intégré ====== -->
+<header class="pi-simple">
     <div class="container topbar">
-        <div class="brand">
-            <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul">
-            <span>Paristanbul</span>
+        <!-- Gauche -->
+        <div class="left-col">
+            <div class="social-group">
+                <nav class="social" aria-label="Réseaux sociaux">
+                    <a href="https://www.facebook.com/supermarcheparistanbul/?locale=fr_FR" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/paristanbul_supermarche/?hl=fr" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@supermarche_paristanbul" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.youtube.com/channel/UCsjy3bdpFzBwM7MF923gKvA" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </nav>
+                <div class="join">Rejoignez nous</div>
+            </div>
         </div>
-        <nav class="nav">
-            <a href="index.php">Accueil</a>
-            <a href="nosMagasins.php">Magasins</a>
-            <a href="index.php#catalog">Catalogue</a>
-            <a href="postuler.php">Postuler</a>
-        </nav>
+
+        <!-- Centre -->
+        <div class="brand">
+            <a href="index.php" class="navbar-brand">
+                <img src="/assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul">
+            </a>
+            <div class="tagline">
+                <span class="rule" aria-hidden="true"></span>
+                <span>Since 1993</span>
+                <span class="rule" aria-hidden="true"></span>
+            </div>
+        </div>
+
+        <!-- Droite -->
+        <div class="right-col">
+            <div class="phone-row">
+                <i class="fa-solid fa-phone"></i>
+                <a class="phone" href="tel:+33749826133">07 49 82 61 33</a>
+            </div>
+        </div>
     </div>
+
+    <hr class="divider">
+
+    <!-- Nav -->
+    <div class="container navrow">
+        <ul class="menu" aria-label="Navigation principale">
+            <?php if (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') === 'admin')): ?>
+                <li><a href="pageAdmin.php">Admin</a></li>
+            <?php endif; ?>
+            <li><a href="index.php">Accueil</a></li>
+            <li><a href="quiSommesNous.html">Notre Histoire</a></li>
+            <li><a href="index.php#catalog">Catalogue</a></li>
+            <li><a href="nosMagasins.php">Nos Magasins</a></li>
+            <li><a href="index.php#contact">Contact</a></li>
+            <li><a href="postuler.php">Postuler</a></li>
+            <li><a href="applicationTel.php" class="is-active">Application</a></li>
+        </ul>
+    </div>
+
+    <hr class="divider">
 </header>
 
-<main>
-    <!-- HERO -->
-    <section id="hero" class="container">
-        <div class="hero-grid">
-            <div>
-                <div class="eyebrow">L’app Paristanbul</div>
-                <h1 class="hero-title">
-                    <span class="line">Vos promos, votre fidélité,</span>
-                    <span class="kicker">à <span class="gradient-text">deux pas</span> de chez vous.</span>
-                </h1>
-                <p class="hero-lead">Recevez les offres en avant-première, cumulez des points, trouvez le magasin le plus proche et gardez vos tickets de caisse au même endroit.</p>
-
-                <div class="grid-gap-14">
-                    <div class="store-badges">
-                        <!-- Remplacez les href par vos liens stores -->
-                        <a class="store" href="https://apps.apple.com/app/id000000" target="_blank" rel="noopener">
-                            <i class="fa-brands fa-apple"></i>
-                            <div><small>Télécharger sur</small><span>App Store</span></div>
-                        </a>
-                        <a class="store" href="https://play.google.com/store/apps/details?id=com.paristanbul" target="_blank" rel="noopener">
-                            <i class="fa-brands fa-google-play"></i>
-                            <div><small>Disponible sur</small><span>Google Play</span></div>
-                        </a>
-                    </div>
-
-                    <div class="hero-card">
-                        <div class="qr-wrap">
-                            <!-- QR code (changez data-app-url) -->
-                            <div class="qr">
-                                <img id="qrImg" alt="QR code de l’app" loading="lazy">
-                            </div>
-                            <div>
-                                <div class="hint">Scannez pour télécharger l’app.</div>
-                                <small style="color:#9fb2dc">iOS 13+ • Android 8.0+. Les liens s’ouvrent dans le store compatible avec votre appareil.</small>
-                                <div style="margin-top:10px" class="store-badges">
-                                    <a class="store" href="#faq"><i class="bi bi-question-circle"></i><span>Aide & FAQ</span></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+<!-- ====== Hero Section ====== -->
+<section class="app-hero">
+    <div class="container">
+        <div class="hero-content" style="display: flex; align-items: center; gap: 40px;">
+            <!-- Logo à gauche -->
+            <div class="hero-image" style="flex: 0 0 30%;">
+                <img src="/assets/img/petit-logo.jpg" alt="Logo Paristanbul" style="width: 100%; max-width: 280px; height: auto; border-radius: 24px; box-shadow: 0 15px 30px -10px rgba(0,0,0,0.2);">
             </div>
 
-            <!-- Visuel téléphone -->
-            <div class="screens">
-                <div class="phone">
-                    <img src="../assets/app/screen-1.jpg" alt="Capture de l’app Paristanbul">
+            <!-- Texte à droite -->
+            <div class="hero-text" style="flex: 0 1 60%;">
+                <style>
+                    @keyframes gradientMove {
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
+                    }
+                    .gradient-text {
+                        background: linear-gradient(90deg, #2E4C97, #D6452E, #2E4C97);
+                        background-size: 200% auto;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                        display: inline-block;
+                        animation: gradientMove 5s ease-in-out infinite;
+                    }
+                </style>
+
+                <div style="margin-bottom: 10px;">
+                    <h1 style="margin: 0; font-size: 2.2em; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #333; line-height: 1;">
+                        <span>L'application</span>
+                        <span class="gradient-text" style="font-size: 1.1em;">Paristanbul</span>
+                    </h1>
+                    <p style="margin: 0; color: white; font-size: 2.2em; font-weight: 300; line-height: 1;">dans votre poche</p>
                 </div>
-                <div class="phone">
-                    <img src="../assets/app/screen-2.jpg" alt="Capture de l’app Paristanbul">
+
+                <em style="margin: 0 0 20px 0; color: #555; line-height: 1.5; color: white">
+                    Accédez à nos offres exclusives, consultez nos catalogues numériques,
+                    gérez vos listes de courses et profitez de réductions personnalisées
+                    où que vous soyez.
+                </em>
+
+                <!-- Petit texte d’aide au téléchargement -->
+                <p class="download-note">
+                    <i class="fa-solid fa-circle-down" aria-hidden="true"></i>
+                    Cliquez pour télécharger l’application
+                </p>
+
+                <div class="app-badges" style="display: flex; gap: 15px; align-items: center;">
+                    <a href="https://play.google.com/store/apps/details?id=com.akead.paristanbul&hl=fr"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       style="display: inline-flex; align-items: center; height: 65px; margin-top: -4px;">
+                        <img src="https://play.google.com/intl/en_us/badges/static/images/badges/fr_badge_web_generic.png"
+                             alt="Disponible sur Google Play"
+                             style="height: 100%; width: auto;">
+                    </a>
+                    <a href="https://apps.apple.com/fr/app/paristanbul-plus/id6743162682"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       style="display: inline-block; height: 50px; margin-top: -2px;">
+                        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                             alt="Télécharger sur l'App Store"
+                             height="50" style="height: 100%; width: auto;">
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="floating-element floating-1"></div>
+    <div class="floating-element floating-2"></div>
+</section>
 
-    <!-- AVANTAGES -->
-    <section class="container" id="avantages">
-        <div class="section-hd">
-            <h2>Pourquoi télécharger l’app ?</h2>
-            <div class="sub">Tout pour vos courses, au bon prix.</div>
+<!-- ====== Features Section ====== -->
+<section class="features">
+    <div class="container">
+        <div class="section-title">
+            <h2>Découvrez nos fonctionnalités</h2>
+            <p>Tout ce dont vous avez besoin pour une expérience de shopping optimale</p>
         </div>
-        <div class="features">
-            <article class="feat">
-                <div class="ico"><i class="bi bi-stars"></i></div>
-                <h3>Promos en avant-première</h3>
-                <p>Recevez les offres avant tout le monde et ne ratez plus les bons plans.</p>
-            </article>
-            <article class="feat">
-                <div class="ico"><i class="bi bi-credit-card-2-front"></i></div>
-                <h3>Fidélité intégrée</h3>
-                <p>Carte dématérialisée, points cumulés, avantages personnalisés.</p>
-            </article>
-            <article class="feat">
-                <div class="ico"><i class="bi bi-geo-alt"></i></div>
-                <h3>Magasins près de vous</h3>
-                <p>Horaires, itinéraire, affluence : trouvez l’adresse idéale en 1 clic.</p>
-            </article>
-            <article class="feat">
-                <div class="ico"><i class="bi bi-receipt"></i></div>
-                <h3>Tickets & garanties</h3>
-                <p>Conservez vos tickets au même endroit et simplifiez vos retours.</p>
-            </article>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <h3>Promotions exclusives</h3>
+                <p>Bénéficiez d'offres spéciales réservées aux utilisateurs de l'application et économisez sur vos courses.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <h3>Scan &amp; Achetez</h3>
+                <p>Scannez les codes-barres en magasin pour voir les prix, les promotions et les informations nutritionnelles.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-list"></i>
+                </div>
+                <h3>Listes de courses</h3>
+                <p>Créez et partagez facilement vos listes de courses avec votre famille et vos amis.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h3>Localisation en magasin</h3>
+                <p>Trouvez facilement les produits dans nos rayons avec notre plan interactif des magasins.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3>Alertes personnalisées</h3>
+                <p>Soyez informé en temps réel des promotions sur vos produits préférés.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h3>Paiement mobile</h3>
+                <p>Payez rapidement et facilement directement depuis votre smartphone.</p>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- COMMENT ÇA MARCHE -->
-    <section class="container" id="how">
-        <div class="section-hd">
-            <h2>Comment ça marche ?</h2>
-            <div class="sub">Installation en 3 minutes.</div>
-        </div>
-        <div class="steps">
-            <div class="step">
-                <div class="badge">1</div>
+<!-- ====== Comment ça marche ====== -->
+<section class="how-it-works">
+    <div class="container">
+        <h2>Comment ça marche ?</h2>
+        <p class="subtitle">Installation en 3 minutes.</p>
+
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-number">1</div>
                 <h3>Téléchargez</h3>
-                <p>Ouvrez l’App Store ou Google Play, puis installez “Paristanbul”.</p>
+                <p>Ouvrez l'App Store ou Google Play et installez "Paristanbul".</p>
             </div>
-            <div class="step">
-                <div class="badge">2</div>
-                <h3>Créez votre compte</h3>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Créez un compte</h3>
                 <p>Renseignez votre e-mail et validez en un instant.</p>
             </div>
-            <div class="step">
-                <div class="badge">3</div>
+            <div class="step-card">
+                <div class="step-number">3</div>
                 <h3>Activez la fidélité</h3>
-                <p>Votre carte apparaît automatiquement dans l’app.</p>
+                <p>Votre carte apparaît automatiquement dans l'app.</p>
             </div>
-            <div class="step">
-                <div class="badge">4</div>
+            <div class="step-card">
+                <div class="step-number">4</div>
                 <h3>Profitez</h3>
                 <p>Scannez en caisse, cumulez des points, recevez des récompenses.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- FAQ -->
-    <section class="container" id="faq">
-        <div class="section-hd">
-            <h2>Questions fréquentes</h2>
-        </div>
+<style>
+    /* Styles de la section Comment ça marche */
+    .how-it-works { padding: 80px 0; background: #f8f9fa; text-align: center; }
+    .how-it-works h2 { font-size: 2.5rem; color: #2E4C97; margin-bottom: 15px; }
+    .subtitle { font-size: 1.2rem; color: #6c757d; margin-bottom: 50px; }
+    .steps-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .step-card { background: white; border-radius: 12px; padding: 30px 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .step-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
+    .step-number { width: 50px; height: 50px; background: linear-gradient(135deg, #2E4C97, #D6452E); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; margin: 0 auto 20px; }
+    .step-card h3 { color: #2E4C97; margin-bottom: 15px; font-size: 1.3rem; }
+    .step-card p { color: #6c757d; line-height: 1.6; }
+    @media (max-width: 768px) {
+        .steps-container { grid-template-columns: 1fr; max-width: 500px; }
+        .step-card { text-align: center; }
+    }
+    /* ====== Animations ====== */
+    .animate {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
 
-        <div class="faq">
-            <details>
-                <summary>
-                    L’app est-elle gratuite ?
-                    <i class="bi bi-chevron-down"></i>
-                </summary>
-                <div class="sub" style="margin-top:8px">Oui, le téléchargement et l’utilisation sont 100% gratuits.</div>
-            </details>
+    .feature-card {
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s ease !important;
+    }
 
-            <details>
-                <summary>
-                    Sur quels appareils fonctionne l’app ?
-                    <i class="bi bi-chevron-down"></i>
-                </summary>
-                <div class="sub" style="margin-top:8px">iPhone (iOS 13+) et Android (Android 8.0+). Nous améliorons régulièrement la compatibilité.</div>
-            </details>
+    .feature-card:hover {
+        transform: translateY(-8px) !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.25) !important;
+    }
 
-            <details>
-                <summary>
-                    Comment récupérer ma carte de fidélité existante ?
-                    <i class="bi bi-chevron-down"></i>
-                </summary>
-                <div class="sub" style="margin-top:8px">Créez votre compte avec le même numéro/é-mail qu’en magasin. Votre carte se rattache automatiquement.</div>
-            </details>
+    .section-title h2, .section-title p {
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
 
-            <details>
-                <summary>
-                    J’ai un souci de connexion.
-                    <i class="bi bi-chevron-down"></i>
-                </summary>
-                <div class="sub" style="margin-top:8px">Utilisez “Mot de passe oublié ?”. Si besoin, contactez le support : <a href="mailto:parisistambulnogent@gmail.com">parisistambulnogent@gmail.com</a>.</div>
-            </details>
-        </div>
-    </section>
-</main>
+    .cta-content {
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+</style>
 
-<footer>
-    <div class="container" style="text-align:center">
-        <div class="store-badges" style="justify-content:center; margin-bottom:10px">
-            <a class="store" href="https://apps.apple.com/app/id000000" target="_blank" rel="noopener">
-                <i class="fa-brands fa-apple"></i>
-                <div><small>Télécharger sur</small><span>App Store</span></div>
+<!-- ====== CTA Section ====== -->
+<section class="cta-section">
+    <div class="cta-content">
+        <h2>Prêt à faire vos courses plus intelligemment ?</h2>
+        <p>Téléchargez dès maintenant l'application Paristanbul et profitez d'une expérience de shopping améliorée.</p>
+        <div class="cta-buttons">
+            <a href="https://apps.apple.com/fr/app/paristanbul-plus/id6743162682" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-apple" style="margin-right:8px;"></i> App Store
             </a>
-            <a class="store" href="https://play.google.com/store/apps/details?id=com.paristanbul" target="_blank" rel="noopener">
-                <i class="fa-brands fa-google-play"></i>
-                <div><small>Disponible sur</small><span>Google Play</span></div>
+            <a href="https://play.google.com/store/apps/details?id=com.akead.paristanbul&hl=fr" class="btn btn-outline" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-google-play" style="margin-right:8px;"></i> Google Play
             </a>
+        </div>
+    </div>
+    <div class="cta-bg">
+        <div style="width:300px; height:300px; top:-100px; right:-50px;"></div>
+        <div style="width:200px; height:200px; bottom:-50px; left:-50px;"></div>
+    </div>
+</section>
+
+<!-- ====== Footer ====== -->
+<footer class="pi-footer">
+    <div class="wrap">
+        <a href="index.php">
+            <img class="brand" src="/assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul">
+        </a>
+
+        <div class="headline">
+            <span class="line" aria-hidden="true"></span>
+            <h2>REJOIGNEZ-NOUS</h2>
+            <span class="line" aria-hidden="true"></span>
         </div>
 
         <ul class="social" aria-label="Réseaux sociaux">
@@ -356,28 +548,112 @@
             <li><a href="https://www.youtube.com/channel/UCsjy3bdpFzBwM7MF923gKvA" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a></li>
         </ul>
 
-        <p class="copyright">© <span id="year"></span> Paristanbul — Tous droits réservés.</p>
+        <nav class="footer-nav" aria-label="Navigation pied de page">
+            <a href="index.php">Accueil</a>
+            <a href="nosMagasins.php">Nos magasins</a>
+            <a href="index.php#catalog">Catalogue</a>
+            <a href="quiSommesNous.html">À propos</a>
+            <a href="postuler.php">Postuler</a>
+            <a href="index.php#contact">Contact</a>
+        </nav>
+
+        <p class="copyright">
+            © <?php echo date('Y'); ?> Paristanbul — Tous droits réservés.
+            <br><br>
+        </p>
     </div>
 </footer>
 
 <script>
-    // Année footer
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // Animation au défilement pour les features + titre
+    document.addEventListener('DOMContentLoaded', function() {
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
 
-    // Génération QR (utilise un service public d'image QR)
-    // Remplacez appUrl par l’URL de votre app / page de redirection smart.
-    const appUrl = 'https://paristanbul.fr/app'; // <-- À personnaliser
-    const qrImg = document.getElementById('qrImg');
-    const size = 280; // génère une image nette même en retina
-    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(appUrl)}`;
-
-    // Défilement doux si besoin
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-        a.addEventListener('click', e=>{
-            const id = a.getAttribute('href').slice(1);
-            const el = document.getElementById(id);
-            if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'}); }
+        document.querySelectorAll('.feature-card').forEach((card) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            observer.observe(card);
         });
+
+        const sectionTitles = document.querySelectorAll('.section-title');
+        sectionTitles.forEach(title => {
+            title.style.opacity = '0';
+            title.style.transform = 'translateY(20px)';
+            title.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(title);
+            setTimeout(() => {
+                if (title.isConnected) {
+                    title.style.opacity = '1';
+                    title.style.transform = 'translateY(0)';
+                }
+            }, 300);
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configuration des animations
+        const animationConfig = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        // Fonction d'animation
+        const animateOnScroll = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    // Ne plus observer l'élément après l'animation
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+
+        // Création de l'observateur
+        const observer = new IntersectionObserver(animateOnScroll, animationConfig);
+
+        // Cibler les éléments à animer
+        const elementsToAnimate = document.querySelectorAll('.hero-text, .hero-image, .feature-card, .section-title, .cta-content');
+
+        // Ajouter la classe d'animation initiale et observer chaque élément
+        elementsToAnimate.forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(element);
+        });
+
+        // Gestion spécifique des cartes de fonctionnalités avec un délai progressif
+        const featureCards = document.querySelectorAll('.feature-card');
+        featureCards.forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.15}s`;
+        });
+
+        // Gestion de l'animation du bouton d'appel à l'action
+        const ctaButton = document.querySelector('.cta-content .btn');
+        if (ctaButton) {
+            ctaButton.style.transform = 'scale(0.95)';
+            ctaButton.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+
+            ctaButton.addEventListener('mouseenter', () => {
+                ctaButton.style.transform = 'scale(1.05)';
+                ctaButton.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+            });
+
+            ctaButton.addEventListener('mouseleave', () => {
+                ctaButton.style.transform = 'scale(1)';
+                ctaButton.style.boxShadow = 'none';
+            });
+        }
     });
 </script>
 </body>
