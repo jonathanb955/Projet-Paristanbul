@@ -525,6 +525,60 @@ $username   = $_SESSION['user_name'] ?? 'Client';
         /* (optionnel) un peu plus de contraste global dans la toolbar */
         #catalog .toolbar .btn,
         #catalog .toolbar .btn svg{ color:#eaf0ff; }
+        /* Dégradé animé sur le texte (défilement de couleur) */
+        .pi-sites__left .title .gradient-text,
+        .gradient-text{
+            display:inline-block;
+            background-image: linear-gradient(90deg, var(--pi-red), var(--pi-blue), var(--pi-red));
+            background-size: 200% 100%;
+            background-repeat: no-repeat;
+
+            /* Clip du fond sur la forme du texte */
+            -webkit-background-clip: text;
+            background-clip: text;
+
+            /* Rendre le remplissage du glyph transparent (Chrome/Safari/Edge + fallback) */
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+
+            animation: ink-move 8s ease-in-out infinite;
+            will-change: background-position;
+        }
+
+        @keyframes ink-move{
+            0%,100%{ background-position: 0% 50%; }
+            50%    { background-position:100% 50%; }
+        }
+
+        @media (prefers-reduced-motion: reduce){
+            .gradient-text{ animation: none; }
+        }
+
+
+
+
+        /* Défilement de couleurs (cross-browser) */
+        .gradient-text{
+            background-image:linear-gradient(90deg, var(--pi-red), var(--pi-blue), var(--pi-red));
+            background-size:200% 100%;
+            -webkit-background-clip:text;
+            background-clip:text;
+            -webkit-text-fill-color:transparent;
+            color:transparent;                 /* <-- important pour Firefox */
+            animation:ink-move 8s ease-in-out infinite;
+        }
+        @keyframes ink-move{
+            0%,100%{background-position:0% 50%}
+            50%    {background-position:100% 50%}
+        }
+
+        /* Si tu veux que l’anim reste active même avec "réduire les animations",
+           supprime ou commente ce bloc : */
+        /*
+        @media (prefers-reduced-motion: reduce){
+          .gradient-text{ animation:none; }
+        }
+        */
 
     </style>
 </head>
@@ -648,7 +702,12 @@ $username   = $_SESSION['user_name'] ?? 'Client';
         <div class="hero-wrap">
             <div class="reveal">
                 <div class="eyebrow">Bienvenue chez Paristanbul</div>
-                <h1>Vos saveurs favorites, <span id="aDeuxPas" class="gradient-text">à deux pas</span> de chez vous.</h1>
+                <h1 class="hero-title">
+                    <span class="line">Vos saveurs favorites,</span>
+                    <span class="line">à <span class="gradient-text">deux pas</span> de chez vous.</span>
+                </h1>
+
+
                 <p class="lead">Boucherie halal, primeur, épicerie, produits turcs et du monde. Découvrez notre nouveau catalogue interactif et trouvez le magasin le plus proche.</p>
                 <div class="cta-row">
                     <a href="#catalog" class="btn primary magnet">Voir le catalogue</a>
@@ -877,7 +936,7 @@ $username   = $_SESSION['user_name'] ?? 'Client';
                             <path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/>
                         </svg>
                         <div class="info-label">Email</div>
-                        <div class="info-value">parisistambulnogent@gmail.com</div>
+                        <div class="info-value">contact@paristanbul.com</div>
 
                         <svg class="info-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>

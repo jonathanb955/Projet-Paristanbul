@@ -328,6 +328,26 @@
 
         /* Supprimer l’icône blanche dans la légende du slider */
         .pi-legend svg{ display:none !important; }
+        /* Défilement de couleurs sur "à deux pas" */
+        .gradient-text{
+            background-image: linear-gradient(90deg, var(--pi-red), var(--pi-blue), var(--pi-red));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent; n n
+            animation: ink-move 8s ease-in-out infinite;
+        }
+
+        /* même animation que sur "Une histoire de famille" */
+        @keyframes ink-move{
+            0%,100%{ background-position: 0% 50%; }
+            50%    { background-position: 100% 50%; }
+        }
+
+        /* accessibilité : pas d’anim si l’utilisateur préfère réduire les mouvements */
+        @media (prefers-reduced-motion: reduce){
+            .gradient-text{ animation: none; }
+        }
 
     </style>
 </head>
@@ -429,7 +449,7 @@
                 <span class="chip"><i class="bi bi-emoji-smile"></i> Hospitalité</span>
             </div>
             <div style="margin-top:14px">
-                <a href="index.php#stores" class="chip magnet" style="background:linear-gradient(145deg,#122043,#0e1731);border-color:#223055;color:#e7ecf5"><i class="bi bi-geo-alt"></i> Voir nos adresses</a>
+                <a href="nosMagasins.php" class="chip magnet" style="background:linear-gradient(145deg,#122043,#0e1731);border-color:#223055;color:#e7ecf5"><i class="bi bi-geo-alt"></i> Voir nos adresses</a>
             </div>
         </div>
     </div>
