@@ -148,14 +148,8 @@ $username   = $_SESSION['user_name'] ?? 'Client';
 <!-- Hero Section -->
 <section class="app-hero">
     <div class="container">
-        <div class="hero-content" style="display: flex; align-items: center; gap: 40px;">
-            <!-- Logo à gauche -->
-            <div class="hero-image" style="flex: 0 0 30%;">
-                <img src="/assets/img/petit-logo.jpg" alt="Logo Paristanbul" style="width: 100%; max-width: 280px; height: auto; border-radius: 24px; box-shadow: 0 15px 30px -10px rgba(0,0,0,0.2);">
-            </div>
-            
-            <!-- Texte à droite -->
-            <div class="hero-text" style="flex: 0 1 60%;">
+        <div class="hero-content">
+            <div class="hero-text">
                 <style>
                     @keyframes gradientMove {
                         0% { background-position: 0% 50%; }
@@ -169,41 +163,26 @@ $username   = $_SESSION['user_name'] ?? 'Client';
                         -webkit-text-fill-color: transparent;
                         background-clip: text;
                         display: inline-block;
+                        position: relative;
+                        line-height: 1.2;
+                        padding-bottom: 0.2em;
                         animation: gradientMove 5s ease-in-out infinite;
                     }
                 </style>
-                
-                <div style="margin-bottom: 10px;">
-                    <h1 style="margin: 0; font-size: 2.2em; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #333; line-height: 1;">
-                        <span>L'application</span>
-                        <span class="gradient-text" style="font-size: 1.1em;">Paristanbul</span>
-                    </h1>
-                    <p style="margin: 0; color: white; font-size: 2.2em; font-weight: 300; line-height: 1;">dans votre poche</p>
+                <h1><span class="gradient-text">L'application Paristanbul</span> dans votre poche</h1>
+                <p>Accédez à nos offres exclusives, consultez nos catalogues numériques, gérez vos listes de courses et profitez de réductions personnalisées où que vous soyez.</p>
+                <div class="app-badges">
+                    <a href="https://play.google.com/store/apps/details?id=com.akead.paristanbul&hl=fr" class="app-badge" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; height: 65px; margin-top: -7px;">
+                        <img src="https://play.google.com/intl/en_us/badges/static/images/badges/fr_badge_web_generic.png" alt="Disponible sur Google Play" style="height: 100%; width: auto;">
+                    </a>
+                    <a href="https://apps.apple.com/fr/app/paristanbul-plus/id6743162682" class="app-badge" target="_blank" rel="noopener noreferrer">
+                        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Télécharger sur l'App Store" height="50">
+                    </a>
                 </div>
-                
-                <p style="margin: 0 0 20px 0; color: #555; line-height: 1.5;">
-                    Accédez à nos offres exclusives, consultez nos catalogues numériques, 
-                    gérez vos listes de courses et profitez de réductions personnalisées 
-                    où que vous soyez.
-                </p>
-                
-                <div class="app-badges" style="display: flex; gap: 15px; margin-top: 25px; align-items: center;">
-                    <a href="https://play.google.com/store/apps/details?id=com.akead.paristanbul&hl=fr" 
-                       target="_blank" 
-                       rel="noopener noreferrer" 
-                       style="display: inline-flex; align-items: center; height: 65px; margin-top: -4px;">
-                        <img src="https://play.google.com/intl/en_us/badges/static/images/badges/fr_badge_web_generic.png" 
-                             alt="Disponible sur Google Play" 
-                             style="height: 100%; width: auto;">
-                    </a>
-                    <a href="https://apps.apple.com/fr/app/paristanbul-plus/id6743162682" 
-                       target="_blank" 
-                       rel="noopener noreferrer"
-                       style="display: inline-block; height: 50px; margin-top: -2px;">
-                        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" 
-                             alt="Télécharger sur l'App Store" 
-                             height="50" style="height: 100%; width: auto;">
-                    </a>
+            </div>
+            <div class="hero-image">
+                <div class="phone-mockup">
+                    <img src="https://i.ibb.co/3zQY1kC/iphone-mockup.png" alt="Application mobile Paristanbul">
                 </div>
             </div>
         </div>
