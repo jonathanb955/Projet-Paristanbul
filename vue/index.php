@@ -3135,7 +3135,7 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
 
     <div class="appPromo-badges">
         <a class="store-badge"
-           href="https://apps.apple.com/fr/search?term=paristanbul"
+           href="https://apps.apple.com/fr/app/paristanbul-plus/id6743162682"
            target="_blank"
            rel="noopener noreferrer"
            aria-label="Ouvrir Paristanbul sur l’App Store (iOS)">
