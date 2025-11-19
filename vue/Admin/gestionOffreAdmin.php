@@ -187,6 +187,7 @@ $queryString = http_build_query($queryParams);
         <a class="menu-item" href="../../vue/Admin/nosMagasinsAdmin.php"><i class="bi bi-shop"></i><span>Nos magasins</span></a>
         <div class="menu-title">Contenus</div>
 
+        <a class="menu-item" href="gestionOffreAdmin.php"><i class="bi bi-briefcase"></i><span>Offres</span></a>
         <a class="menu-item" href="candidatureAdmin.php"><i class="bi bi-briefcase"></i><span>Candidatures</span></a>
         <a class="menu-item" href="../../vue/Admin/gestionUserAdmin.php"><i class="bi bi-people"></i><span>Utilisateurs</span></a>
     </nav>

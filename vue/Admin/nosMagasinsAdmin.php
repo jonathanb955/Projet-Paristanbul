@@ -99,6 +99,7 @@ $villes = $stmtVilles->fetchAll(PDO::FETCH_COLUMN);
 
         <div class="menu-title">Administration</div>
         <a class="menu-item" href="gestionOffreAdmin.php"><i class="bi bi-briefcase"></i><span>Offres</span></a>
+        <a class="menu-item" href="candidatureAdmin.php"><i class="bi bi-briefcase"></i><span>Candidatures</span></a>
         <a class="menu-item" href="gestionUserAdmin.php"><i class="bi bi-people"></i><span>Utilisateurs</span></a>
     </nav>
     <div class="sidebar-footer">
