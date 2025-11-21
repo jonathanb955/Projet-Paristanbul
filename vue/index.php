@@ -223,7 +223,7 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
                         Voir le catalogue
                     </a>
 
-                    <a href="#stores" class="btn magnet"
+                    <a href="nosMagasins.php" class="btn magnet"
                        style="background:linear-gradient(145deg,#8B1A1A,#A32929);border:1px solid #A32929;">
                         Voir nos magasins
                     </a>
@@ -455,7 +455,7 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
     <section class="section" id="appPromo" style="padding-top:32px; padding-bottom:32px;">
         <div class="container apppromo-wrap">
             <!-- Col texte -->
-            <div class="apppromo-left">
+            <div class="apppromo-left animate-on-scroll from-left">
                 <div class="eyebrow">Ne ratez plus une promo</div>
 
                 <h2 class="apppromo-title">
@@ -499,7 +499,7 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
 
             <!-- Col visuel téléphone -->
             <!-- Col visuel téléphone -->
-            <div class="apppromo-right" data-parallax data-speed="0.015">
+            <div class="apppromo-right animate-on-scroll from-right" data-parallax data-speed="0.015">
                 <div class="apppromo-phoneCard">
                     <div class="apppromo-phoneMock">
                         <img src="../assets/img/app_paristanbul_mockup.jpeg"
@@ -1053,17 +1053,24 @@ function handleIntersection(entries, observer) {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.classList.add('active');
-            observer.unobserve(entry.target);
+            // Ne pas supprimer l'observation pour éviter les clignotements
+            // lors du défilement vers le haut
+        } else {
+            // Ne pas retirer la classe 'active' pour maintenir l'état visible
+            // entry.target.classList.remove('active');
         }
     });
 }
 
+// Configuration de l'IntersectionObserver avec un rootMargin plus grand
+// pour déclencher l'animation plus tôt
 const observer = new IntersectionObserver(handleIntersection, {
     root: null,
-    rootMargin: '0px',
-    threshold: 0.1
+    rootMargin: '0px 0px -20% 0px', // Détecte les éléments 20% avant qu'ils n'entrent dans la vue
+    threshold: 0.01 // Déclenche dès que 1% de l'élément est visible
 });
 
+// Observer tous les éléments avec la classe animate-on-scroll
 document.querySelectorAll('.animate-on-scroll').forEach(el => {
     observer.observe(el);
 });
