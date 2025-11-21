@@ -15,80 +15,1308 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
     <title>Paristanbul — Supermarché</title>
     <meta name="description" content="Paristanbul : vos courses, nos magasins, notre catalogue interactif et nos meilleures offres." />
 
-    <!-- Preconnect to external domains -->
+    <!-- Fonts + Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://unpkg.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    
-    <!-- Preload critical CSS -->
-    <link rel="preload" href="../assets/css/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="../assets/css/index.css"></noscript>
-    
-    <!-- Load non-critical CSS asynchronously -->
-    <!-- Chargement optimisé des polices avec display=swap -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'" />
-    <noscript>
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    </noscript>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" media="print" onload="this.media='all'" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin media="print" onload="this.media='all'" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/css/page-flip.min.css" media="print" onload="this.media='all'" />
-    
-    <!-- Load CSS for print -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'" />
-    
-    <!-- Critical CSS inlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+    <!-- Leaflet map + PageFlip (utiles plus bas dans la page, je les laisse ici si tu veux les garder) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/css/page-flip.min.css">
+
     <style>
-        /* Critical CSS for above-the-fold content */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.6; }
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 15px; }
-        img { max-width: 100%; height: auto; display: block; }
-        
-        /* Animation de base pour les éléments au défilement */
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        :root{
+            --black:#0a0c10; --blue:#0b3b8a; --red:#7b0f20;
+            --pi-blue:#2E4C97; --pi-red:#D6452E;
+
+            --text:#ffffff;
+            --muted:#c9d4ea;
+            --muted-2:#cfd5e6;
+
+            --bg-1:#0B1326;
+            --bg-2:#0A0F1F;
+
+            --panel:#0f1320;
+            --panel-soft:#121a34;
+            --panel-alt:#111418;
+
+            --edge:#1b2235;
+            --ring:#2c59ff55;
+
+            --borderSoft:rgba(255,255,255,.07);
+            --borderHard:rgba(255,255,255,.14);
+
+            --page-bg:
+                    radial-gradient(1000px 500px at 10% 10%, rgba(46,76,151,.25), transparent 60%),
+                    radial-gradient(900px 600px at 90% 10%, rgba(214,69,46,.18), transparent 55%),
+                    linear-gradient(180deg, var(--bg-1), var(--bg-2) 70%);
         }
-        .animate-on-scroll.active {
-            opacity: 1;
-            transform: translateY(0);
+
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+            margin:0;
+            font-family:"Plus Jakarta Sans",system-ui,Segoe UI,Roboto,Arial;
+            color:var(--text);
+            background:transparent;
+            overflow-x:hidden;
         }
-        
-        /* Optimisation des performances pour les animations */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
+        a{color:inherit;text-decoration:none}
+        .container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+        /* ========= FOND GLOBAL ========= */
+        #page-bg{
+            position:fixed;
+            inset:0;
+            z-index:-4;
+            pointer-events:none;
+            background:var(--page-bg);
+        }
+        .pi-orbs{
+            position:fixed;
+            inset:0;
+            z-index:-3;
+            pointer-events:none;
+            overflow:hidden;
+        }
+        .pi-orbs .orb{
+            position:absolute;
+            width:48vmax;
+            height:48vmax;
+            border-radius:9999px;
+            filter:blur(80px);
+            opacity:.75;
+            mix-blend-mode:screen;
+        }
+        .pi-orbs .blue{ background:rgba(46,76,151,.18) }
+        .pi-orbs .red { background:rgba(226,27,60,.16) }
+
+        .pi-orbs .a{ top:-10vmax; left:-6vmax;  animation:orbA 36s linear infinite }
+        .pi-orbs .b{ top:-8vmax;  right:-10vmax; animation:orbB 42s linear infinite }
+        .pi-orbs .c{ bottom:-12vmax; left:15vw;  animation:orbC 40s linear infinite; width:42vmax;height:42vmax }
+        .pi-orbs .d{ bottom:-14vmax; right:10vw; animation:orbD 46s linear infinite; width:50vmax;height:50vmax }
+
+        @keyframes orbA{50%{transform:translate3d(4vw,2vh,0) scale(1.05)}}
+        @keyframes orbB{50%{transform:translate3d(-3vw,3vh,0) scale(1.03)}}
+        @keyframes orbC{50%{transform:translate3d(2vw,-2vh,0) scale(1.06)}}
+        @keyframes orbD{50%{transform:translate3d(-2vw,-3vh,0) scale(1.04)}}
+
+        /* glossy pulse halo dans les orbes */
+        .pi-orbs .orb::after{
+            content:"";
+            position:absolute;
+            inset:0;
+            border-radius:inherit;
+            background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.4)0%,rgba(255,255,255,0)60%);
+            mix-blend-mode:screen;
+            opacity:.2;
+            filter:blur(40px);
+            animation:orbPulse 8s ease-in-out infinite;
+        }
+        @keyframes orbPulse{
+            0%,100% { transform:scale(1); opacity:.2; }
+            50%     { transform:scale(1.05); opacity:.35; }
+        }
+
+        /* ====== BANDEAU défilant haut de page ====== */
+        .marquee{
+            position:relative;
+            overflow:hidden;
+            border-top:1px solid #151a2a;
+            border-bottom:1px solid #151a2a;
+            background: linear-gradient(180deg,#0f1525,#0c1223) !important;
+        }
+        .marquee__track{
+            display:flex;
+            width:max-content;
+            will-change:transform;
+            animation:marquee-roll 28s linear infinite;
+        }
+        .marquee:hover .marquee__track{ animation-play-state:paused; }
+        .marquee__group{
+            display:flex;
+            gap:40px;
+            padding:10px 0;
+        }
+        @keyframes marquee-roll{
+            from{ transform:translateX(0)}
+            to  { transform:translateX(-50%)}
+        }
+        .pill{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:6px 12px;
+            border-radius:999px;
+            background:linear-gradient(145deg,#121a34,#0f162a);
+            border:1px solid #1b2744;
+            font-size:.92rem;
+            color:#fff;
+            box-shadow:0 16px 30px rgba(0,0,0,.8);
+        }
+        .pill .dot{
+            width:8px;
+            height:8px;
+            border-radius:50%;
+            background:conic-gradient(from 90deg,var(--red),var(--blue));
+        }
+
+        /* ========= HEADER .pi-simple (même base que postuler.php) ========= */
+        header.pi-simple{
+            position: relative;
+            isolation: isolate;
+            background:transparent !important;
+            z-index: 0;
+        }
+        header.pi-simple::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            z-index:-1;
+            left:50%; right:50%;
+            margin-left:-50vw; margin-right:-50vw;
+            background: linear-gradient(180deg, #0f1525 0%, #0c1223 100%) !important;
+            border-bottom:1px solid #141a2b;
+            box-shadow: inset 0 -12px 40px rgba(0,0,0,.35);
+        }
+
+        .pi-simple .topbar{
+            display:grid;
+            grid-template-columns:1fr minmax(200px, 1fr) 1fr;
+            align-items:center;
+            gap:16px;
+            padding-block: clamp(18px, 3.5vh, 40px);
+        }
+
+        /* Colonne gauche (réseaux) */
+        .pi-simple .left-col{display:flex}
+        .pi-simple .social-group{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            width:max-content
+        }
+        .pi-simple .social{
+            display:flex;
+            align-items:center;
+            gap:16px;
+            color:var(--muted)
+        }
+        .pi-simple .social a{
+            font-size:18px;
+            color:var(--muted)
+        }
+        .pi-simple .social a:hover{color:#fff}
+        .pi-simple .join{
+            font-size:13px;
+            color:var(--muted);
+            font-weight:800;
+            margin-top:6px;
+            text-align:center
+        }
+
+        /* Colonne centre (logo + since 1993) */
+        .pi-simple .brand{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:10px
+        }
+        .pi-simple .brand img{
+            height: clamp(60px, 9vw, 72px)
+        }
+        .pi-simple .tagline{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            color:var(--muted);
+            font-size: clamp(13px, 1.3vw, 16px);
+            line-height:1
+        }
+        .pi-simple .tagline .rule{
+            width: clamp(58px, 9vw, 92px);
+            height:1px;
+            background:rgba(255,255,255,.06)
+        }
+
+        /* Colonne droite : téléphone + login btn façon "magnet" */
+        .pi-simple .right-col{
+            display:flex;
+            flex-direction:column;
+            align-items:flex-end;
+            gap:12px;
+            font-weight:800;
+        }
+        .pi-simple .right-col i{color:#c9d4ea}
+        .pi-simple .right-col .phone-line,
+        .pi-simple .right-col .phone-row{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+        .pi-simple .phone{
+            font-size: clamp(14px, 1.2vw, 18px);
+            color:#e7ecf5
+        }
+
+        /* bouton login/déco */
+        .btn-login.magnet{
+            position:relative;
+            border-radius:16px;
+            display:inline-flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            padding:14px 18px;
+            min-width:130px;
+            text-align:center;
+            font-weight:800;
+            font-size:12.5px;
+            line-height:1.05;
+            letter-spacing:.06em;
+            text-transform:uppercase;
+            color:#eaf0ff;
+
+            background:
+                    linear-gradient(180deg, #1c2b59, #0f1833) padding-box,
+                    linear-gradient(135deg, #3a58ff, #e5473a) border-box;
+            border:1px solid transparent;
+
+            box-shadow:
+                    0 12px 26px rgba(0,0,0,.35),
+                    inset 0 1px 0 rgba(255,255,255,.06),
+                    0 0 40px rgba(46,76,151,.4);
+
+            transition:.18s;
+        }
+        .btn-login.magnet i{
+            font-size:18px;
+            line-height:1;
+            width:40px;
+            height:40px;
+            border-radius:999px;
+            display:grid;
+            place-items:center;
+            background: radial-gradient(120% 120% at 30% 20%, #2a3f86 0%, #182650 45%, #0f1833 100%);
+            box-shadow:
+                    inset 0 1px 0 rgba(255,255,255,.08),
+                    0 6px 18px rgba(58,88,255,.25);
+        }
+        .btn-login.magnet:hover{
+            transform:translateY(-1px) scale(1.03) rotate(-.4deg);
+            box-shadow:
+                    0 22px 44px -12px rgba(0,0,0,.9),
+                    0 0 60px rgba(46,76,151,.6),
+                    inset 0 1px 0 rgba(255,255,255,.06);
+            filter:brightness(1.04);
+        }
+        .btn-login.magnet:active{
+            transform:translateY(0) scale(.995);
+            filter:brightness(.98);
+        }
+
+        /* Lignes du header */
+        .pi-simple .divider{
+            border:0;
+            border-top:1px solid #141a26;
+            margin:0
+        }
+        .pi-simple .navrow{padding:12px 0; position: relative;}
+        .pi-simple .menu{
+            display:flex;
+            justify-content:center;
+            gap:28px;
+            list-style:none;
+            margin:0;
+            padding:0
+        }
+        .pi-simple .menu a{
+            font-weight:800;
+            font-size:14px;
+            color:#c9d4ea;
+            letter-spacing:.06em;
+            text-transform:uppercase;
+        }
+        .pi-simple .menu a:hover,
+        .pi-simple .menu a.is-active{color:#ffffff}
+
+        @media (max-width:720px){
+            .pi-simple .topbar{ grid-template-columns:1fr; text-align:center }
+            .pi-simple .left-col{justify-content:center}
+            .pi-simple .right-col{ align-items:center; }
+            .pi-simple .menu{flex-wrap:wrap; gap:18px}
+        }
+
+        /* ========= SECTIONS GLOBALES ========= */
+        main{ position:relative; z-index:1; }
+        section{padding:64px 0; background:transparent !important;}
+        .section-hd{display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:20px}
+        .section-hd h2{
+            font-size:clamp(24px,3.3vw,40px);
+            margin:0;
+            font-weight:800;
+            background:linear-gradient(90deg,#fff,#9cc3ff 50%,#fff 100%);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            text-shadow:0 18px 40px rgba(0,0,0,.8);
+            animation:titleGlow 6s ease-in-out infinite;
+        }
+        @keyframes titleGlow{
+            0%,100% { filter:drop-shadow(0 0 12px rgba(46,76,151,.4)); }
+            50%     { filter:drop-shadow(0 0 20px rgba(214,69,46,.4)); }
+        }
+        .sub{color:var(--muted); font-size:.95rem; font-weight:500; }
+
+        /* mini util */
+        .badge-soft{
+            background: rgba(214,69,46,.12);
+            color:#ffd7dc;
+            border:1px solid rgba(214,69,46,.25);
+            font-weight:700;
+            padding:.35rem .6rem;
+            border-radius:999px;
+            font-size:.8rem;
+        }
+
+        /* Boutons génériques */
+        .btn.magnet{
+            position:relative;
+            border-radius:14px;
+            box-shadow:
+                    0 16px 30px -10px rgba(0,0,0,.9),
+                    0 0 40px rgba(46,76,151,.4);
+            transition:.18s;
+            font-weight:800;
+            font-size:14px;
+            letter-spacing:.05em;
+            text-transform:uppercase;
+            padding:12px 16px;
+            line-height:1;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            border:1px solid transparent;
+            color:#fff;
+        }
+        .btn.magnet:hover{
+            transform:translateY(-1px) scale(1.03) rotate(-.4deg);
+            box-shadow:
+                    0 22px 44px -12px rgba(0,0,0,.9),
+                    0 0 60px rgba(46,76,151,.6);
+        }
+
+        .btn-red{
+            background:#A32929;
+            border:1px solid #A32929;
+            color:#fff;
+            font-weight:800;
+            text-transform:uppercase;
+            letter-spacing:.04em;
+            border-radius:10px;
+            box-shadow:
+                    0 16px 30px -10px rgba(0,0,0,.9),
+                    0 0 30px rgba(214,69,46,.4);
+            transition:.18s;
+        }
+        .btn-red:hover{
+            background:#8B1A1A;
+            border-color:#8B1A1A;
+            box-shadow:
+                    0 20px 40px -10px rgba(0,0,0,.9),
+                    0 0 40px rgba(214,69,46,.6);
+            transform:translateY(-1px) scale(1.02);
+        }
+
+        .btn-ghost{
+            background:transparent;
+            border:1px solid rgba(255,255,255,.14);
+            color:#fff;
+            font-weight:800;
+            text-transform:uppercase;
+            letter-spacing:.04em;
+            border-radius:10px;
+        }
+        .btn-ghost:hover{
+            border-color:#2a3d73;
+            background:#0f1b3b;
+        }
+
+        /* ========= HERO ========= */
+        .hero{
+            padding:64px 0 32px;
+        }
+        .hero-wrap{
+            display:grid;
+            grid-template-columns:1fr minmax(320px, 480px);
+            gap:40px;
+            align-items:center;
+        }
+        @media(max-width:980px){
+            .hero-wrap{grid-template-columns:1fr; gap:26px}
+        }
+
+        .eyebrow{
+            font-size:.8rem;
+            color:var(--muted);
+            letter-spacing:.2em;
+            font-weight:800;
+            text-transform:uppercase;
+        }
+        .hero-title{
+            font-size:clamp(32px,4vw,44px);
+            line-height:1.05;
+            font-weight:800;
+            margin:.3em 0;
+            text-shadow:0 12px 30px rgba(0,0,0,.8);
+        }
+
+        /* texte dégradé animé réutilisable */
+        .gradient-text{
+            display:inline-block;
+            background-image:linear-gradient(90deg, var(--pi-red), var(--pi-blue), var(--pi-red));
+            background-size:200% 100%;
+            background-repeat:no-repeat;
+            -webkit-background-clip:text;
+            background-clip:text;
+            -webkit-text-fill-color:transparent;
+            color:transparent;
+            animation:ink-move 8s ease-in-out infinite;
+            will-change:background-position;
+        }
+        @keyframes ink-move{
+            0%,100%{ background-position:0% 50%; }
+            50%    { background-position:100% 50%; }
+        }
+
+        .hero-lead{
+            font-size:1.05rem;
+            color:#e3eaff;
+            max-width:46ch;
+        }
+        @media (max-width:600px){
+            .hero-lead{font-size:1rem;max-width:38ch}
+        }
+
+        .job-pills{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px 10px;
+            margin:16px 0 24px;
+            padding:0;
+            list-style:none;
+            font-size:.8rem;
+            font-weight:600;
+            color:#fff;
+            position:relative;
+        }
+        .job-pill{
+            position:relative;
+            background:radial-gradient(circle at 0% 0%,rgba(46,76,151,.35)0%,rgba(16,23,51,.2)60%);
+            border:1px solid rgba(46,76,151,.5);
+            border-radius:10px;
+            padding:6px 10px;
+            line-height:1;
+            box-shadow:
+                    0 10px 24px rgba(0,0,0,.8),
+                    inset 0 1px 0 rgba(255,255,255,.07);
+            overflow:hidden;
+        }
+        .job-pill::after{
+            content:"";
+            position:absolute;
+            left:-40%;
+            top:0;
+            width:40%;
+            height:100%;
+            background:linear-gradient(90deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 70%);
+            transform:skewX(-20deg) translateX(-120%);
+            filter:blur(2px);
+            animation:shimmer 4s infinite;
+        }
+        @keyframes shimmer{
+            0%   { transform:skewX(-20deg) translateX(-120%); opacity:0; }
+            20%  { opacity:1; }
+            40%  { transform:skewX(-20deg) translateX(250%); opacity:0; }
+            100% { opacity:0; }
+        }
+
+        .cta-row{
+            display:flex;
+            flex-wrap:wrap;
+            gap:12px;
+            margin-top:18px;
+        }
+
+        /* carte vidéo hero (mêmes arrondis/glow que dans postuler) */
+        .hero-media{
+            border-radius:16px;
+            overflow:hidden;
+            box-shadow:
+                    0 20px 50px rgba(0,0,0,.35),
+                    inset 0 1px 0 rgba(255,255,255,.06);
+            border:1px solid #1e2740;
+            background:#0b1020;
+            width:100%;
+
+            max-width:480px;
+            margin-inline:auto;
+            aspect-ratio:16/9;
+            position:relative;
+        }
+        .hero-media iframe{
+            position:absolute;
+            inset:0;
+            width:100%;
+            height:100%;
+            border:0;
+            display:block;
+        }
+
+        /* util petits textes */
+        .small-muted{ color:#9aa4b2; font-size:.8rem; font-weight:500; }
+
+        /* ========= (le reste des sections: catalogue, carrousels, map, contact, footer sera dans PARTIE 2 & 3) ========= */
+        /* ==== Bloc promo appli ==== */
+
+        .apppromo-wrap{
+            position:relative;
+            display:grid;
+            grid-template-columns:1fr minmax(260px,360px);
+            gap: clamp(24px,4vw,48px);
+            align-items:center;
+
+            background:
+                    linear-gradient(180deg,#111418 0%,#141922 100%);
+            /* j’enlève les gros radial-gradient rouges/bleus internes */
+
+            border:1px solid rgba(255,255,255,.07);
+            border-radius:22px;
+
+            box-shadow:
+                    0 40px 80px -20px rgba(0,0,0,.9); /* juste l’ombre noire dessous */
+            /* plus de halo coloré */
+
+            padding:24px clamp(20px,3vw,32px);
+        }
+
+        @media(max-width:840px){
+            .apppromo-wrap{
+                grid-template-columns:1fr;
+                text-align:center;
+            }
+            .apppromo-right{
+                order:-1;
+                justify-self:center;
             }
         }
+
+        .apppromo-left .eyebrow{
+            font-size:.8rem;
+            color:#c9d4ea;
+            letter-spacing:.2em;
+            font-weight:800;
+            text-transform:uppercase;
+            margin-bottom:10px;
+        }
+
+        .apppromo-title{
+            font-size:clamp(24px,3vw,32px);
+            line-height:1.15;
+            font-weight:800;
+            color:#fff;
+            text-shadow:0 12px 30px rgba(0,0,0,.8);
+            margin:0 0 14px 0;
+        }
+
+        .apppromo-lead{
+            color:#e3eaff;
+            font-size:1rem;
+            line-height:1.4;
+            max-width:45ch;
+            margin:0 0 18px 0;
+        }
+        @media(max-width:840px){
+            .apppromo-lead{
+                max-width:38ch;
+                margin-left:auto;
+                margin-right:auto;
+            }
+        }
+
+        /* bullets */
+        .apppromo-bullets{
+            list-style:none;
+            padding:0;
+            margin:0 0 20px 0;
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+            color:#fff;
+            font-size:.9rem;
+            font-weight:600;
+        }
+        .apppromo-bullets li{
+            display:flex;
+            align-items:flex-start;
+            gap:10px;
+            background:#0f152b;
+            background:linear-gradient(145deg,#0f152b,#0c1223);
+            border:1px solid #1e2740;
+            border-radius:12px;
+            padding:.7rem .8rem;
+            color:#cfe0ff;
+            box-shadow:0 18px 40px rgba(0,0,0,.8),
+            inset 0 1px 0 rgba(255,255,255,.06);
+        }
+        .apppromo-bullets i{
+            font-size:1rem;
+            line-height:1;
+            color:#A32929;
+            flex-shrink:0;
+            text-shadow:0 0 12px rgba(214,69,46,.5);
+        }
+
+        /* CTA row */
+        .apppromo-cta-row{
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            gap:12px;
+        }
+        @media(max-width:840px){
+            .apppromo-cta-row{
+                flex-direction:column;
+                justify-content:center;
+            }
+        }
+        .apppromo-btn-download{
+            border-radius:14px;
+            padding:12px 16px;
+            line-height:1;
+            font-size:.8rem;
+            font-weight:800;
+            letter-spacing:.05em;
+            text-transform:uppercase;
+            color:#fff;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            box-shadow:
+                    0 20px 40px -10px rgba(139,31,34,.6),
+                    0 0 60px rgba(214,69,46,.4);
+        }
+        .apppromo-btn-download:hover{
+            background:#8B1A1A !important;
+            border-color:#8B1A1A !important;
+            box-shadow:
+                    0 24px 50px -10px rgba(139,31,34,.8),
+                    0 0 80px rgba(214,69,46,.6);
+            transform:translateY(-1px) scale(1.02);
+        }
+
+        .apppromo-small-text{
+            color:#c9d4ea;
+            font-size:.8rem;
+            font-weight:600;
+            line-height:1.2;
+        }
+
+        /* téléphone visuel */
+        .apppromo-right{
+            position:relative;
+            filter:drop-shadow(0 30px 60px rgba(0,0,0,.9))
+            drop-shadow(0 0 60px rgba(46,76,151,.4))
+            drop-shadow(0 0 100px rgba(214,69,46,.3));
+        }
+        .apppromo-phoneCard{
+            position:relative;
+            width:min(240px,60vw);
+            aspect-ratio: 9 / 16;
+            border-radius:24px;
+            padding:12px;
+            background:
+                    radial-gradient(circle at 0% 0%,rgba(46,76,151,.35)0%,rgba(16,23,51,.2)60%),
+                    #0f1320;
+            border:1px solid rgba(255,255,255,.07);
+            box-shadow:
+                    0 28px 60px -20px rgba(0,0,0,.9),
+                    0 0 80px rgba(46,76,151,.2),
+                    inset 0 1px 0 rgba(255,255,255,.07);
+            margin-inline:auto;
+        }
+        .apppromo-phoneMock{
+            position:relative;
+            width:100%;
+            height:100%;
+            border-radius:20px;
+            background:#000;
+            overflow:hidden;
+            box-shadow:0 12px 30px rgba(0,0,0,.8),
+            0 0 40px rgba(214,69,46,.4);
+            border:1px solid #1e2740;
+        }
+
+        /* badge promos */
+        .apppromo-badge{
+            position:absolute;
+            right:-10px;
+            bottom:-10px;
+            background:linear-gradient(145deg,#8B1A1A,#A32929);
+            border:2px solid #A32929;
+            border-radius:14px;
+            padding:.6rem .8rem;
+            min-width:88px;
+
+            box-shadow:
+                    0 20px 40px -10px rgba(139,31,34,.6),
+                    0 0 60px rgba(214,69,46,.5),
+                    0 0 100px rgba(46,76,151,.4);
+            color:#fff;
+            font-weight:800;
+            line-height:1.2;
+            text-align:center;
+            text-shadow:0 2px 10px rgba(0,0,0,.45);
+        }
+        .apppromo-badge-num{
+            font-size:1.2rem;
+            font-weight:900;
+            line-height:1;
+        }
+        .apppromo-badge-label{
+            font-size:.7rem;
+            font-weight:700;
+            letter-spacing:.03em;
+            text-transform:uppercase;
+        }
+        /* ====== SLIDER RAYONS (mêmes animations que nosMagasins.php) ====== */
+
+        /* on donne une vraie transition smooth aux cartes */
+        .pi-sites__card{
+            transition: transform 560ms cubic-bezier(.22,.8,.24,1),
+            opacity   560ms ease;
+            transform-origin:center center;
+            z-index:0;
+        }
+
+        /* position de base (tes inline styles init resteront ok au chargement),
+           mais on redéclare ici pour les étapes animées */
+        .pi-role-left  { transform:translate(-12vw,6vh) scale(.66); z-index:1; opacity:.9; pointer-events:none; }
+        .pi-role-center{ transform:translate(0,0)      scale(1);    z-index:3; opacity:1;  pointer-events:auto; }
+        .pi-role-right { transform:translate(14vw,-3vh) scale(.62); z-index:1; opacity:.9; pointer-events:none; }
+
+        /* État pendant le mouvement vers la droite (next) */
+        .pi-shift-next .pi-role-left{
+            transform: translate(-26vw, 12vh) scale(.56);
+            opacity:0;
+        }
+        .pi-shift-next .pi-role-center{
+            transform: translate(-12vw, 6vh) scale(.66);
+            opacity:.9;
+        }
+        .pi-shift-next .pi-role-right{
+            transform: translate(0,0) scale(1);
+            opacity:1;
+            z-index:5;
+        }
+        /* baisse un peu l'ancienne carte du centre pendant l'anim */
+        .pi-shift-next .pi-role-center{ z-index:2; }
+
+        /* État pendant le mouvement vers la gauche (prev) */
+        .pi-shift-prev .pi-role-right{
+            transform: translate(24vw, -12vh) scale(.54);
+            opacity:0;
+        }
+        .pi-shift-prev .pi-role-center{
+            transform: translate(14vw,-3vh) scale(.62);
+            opacity:.9;
+        }
+        .pi-shift-prev .pi-role-left{
+            transform: translate(0,0) scale(1);
+            opacity:1;
+            z-index:5;
+        }
+        /* baisse un peu l'ancienne carte du centre pendant l'anim */
+        .pi-shift-prev .pi-role-center{ z-index:2; }
+
+        /* petit effet arrivée pour le titre du rayon */
+        @keyframes piTitleIn{
+            0%{
+                opacity:0;
+                transform:translateY(12px) scale(.98);
+                filter:blur(2px);
+                letter-spacing:.02em;
+            }
+            60%{
+                opacity:1;
+                transform:translateY(0) scale(1);
+                filter:none;
+            }
+            100%{
+                opacity:1;
+                transform:none;
+                letter-spacing:0;
+            }
+        }/* ====== SLIDER RAYONS (mêmes animations que nosMagasins.php) ====== */
+
+        /* on donne une vraie transition smooth aux cartes */
+        .pi-sites__card{
+            transition: transform 560ms cubic-bezier(.22,.8,.24,1),
+            opacity   560ms ease;
+            transform-origin:center center;
+            z-index:0;
+        }
+
+        /* position de base (tes inline styles init resteront ok au chargement),
+           mais on redéclare ici pour les étapes animées */
+        .pi-role-left  { transform:translate(-12vw,6vh) scale(.66); z-index:1; opacity:.9; pointer-events:none; }
+        .pi-role-center{ transform:translate(0,0)      scale(1);    z-index:3; opacity:1;  pointer-events:auto; }
+        .pi-role-right { transform:translate(14vw,-3vh) scale(.62); z-index:1; opacity:.9; pointer-events:none; }
+
+        /* État pendant le mouvement vers la droite (next) */
+        .pi-shift-next .pi-role-left{
+            transform: translate(-26vw, 12vh) scale(.56);
+            opacity:0;
+        }
+        .pi-shift-next .pi-role-center{
+            transform: translate(-12vw, 6vh) scale(.66);
+            opacity:.9;
+        }
+        .pi-shift-next .pi-role-right{
+            transform: translate(0,0) scale(1);
+            opacity:1;
+            z-index:5;
+        }
+        /* baisse un peu l'ancienne carte du centre pendant l'anim */
+        .pi-shift-next .pi-role-center{ z-index:2; }
+
+        /* État pendant le mouvement vers la gauche (prev) */
+        .pi-shift-prev .pi-role-right{
+            transform: translate(24vw, -12vh) scale(.54);
+            opacity:0;
+        }
+        .pi-shift-prev .pi-role-center{
+            transform: translate(14vw,-3vh) scale(.62);
+            opacity:.9;
+        }
+        .pi-shift-prev .pi-role-left{
+            transform: translate(0,0) scale(1);
+            opacity:1;
+            z-index:5;
+        }
+        /* baisse un peu l'ancienne carte du centre pendant l'anim */
+        .pi-shift-prev .pi-role-center{ z-index:2; }
+
+        /* petit effet arrivée pour le titre du rayon */
+        @keyframes piTitleIn{
+            0%{
+                opacity:0;
+                transform:translateY(12px) scale(.98);
+                filter:blur(2px);
+                letter-spacing:.02em;
+            }
+            60%{
+                opacity:1;
+                transform:translateY(0) scale(1);
+                filter:none;
+            }
+            100%{
+                opacity:1;
+                transform:none;
+                letter-spacing:0;
+            }
+        }
+        /* ============ Modal download app ============ */
+        .appModal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Plus Jakarta Sans', system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+        }
+        .appModal.is-visible { display:flex; }
+
+        .appModal__backdrop {
+            position:absolute;
+            inset:0;
+            background:rgba(0,0,0,.6);
+            backdrop-filter:blur(6px);
+        }
+
+        /* panel = style Paristanbul (bleu nuit + halo rouge/bleu + bord arrondi 20px) */
+        .appModal__panel {
+            position:relative;
+            width:90%;
+            max-width:380px;
+            border-radius:20px;
+            padding:20px 20px 16px;
+            color:#fff;
+            background:
+                    radial-gradient(circle at 0% 0%, rgba(46,76,151,.28) 0%, rgba(0,0,0,0) 60%),
+                    radial-gradient(circle at 100% 0%, rgba(214,69,46,.22) 0%, rgba(0,0,0,0) 60%),
+                    linear-gradient(180deg,#111827 0%,#0f172a 100%);
+            border:1px solid rgba(255,255,255,.1);
+            box-shadow:
+                    0 40px 80px rgba(0,0,0,.9),
+                    0 0 80px rgba(46,76,151,.4),
+                    0 0 120px rgba(214,69,46,.4);
+            box-sizing:border-box;
+            z-index:2;
+        }
+
+        /* bouton X */
+        .appModal__close {
+            position:absolute;
+            top:8px;
+            right:8px;
+            border:0;
+            border-radius:10px;
+            background:rgba(15,23,42,.8);
+            color:#fff;
+            font-size:16px;
+            line-height:1;
+            font-weight:600;
+            width:28px;
+            height:28px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            box-shadow:
+                    0 10px 20px rgba(0,0,0,.8),
+                    0 0 20px rgba(214,69,46,.4),
+                    inset 0 1px 0 rgba(255,255,255,.07);
+            border:1px solid rgba(255,255,255,.15);
+            z-index:3;
+        }
+        .appModal__close:active{
+            transform:scale(.96);
+            filter:brightness(.9);
+        }
+
+        .appModal__content {
+            position:relative;
+            z-index:2;
+            display:flex;
+            flex-direction:column;
+            gap:16px;
+            text-align:left;
+        }
+
+        .appModal__eyebrow {
+            margin:0;
+            font-size:10px;
+            line-height:1.2;
+            font-weight:800;
+            letter-spacing:.18em;
+            text-transform:uppercase;
+            color:#c9d4ea;
+        }
+
+        .appModal__title {
+            margin:2px 0 8px 0;
+            font-size:18px;
+            line-height:1.25;
+            font-weight:800;
+            color:#fff;
+            text-shadow:0 12px 30px rgba(0,0,0,.8);
+        }
+
+        .appModal__text {
+            margin:0;
+            font-size:13px;
+            line-height:1.45;
+            color:#e3eaff;
+            font-weight:500;
+            max-width:32ch;
+        }
+
+        /* badges store */
+        .appModal__stores {
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+        }
+
+        /* style badge => fond noir glossy, bord arrondi */
+        .storeBadge {
+            flex:1 1 150px;
+            background:linear-gradient(#0f172a,#000);
+            border-radius:12px;
+            border:1px solid rgba(255,255,255,.18);
+            box-shadow:
+                    0 20px 40px rgba(0,0,0,.8),
+                    0 0 40px rgba(46,76,151,.4);
+            text-decoration:none;
+            color:#fff;
+            min-height:50px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:10px 12px;
+            position:relative;
+            box-sizing:border-box;
+        }
+        .storeBadge:hover{
+            filter:brightness(1.08);
+            box-shadow:
+                    0 24px 50px rgba(0,0,0,.9),
+                    0 0 60px rgba(214,69,46,.6),
+                    0 0 80px rgba(46,76,151,.4);
+        }
+
+        .storeBadge__inner{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            line-height:1.2;
+        }
+        .storeBadge__icon{
+            width:28px;
+            height:28px;
+            flex-shrink:0;
+            color:#fff;
+            display:block;
+        }
+        .storeBadge__textcol{
+            display:flex;
+            flex-direction:column;
+            line-height:1.2;
+            font-weight:600;
+        }
+        .storeBadge__mini{
+            font-size:10px;
+            color:#c9d4ea;
+            font-weight:600;
+        }
+        .storeBadge__main{
+            font-size:14px;
+            color:#fff;
+            font-weight:700;
+        }
+
+        /* petit texte en bas */
+        .appModal__legal {
+            margin:0;
+            font-size:10px;
+            line-height:1.4;
+            color:#9aa4b2;
+            text-align:center;
+            font-weight:500;
+        }
+        .ctaDownloadApp{
+            appearance:none;
+            cursor:pointer;
+            border:0;
+            border-radius:14px;
+            padding:14px 16px;
+            line-height:1;
+            font-size:.8rem;
+            font-weight:800;
+            letter-spacing:.08em;
+            text-transform:uppercase;
+            color:#fff;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            background:linear-gradient(145deg,#8B1A1A,#A32929);
+            border:1px solid #A32929;
+            box-shadow:
+                    0 20px 40px -10px rgba(139,31,34,.6),
+                    0 0 60px rgba(214,69,46,.4),
+                    0 0 80px rgba(46,76,151,.4);
+            transition:.18s;
+        }
+        .ctaDownloadApp:hover{
+            background:#8B1A1A;
+            border-color:#8B1A1A;
+            transform:translateY(-1px) scale(1.03) rotate(-.4deg);
+            box-shadow:
+                    0 24px 50px -10px rgba(139,31,34,.8),
+                    0 0 80px rgba(214,69,46,.6),
+                    0 0 100px rgba(46,76,151,.5);
+        }
+        .ctaDownloadApp i{
+            font-size:16px;
+            line-height:1;
+        }
+        /* ====== POPUP APP DOWNLOAD (overlay + card avec badges officiels) ====== */
+        .appPromo-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 7, 14, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 500;
+            opacity: 1;
+            transition: opacity .2s ease;
+        }
+        .appPromo-overlay.is-hidden {
+            opacity: 0;
+            pointer-events: none;
+            display: none;
+        }
+
+        .appPromo-card {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            bottom: auto;
+            transform: translate(-50%, -50%);
+            width: clamp(280px, 90vw, 360px);
+
+            background: radial-gradient(circle at 20% 20%, rgba(40,50,90,.6) 0%, rgba(10,12,25,.6) 60%);
+            background-color: rgba(15,19,40,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+
+            box-shadow:
+                    0 20px 40px rgba(0,0,0,.8),
+                    0 0 80px rgba(58,104,255,.4);
+
+            color: #fff;
+            font-family: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+            padding: 1rem 1rem 1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: .75rem;
+
+            z-index: 600;
+            backdrop-filter: blur(16px) saturate(160%);
+            -webkit-backdrop-filter: blur(16px) saturate(160%);
+
+        }
+        .appPromo-card.is-hidden {
+             opacity: 0;
+             pointer-events: none;
+             transform: translate(-50%, -50%) scale(.98);
+             transition: all .2s ease;
+             display: none;
+         }
+        .appPromo-card.is-visible {
+            animation: appPromo-pop .25s cubic-bezier(.2,.8,.3,1) both;
+        }
+        @keyframes appPromo-pop {
+            0%   {opacity:0; transform:translate(-50%, -50%) scale(.96);}
+            100% {opacity:1; transform:translate(-50%, -50%) scale(1);}
+        }
+
+        /* bouton X */
+        .appPromo-close {
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
+            width: 28px;
+            height: 28px;
+            border-radius: .5rem;
+            border: 0;
+            background: rgba(255,255,255,0.07);
+            color: #fff;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: background .15s;
+        }
+        .appPromo-close:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        /* texte haut */
+        .appPromo-headline {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+            padding-right: 2rem; /* laisse la place de la croix */
+        }
+        .appPromo-eyebrow {
+            font-size: .65rem;
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: .08em;
+            color: rgba(255,255,255,.6);
+        }
+        .appPromo-title {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.3;
+            color: #fff;
+            margin: 0;
+        }
+        .appPromo-desc {
+            font-size: .8rem;
+            line-height: 1.4;
+            color: rgba(255,255,255,.75);
+            margin: 0;
+        }
+
+        /* badges store officiels */
+        .appPromo-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem .75rem;
+        }
+        .store-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            line-height: 0;
+
+            background: transparent;
+            border: 0;
+            border-radius: 8px;
+            padding: 0;
+            min-height: auto;
+            box-shadow: none;
+        }
+        .store-badge img {
+            display: block;
+            height: 40px;            /* un peu plus grand, joli */
+            width: auto;
+            object-fit: contain;
+
+            border-radius: 8px;      /* arrondi badge */
+            box-shadow: 0 20px 40px rgba(0,0,0,.7); /* glow propre dans ton thème */
+        }
+
+        /* petit texte gris en bas */
+        .appPromo-footnote {
+            color: rgba(255,255,255,.4);
+            font-size: .7rem;
+            line-height: 1.2;
+            text-align: center;
+            margin-top: .25rem;
+        }
     </style>
-
-
 </head>
 <body>
+    <!-- Écran de chargement -->
+    <div id="loading" class="loading">
+        <span class="loader"></span>
+    </div>
 
 <?php if (!empty($flash)): ?>
-    <div id="toast" data-message="<?= htmlspecialchars($flash, ENT_QUOTES, 'UTF-8') ?>" style="position:fixed;right:16px;top:16px;z-index:9999; padding:10px 14px;border-radius:10px; background:rgba(16,185,129,.95);color:#fff;font-weight:700; border:1px solid rgba(16,185,129,.4);box-shadow:0 10px 30px rgba(0,0,0,.25)">
+    <div id="toast" style="position:fixed;right:16px;top:16px;z-index:9999; padding:10px 14px;border-radius:10px; background:rgba(16,185,129,.95);color:#fff;font-weight:700; border:1px solid rgba(16,185,129,.4);box-shadow:0 10px 30px rgba(0,0,0,.25)">
         <?= htmlspecialchars($flash) ?>
     </div>
     <script>
-    // Chargement différé du script principal
-    window.addEventListener('load', function() {
-        var script = document.createElement('script');
-        script.src = '/Projet-Paristanbul/assets/js/index.js';
-        script.defer = true;
-        document.body.appendChild(script);
-    });
+        setTimeout(()=>{
+            const t=document.getElementById('toast');
+            if(!t) return;
+            t.style.transition='opacity .35s ease, transform .35s ease';
+            t.style.opacity='0';
+            t.style.transform='translateY(-6px)';
+            setTimeout(()=>t.remove(),380);
+        },2200);
     </script>
 <?php endif; ?>
 
@@ -138,9 +1366,9 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
         </div>
 
         <!-- Col centre : logo -->
-        <div class="brand" style="display: flex; justify-content: center; width: 100%;">
-            <a href="index.php" class="navbar-brand" style="display: block; max-width: 100%;">
-                <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul" style="height: auto; width: auto; max-height: 72px; max-width: 100%; object-fit: contain;">
+        <div class="brand">
+            <a href="index.php" class="navbar-brand">
+                <img src="../assets/img/paristanbul_logo_1200x350-1024x299.png" alt="Paristanbul">
             </a>
             <div class="tagline">
                 <span class="rule" aria-hidden="true"></span>
@@ -448,6 +1676,152 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
                             background:#0e1423 !important;
                         "></div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- CARROUSEL MAGASINS "quelques-uns de nos magasins" -->
+
+
+    <!-- NOS MAGASINS + MAP INTERACTIVE -->
+    <section id="stores" class="section" style="padding-top:16px;">
+        <div class="container">
+            <div class="section-hd">
+                <div>
+                    <h2>Quelques-un de nos magasins</h2>
+                    <div class="sub">Des équipes passionnées à votre service</div>
+
+                </div>
+                <a href="nosMagasins.php"
+                   class="btn magnet"
+                   style="
+                        background:linear-gradient(145deg,#1c305c,#101a33);
+                        border:1px solid #2a3d73;
+                        color:#fff;
+                        font-weight:800;
+                        font-size:14px;
+                        letter-spacing:.05em;
+                        text-transform:uppercase;
+                        border-radius:14px;
+                        padding:10px 14px;
+                        line-height:1;
+                        display:inline-flex;
+                        align-items:center;
+                        gap:8px;
+                   ">
+                    <span>Tous nos magasins</span>
+                    <i class="bi bi-arrow-right-short" style="font-size:18px;line-height:1;"></i>
+                </a>
+            </div>
+
+            <!-- Onglets / contenu -->
+            <div style="
+                background:linear-gradient(180deg,#10182e,#0d1529);
+                border:1px solid rgba(255,255,255,.07);
+                border-radius:18px;
+                box-shadow:
+                    0 32px 70px -20px rgba(0,0,0,.9),
+                    0 0 120px rgba(46,76,151,.28),
+                    inset 0 1px 0 rgba(255,255,255,.06);
+                overflow:hidden;
+            ">
+
+                <!-- barre d’onglets -->
+                <div class="nav-tabs" style="
+                    display:flex;
+                    justify-content:center;
+                    flex-wrap:wrap;
+                    gap:12px;
+                    padding:12px;
+                    background:linear-gradient(180deg,#121a32,#0f172c);
+                    border-bottom:1px solid rgba(255,255,255,.07);
+                ">
+                    <button class="nav-tab active" data-store="villiers1" style="
+                        background:linear-gradient(145deg,#1c305c,#2a3d73);
+                        border:1px solid #2a3d73;
+                        color:#fff;
+                        font-weight:800;
+                        padding:.75rem 1.1rem;
+                        border-radius:999px;
+                        font-size:.8rem;
+                        letter-spacing:.05em;
+                        text-transform:uppercase;
+                        box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 22px rgba(0,0,0,.30);
+                    ">Villiers-le-Bel</button>
+
+                    <button class="nav-tab" data-store="drancy" style="
+                        background:linear-gradient(145deg,#111a31,#0e1528);
+                        border:1px solid #223055;
+                        color:#e7ecf5;
+                        font-weight:800;
+                        padding:.75rem 1.1rem;
+                        border-radius:999px;
+                        font-size:.8rem;
+                        letter-spacing:.05em;
+                        text-transform:uppercase;
+                    ">Drancy</button>
+
+                    <button class="nav-tab" data-store="bondy" style="
+                        background:linear-gradient(145deg,#111a31,#0e1528);
+                        border:1px solid #223055;
+                        color:#e7ecf5;
+                        font-weight:800;
+                        padding:.75rem 1.1rem;
+                        border-radius:999px;
+                        font-size:.8rem;
+                        letter-spacing:.05em;
+                        text-transform:uppercase;
+                    ">Bondy</button>
+
+                    <button class="nav-tab" data-store="villemomble" style="
+                        background:linear-gradient(145deg,#111a31,#0e1528);
+                        border:1px solid #223055;
+                        color:#e7ecf5;
+                        font-weight:800;
+                        padding:.75rem 1.1rem;
+                        border-radius:999px;
+                        font-size:.8rem;
+                        letter-spacing:.05em;
+                        text-transform:uppercase;
+                    ">Villemomble</button>
+
+                    <button class="nav-tab" data-store="nogent" style="
+                        background:linear-gradient(145deg,#111a31,#0e1528);
+                        border:1px solid #223055;
+                        color:#e7ecf5;
+                        font-weight:800;
+                        padding:.75rem 1.1rem;
+                        border-radius:999px;
+                        font-size:.8rem;
+                        letter-spacing:.05em;
+                        text-transform:uppercase;
+                    ">Nogent-sur-Oise</button>
+
+                    <button class="nav-tab" data-store="vertsaintdenis" style="
+                        background:linear-gradient(145deg,#111a31,#0e1528);
+                        border:1px solid #223055;
+                        color:#e7ecf5;
+                        font-weight:800;
+                        padding:.75rem 1.1rem;
+                        border-radius:999px;
+                        font-size:.8rem;
+                        letter-spacing:.05em;
+                        text-transform:uppercase;
+                    ">Vert-Saint-Denis</button>
+                </div>
+
+                <!-- zone info + map -->
+                <div id="contentArea" style="
+                    display:grid;
+                    grid-template-columns:1.2fr .8fr;
+                    min-height:500px;
+                    position:relative;
+                    overflow:hidden;
+                ">
+                    <!-- JS va injecter ici la map + infos du magasin sélectionné -->
                 </div>
             </div>
         </div>
@@ -935,161 +2309,10 @@ $isAdmin    = (!empty($_SESSION['user_id']) && (($_SESSION['user_role'] ?? '') =
     "></div>
 </footer>
 
-<!-- SCRIPTS EXTERNES (chargement différé) -->
-<script>
-// Détection des fonctionnalités
-const supportsIntersectionObserver = 'IntersectionObserver' in window;
-const supportsLoading = 'loading' in HTMLImageElement.prototype;
-
-// Variable globale pour PageFlip
-window.St = { PageFlip: null };
-
-// Fonction pour charger les scripts de manière asynchrone
-function loadScript(src, async = true, defer = true) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.async = async;
-        script.defer = defer;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.body.appendChild(script);
-    });
-}
-
-// Chargement des scripts non critiques après le chargement de la page
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM chargé, démarrage de l\'initialisation...');
-    
-    // Vérifier si le catalogue est présent dans la page
-    const catalogSection = document.getElementById('catalog');
-    if (!catalogSection) {
-        console.warn('La section du catalogue est introuvable dans le DOM');
-        return;
-    }
-    
-    // Suppression de l'ancien conteneur d'erreur s'il existe
-    const existingErrorContainer = catalogSection.querySelector('.catalog-error');
-    if (existingErrorContainer) {
-        existingErrorContainer.remove();
-    }
-    
-    // Charger PageFlip
-    console.log('Chargement de PageFlip...');
-    loadScript('https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js', true, false)
-        .then(() => {
-            console.log('PageFlip chargé avec succès');
-            
-            // Mettre à jour la référence globale
-            window.St = window.St || {};
-            window.St.PageFlip = window.St.PageFlip || window.PageFlip;
-            
-            if (!window.St || !window.St.PageFlip) {
-                throw new Error('PageFlip n\'a pas été correctement chargé');
-            }
-            
-            // Vérifier que la fonction d'initialisation est disponible
-            if (typeof initFlip !== 'function') {
-                throw new Error('La fonction initFlip n\'est pas définie');
-            }
-            
-            // Démarrer l'initialisation avec un léger délai
-            console.log('Démarrage de l\'initialisation du catalogue...');
-            setTimeout(() => initFlip(0), 300);
-        })
-        .catch(error => {
-            console.error('Erreur lors du chargement de PageFlip:', error);
-            
-            // En cas d'erreur, on ne fait rien pour éviter d'afficher un message d'erreur
-            console.error('Erreur lors du chargement de PageFlip:', error);
-        });
-
-    // Charger Leaflet en parallèle
-    loadScript('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', true, true);
-});
-
-// Optimisation des images - lazy loading
-if ('loading' in HTMLImageElement.prototype) {
-    const images = document.querySelectorAll('img[loading="lazy"]');
-    images.forEach(img => {
-        if (img.dataset.src) {
-            img.src = img.dataset.src;
-        }
-        if (img.dataset.srcset) {
-            img.srcset = img.dataset.srcset;
-        }
-    });
-}
-
-// Optimisation des iframes - lazy loading
-document.addEventListener('DOMContentLoaded', function() {
-    const iframes = document.querySelectorAll('iframe[loading="lazy"]');
-    if ('IntersectionObserver' in window) {
-        const iframeObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const iframe = entry.target;
-                    if (iframe.dataset.src) {
-                        iframe.src = iframe.dataset.src;
-                        iframeObserver.unobserve(iframe);
-                    }
-                }
-            });
-        });
-
-        iframes.forEach(iframe => iframeObserver.observe(iframe));
-    } else {
-        // Fallback pour les navigateurs qui ne supportent pas IntersectionObserver
-        iframes.forEach(iframe => {
-            if (iframe.dataset.src) {
-                iframe.src = iframe.dataset.src;
-            }
-        });
-    }
-});
-
-// Gestion des animations au défilement
-function handleIntersection(entries, observer) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-            observer.unobserve(entry.target);
-        }
-    });
-}
-
-const observer = new IntersectionObserver(handleIntersection, {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1
-});
-
-document.querySelectorAll('.animate-on-scroll').forEach(el => {
-    observer.observe(el);
-});
-
-// Optimisation des requêtes de police
-const loadFonts = () => {
-    if ('fonts' in document) {
-        Promise.all([
-            document.fonts.load('1em Plus Jakarta Sans'),
-            document.fonts.load('700 1em Plus Jakarta Sans'),
-            document.fonts.load('800 1em Plus Jakarta Sans')
-        ]).then(() => {
-            document.documentElement.classList.add('fonts-loaded');
-        });
-    }
-};
-
-// Démarrer le chargement des polices après le chargement critique
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadFonts);
-} else {
-    loadFonts();
-}
-</script>
+<!-- SCRIPTS EXTERNES -->
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.js"></script>
-<script src="/Projet-Paristanbul/assets/js/index.js" defer></script>
 
 <script>
     // petit util toast
@@ -1158,8 +2381,7 @@ if (document.readyState === 'loading') {
        CATALOGUE PageFlip init
        ======================= */
     (function(){
-        // Chemin absolu vers les images du catalogue
-        const PATH = window.location.origin + '/Projet-Paristanbul/assets/pages';
+        const PATH = '/Projet-Paristanbul/assets/pages';
         const FILENAME = i => String(i).padStart(2,'0') + '.jpg';
 
         // ordre pages (tu ajustes ce tableau)
@@ -1236,107 +2458,74 @@ if (document.readyState === 'loading') {
         }
 
         async function initFlip(startIndex=0){
-            try {
-                console.log('Initialisation du catalogue...');
-                console.log('Chemin des images:', pages);
-                
-                await detectAspect();
-                const { width, height, usePortrait } = computeSize();
-                pageW = width;
+            await detectAspect();
+            const { width, height, usePortrait } = computeSize();
+            pageW = width;
 
-                if(pageFlip) { 
-                    pageFlip.destroy(); 
-                }
+            if(pageFlip){ pageFlip.destroy(); }
 
-                // Vérifier que St.PageFlip est disponible
-                if (!window.St || !window.St.PageFlip) {
-                    console.error('PageFlip n\'est pas correctement chargé');
-                    throw new Error('La bibliothèque PageFlip n\'est pas disponible');
-                }
+            pageFlip = new St.PageFlip(flipEl, {
+                width,
+                height,
+                size:'fixed',
+                showCover:true,
+                usePortrait,
+                autoSize:true,
+                maxShadowOpacity:0.5,
+                mobileScrollSupport:true,
+                startPage:startIndex
+            });
 
-                // Créer une nouvelle instance de PageFlip
-                pageFlip = new window.St.PageFlip(flipEl, {
-                    width,
-                    height,
-                    size: 'fixed',
-                    showCover: true,
-                    usePortrait,
-                    autoSize: true,
-                    maxShadowOpacity: 0.5,
-                    mobileScrollSupport: true,
-                    startPage: startIndex
-                });
+            pageFlip.loadFromImages(pages);
+            pageFlip.on('flip', coverMaskAndCenter);
 
-                // Charger les images
-                pageFlip.loadFromImages(pages);
-                
-                // Configurer les événements
-                pageFlip.on('flip', coverMaskAndCenter);
-                
-                // Mettre à jour l'échelle et la position
-                scale = baseScale;
-                coverMaskAndCenter();
-                
-                console.log('Catalogue initialisé avec succès');
-                
-                // Cacher le message d'erreur si tout s'est bien passé
-                const errorContainer = document.querySelector('.catalog-error');
-                if (errorContainer) {
-                    errorContainer.style.display = 'none';
-                }
-                
-                // Initialiser les boutons de contrôle
-                const zoomIn = document.getElementById('zoomIn');
-                const zoomOut = document.getElementById('zoomOut');
-                const fitBtn = document.getElementById('fitBtn');
-                
-                // Ajouter les écouteurs d'événements
-                if (prevBtn) prevBtn.addEventListener('click', () => pageFlip?.flipPrev());
-                if (nextBtn) nextBtn.addEventListener('click', () => pageFlip?.flipNext());
-                if (zoomIn) zoomIn.addEventListener('click', () => {
-                    scale = Math.min(2.0, scale + 0.1);
-                    coverMaskAndCenter();
-                });
-                if (zoomOut) zoomOut.addEventListener('click', () => {
-                    scale = Math.max(0.5, scale - 0.1);
-                    coverMaskAndCenter();
-                });
-                if (fitBtn) fitBtn.addEventListener('click', () => {
-                    scale = baseScale;
-                    coverMaskAndCenter();
-                });
-                
-            } catch (error) {
-                console.error('Erreur lors de l\'initialisation du catalogue:', error);
-                
-                // Afficher le message d'erreur uniquement si le catalogue n'est pas déjà affiché
-                const flipbook = document.getElementById('flipbook');
-                if (!flipbook || flipbook.children.length === 0) {
-                    const errorContainer = document.querySelector('.catalog-error');
-                    if (errorContainer) {
-                        errorContainer.textContent = 'Erreur lors du chargement du catalogue. ' + (error.message || 'Erreur inconnue');
-                        errorContainer.style.display = 'block';
-                    }
-                }
-            }
+            scale = baseScale;
+            coverMaskAndCenter();
         }
-        
-        // Gestion du redimensionnement
+
+        // boutons catalogue
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const zoomIn  = document.getElementById('zoomIn');
+        const zoomOut = document.getElementById('zoomOut');
+        const fitBtn  = document.getElementById('fitBtn');
+
+        prevBtn?.addEventListener('click', ()=> pageFlip?.flipPrev());
+        nextBtn?.addEventListener('click', ()=> pageFlip?.flipNext());
+        zoomIn?.addEventListener('click', ()=>{
+            scale = Math.min(2.0, scale + 0.1);
+            coverMaskAndCenter();
+        });
+        zoomOut?.addEventListener('click', ()=>{
+            scale = Math.max(0.6, scale - 0.1);
+            coverMaskAndCenter();
+        });
+        fitBtn?.addEventListener('click', ()=>{
+            scale = baseScale;
+            coverMaskAndCenter();
+        });
+
+        // resize -> on recrée le flipbook en gardant la page courante
         let resizeTimer;
-        window.addEventListener('resize', () => {
+        window.addEventListener('resize', ()=>{
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
+            resizeTimer = setTimeout(()=>{
                 const current = pageFlip ? pageFlip.getCurrentPageIndex() : 0;
                 initFlip(current);
-            }, 150);
-        });
+            },150);
         });
 
-        // L'initialisation est maintenant gérée par le gestionnaire d'événements DOMContentLoaded
-        // pour s'assurer que PageFlip est chargé avant d'initialiser
+        // on démarre
+        if(document.readyState!=='loading'){
+            initFlip(0);
+        } else {
+            window.addEventListener('load', ()=>initFlip(0));
         }
     })();
 
+    /* ===========================
+       CARROUSEL MAGASINS (track)
+       =========================== */
     (function(){
         const vp    = document.querySelector('#advantages .track-viewport');
         const track = document.getElementById('adv-track');
@@ -1470,6 +2659,95 @@ if (document.readyState === 'loading') {
         window.addEventListener('resize', setupClones);
     })();
 
+    /* =====================
+       MAGASINS + LEAFLET MAP
+       ===================== */
+    const storesData = {
+        villiers1: {
+            title: 'Paristanbul VILLIERS-LE-BEL',
+            image: '/Projet-Paristanbul/assets/img/magasins/villiers1.jpg',
+            address: '3 avenue des entrepreneurs, VILLIERS-LE-BEL',
+            hours: 'Lundi à Dimanche : 08:30-20:00',
+            phone: '+33 7 49 82 61 33',
+            coordinates: [49.0010, 2.3894]
+        },
+        drancy: {
+            title: 'Paristanbul DRANCY',
+            image: '/Projet-Paristanbul/assets/img/magasins/drancy.jpg',
+            address: '83 avenue Marceau, DRANCY',
+            hours: 'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00',
+            phone: '+33 7 49 82 61 33',
+            coordinates: [48.9242, 2.4456]
+        },
+        bondy: {
+            title: 'Paristanbul BONDY',
+            image: '/Projet-Paristanbul/assets/img/magasins/bondy.jpg',
+            address: '116 Av. Gallieni, BONDY',
+            hours: 'Lundi à Samedi : 09:00-21:00, Dimanche : 09:00-19:00',
+            phone: '+33 7 49 82 61 33',
+            coordinates: [48.9024, 2.4823]
+        },
+        villemomble: {
+            title: 'Paristanbul VILLEMOMBLE',
+            image: '/Projet-Paristanbul/assets/img/magasins/villemomble.jpg',
+            address: '68 Allée du Plateau, VILLEMOMBLE',
+            hours: 'Lundi à Dimanche : 08:00-20:30',
+            phone: '+33 7 49 82 61 33',
+            coordinates: [48.8844, 2.5103]
+        },
+        nogent: {
+            title: 'Paristanbul NOGENT-SUR-OISE',
+            image: '/Projet-Paristanbul/assets/img/magasins/nogent.jpg',
+            address: '171 Rue Jean Monnet, NOGENT-SUR-OISE',
+            hours: 'Lundi à Samedi : 09:30-20:00, Dimanche : 10:00-19:00',
+            phone: '+33 7 49 82 61 33',
+            coordinates: [49.2765, 2.2011]
+        },
+        vertsaintdenis: {
+            title: 'Paristanbul VERT-SAINT-DENIS',
+            image: '/Projet-Paristanbul/assets/img/magasins/vertsaintdenis.jpg',
+            address: 'La Fontaine Ronde, VERT-SAINT-DENIS',
+            hours: 'Lundi à Dimanche : 08:30-20:30',
+            phone: '+33 7 49 82 61 33',
+            coordinates: [48.6478, 2.6223]
+        }
+    };
+
+    let currentMap = null;
+
+    function openDirections(address){
+        const encoded = encodeURIComponent(address);
+        window.open('https://www.google.com/maps/dir/?api=1&destination='+encoded, '_blank');
+    }
+
+    function initMap(lat, lng, title, address){
+        if(typeof L === 'undefined'){ return; } // sécurité si Leaflet pas encore chargé
+
+        if(currentMap){ currentMap.remove(); }
+
+        currentMap = L.map('map',{ zoomControl:true, scrollWheelZoom:true }).setView([lat,lng],15);
+
+        L.tileLayer(
+            'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+            {
+                attribution:'© OpenStreetMap • © CARTO',
+                subdomains:'abcd',
+                maxZoom:19
+            }
+        ).addTo(currentMap);
+
+        const customIcon = L.divIcon({
+            html:'<div style="background:#A32929;width:20px;height:20px;border-radius:50%;border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,.3);"></div>',
+            iconSize:[26,26],
+            iconAnchor:[13,13]
+        });
+
+        L.marker([lat,lng],{icon:customIcon})
+            .addTo(currentMap)
+            .bindPopup(`<strong>${title}</strong><br>${address}`)
+            .openPopup();
+
+        setTimeout(()=> currentMap.invalidateSize(), 150);
     }
 
     function createStoreContent(key){
